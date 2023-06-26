@@ -1,7 +1,8 @@
+from abstract_factory import AbstractFactory
 from utils.configLoader import ConfigLoader
 
 
-class Creator:
+class Creator(AbstractFactory):
     "The Factory Class"
     @staticmethod
     def create_object(some_property):

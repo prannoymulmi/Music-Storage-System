@@ -1,9 +1,6 @@
-from pathlib import Path
-
 import typer
 
 from factory import Creator
-from utils.configLoader import ConfigLoader
 
 APP_NAME = "my-super-cli-app"
 
