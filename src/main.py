@@ -2,6 +2,7 @@ from pathlib import Path
 
 import typer
 
+from factory import Creator
 from utils.configLoader import ConfigLoader
 
 APP_NAME = "my-super-cli-app"
@@ -28,8 +29,8 @@ def list_music_data():
     print("Typer is now below Click, the Click app is the top level")
 
 def main():
-    loader = ConfigLoader()
-    loader.load_config()
+    loader = Creator().create_object('a')
+    print(loader.load_config())
 
 
 typer_click_object = typer.main.get_command(app)
