@@ -1,10 +1,8 @@
 from unittest import mock
 
-import pytest
 from click.testing import CliRunner
 
 from src.main import cli
-from src.utils.ConfigLoader import ConfigLoader
 
 def test_cli():
     runner = CliRunner()

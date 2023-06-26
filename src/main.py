@@ -2,7 +2,7 @@ from pathlib import Path
 
 import typer
 
-from utils.ConfigLoader import ConfigLoader
+from utils.configLoader import ConfigLoader
 
 APP_NAME = "my-super-cli-app"
 
