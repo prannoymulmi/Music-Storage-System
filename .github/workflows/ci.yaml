@@ -22,9 +22,11 @@ jobs:
           pip install pylint pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Lint with pylint
-        run: |
+        uses: cclauss/GitHub-Action-for-pylint@master
+        with:
+            args: |
           # stop the build if there are Python syntax errors or undefined names
-          pylint --errors-only **/*.py
+          pip install -r requirements.txt ; pylint --errors-only **/*.py
       - name: Test with pytest
         run: |
           pytest
