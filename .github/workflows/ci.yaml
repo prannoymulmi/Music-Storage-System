@@ -1,6 +1,6 @@
 name: Music Storage System
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
