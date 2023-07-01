@@ -45,3 +45,16 @@ def test_when_login_with_right_credentials_then_user_is_logged_on(
     runner = CliRunner()
     result = runner.invoke(cli, ['login'])
     assert 'login' in result.output
+
+
+@mock.patch("src.main.Creator.create_object")
+def test_when_delete_music_data_with_right_credentials_then_music_data_is_deleted(
+        mock__creator
+):
+    test = MagicMock(ConfigLoader())
+
+    test.load_config.return_value = "YOL"
+    mock__creator.side_effect = side_effect
+    runner = CliRunner()
+    result = runner.invoke(cli, ['delete-music-data'])
+    assert 'deleting' in result.output
