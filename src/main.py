@@ -1,7 +1,7 @@
 import typer
 import click
 
-from factory import Creator
+from config_factory import ConfigFactory
 
 app = typer.Typer()
 
@@ -31,7 +31,7 @@ def sub():
     pass
 
 def load_app_config():
-    loader = Creator().create_object('config_loader')
+    loader = ConfigFactory().create_object('config_loader')
     loader.load_config()
 
 

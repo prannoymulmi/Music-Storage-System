@@ -22,7 +22,7 @@ def side_effect(arg):
     values = {'config_loader': test, 'b': 2, 'c': 3}
     return values[arg]
 
-@mock.patch("src.main.Creator.create_object")
+@mock.patch("src.main.ConfigFactory.create_object")
 def test_when_list_music_data_then_is_listed(
         mock__creator
 ):
@@ -34,7 +34,7 @@ def test_when_list_music_data_then_is_listed(
     result = runner.invoke(cli, ['list-music-data'])
     assert 'Listing' in result.output
 
-@mock.patch("src.main.Creator.create_object")
+@mock.patch("src.main.ConfigFactory.create_object")
 def test_when_login_with_right_credentials_then_user_is_logged_on(
         mock__creator
 ):
@@ -47,7 +47,7 @@ def test_when_login_with_right_credentials_then_user_is_logged_on(
     assert 'login' in result.output
 
 
-@mock.patch("src.main.Creator.create_object")
+@mock.patch("src.main.ConfigFactory.create_object")
 def test_when_delete_music_data_with_right_credentials_then_music_data_is_deleted(
         mock__creator
 ):
