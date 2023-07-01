@@ -26,7 +26,7 @@ jobs:
         with:
             args: |
               # stop the build if there are Python syntax errors or undefined names
-              pip install -r requirements.txt ; pylint --errors-only **/*.py
+              pip install -r requirements.txt ; pylint --errors-only --init-hook='import sys; sys.path.append(".")' **/*.py
       - name: Test with pytest
         run: |
           pytest
