@@ -18,8 +18,6 @@ from src.utils.configLoader import ConfigLoader
 
 def side_effect(arg):
     test = MagicMock(ConfigLoader())
-    values = {'config_loader': ConfigLoader(), 'b': 2, 'c': 3}
-
     test.load_config.return_value = "YOL"
     values = {'config_loader': test, 'b': 2, 'c': 3}
     return values[arg]
@@ -29,7 +27,6 @@ def test_when_list_music_data_then_is_listed(
         mock__creator
 ):
     test = MagicMock(ConfigLoader())
-    values = {'config_loader': ConfigLoader(), 'b': 2, 'c': 3}
 
     test.load_config.return_value = "YOL"
     mock__creator.side_effect = side_effect

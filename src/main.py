@@ -1,10 +1,7 @@
 import typer
+import click
 
 from factory import Creator
-
-APP_NAME = "music-storage-system"
-
-import click
 
 app = typer.Typer()
 
