@@ -1,4 +1,4 @@
-from abstract_factory import AbstractFactory
+from .abstract_factory import AbstractFactory
 from utils.configLoader import ConfigLoader
 
 

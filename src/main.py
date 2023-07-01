@@ -1,7 +1,9 @@
 import typer
 import click
 
-from config_factory import ConfigFactory
+from factories.config_factory import ConfigFactory
+from factories.controller_factory import ControllerFactory
+from controllers.login_controller import LoginController
 
 app = typer.Typer()
 
@@ -12,6 +14,8 @@ def cli():
 
 @click.command()
 def login():
+    controller: LoginController = ControllerFactory().create_object("login_controller")
+    print(controller.login("", ""))
     click.echo("login")
 
 @click.command()
