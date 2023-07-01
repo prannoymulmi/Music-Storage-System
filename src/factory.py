@@ -7,6 +7,6 @@ class Creator(AbstractFactory):
     @staticmethod
     def create_object(some_property):
         "A static method to get a concrete product"
-        if some_property == 'a':
+        if some_property == 'config_loader':
             return ConfigLoader()
         return None
