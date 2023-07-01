@@ -2,7 +2,7 @@ import typer
 
 from factory import Creator
 
-APP_NAME = "my-super-cli-app"
+APP_NAME = "music-storage-system"
 
 import click
 
