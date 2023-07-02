@@ -1,5 +1,6 @@
+from typing_extensions import Annotated
+
 import typer
-import click
 
 from factories.config_factory import ConfigFactory
 from factories.controller_factory import ControllerFactory
@@ -7,43 +8,45 @@ from controllers.login_controller import LoginController
 
 app = typer.Typer()
 
-@click.group()
-def cli():
-    load_app_config()
-    pass
 
-@click.command()
-def login():
+# @click.group()
+# def cli():
+#     load_app_config()
+#     pass
+
+@app.command()
+def login(username: Annotated[str, typer.Option(prompt=True)],
+          password: Annotated[str, typer.Option(prompt=True, hide_input=True)]):
     controller: LoginController = ControllerFactory().create_object("login_controller")
-    print(controller.login("", ""))
-    click.echo("login")
+    print(controller.login(username, password))
+    print("login")
 
-@click.command()
+
+@app.command()
 def add_music_data():
-    click.echo("Dropped the database")
+    pass
+    # click.echo("Dropped the database")
 
-@click.command()
+
+@app.command()
 def list_music_data():
-    click.echo("Listing")
+    print("Listing")
 
-@click.command()
+
+@app.command()
 def delete_music_data():
     print("deleting")
 
-@app.command()
-def sub():
-    pass
 
 def load_app_config():
     loader = ConfigFactory().create_object('config_loader')
     loader.load_config()
 
 
-typer_click_object = typer.main.get_command(app)
-cli.add_command(login)
-cli.add_command(add_music_data)
-cli.add_command(list_music_data)
-cli.add_command(delete_music_data)
+def main():
+    load_app_config()
+    app()
+
 
 if __name__ == "__main__":
-    cli()
+    main()
