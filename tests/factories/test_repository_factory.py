@@ -1,6 +1,5 @@
 from factories.repository_factory import RepositoryFactory
 from repositories.user_repository import UserRepository
-from src.factories.controller_factory import ControllerFactory
 
 
 def test_create_object_when_user_repo_then_return_user_repository():

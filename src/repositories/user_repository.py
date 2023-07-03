@@ -17,7 +17,11 @@ class UserRepository:
         data = result.one()
         return data
 
-    def create_user_or_else_return_none(self: str, session: Session, username: str, password: str) -> Any:
+    def create_user_or_else_return_none(self: str,
+                                        session: Session,
+                                        username: str,
+                                        password: str
+                                        ) -> Any:
         # does nothing if a staff already exists
 
             # hashes the password into argon2id with random salt
