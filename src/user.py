@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, DateTime
 from sqlmodel import Field
 from sqlmodel import SQLModel
 from typing import Optional
@@ -13,7 +13,11 @@ class User(SQLModel, table=True):
     hash_method: str = Field(nullable=False)
     test: bytes = Field(nullable=False)
     modified_timestamp: datetime = Field(
-        sa_column=Column(DateTime, onupdate=datetime.now(), nullable=False, default=datetime.utcnow())
+        sa_column=Column(DateTime,
+                         onupdate=datetime.now(),
+                         nullable=False,
+                         default=datetime.utcnow()
+                         )
     )
     last_login_attempt: datetime = Field(default=datetime.utcnow())
     login_counter: int = Field(nullable=False, default=0)

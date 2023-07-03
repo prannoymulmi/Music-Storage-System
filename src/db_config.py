@@ -1,4 +1,4 @@
-from sqlmodel import Session, create_engine, SQLModel
+from sqlmodel import Session, create_engine
 
 import role
 import user
@@ -16,7 +16,8 @@ def create_db_and_tables():
 
 
 """
-A reusable function which returns a session for the database. This session can be used to execute queries from the functions. 
+A reusable function which returns a session for the database. 
+This session can be used to execute queries from the functions. 
 """
 def get_session() -> Session:
     """Provide a transactional scope around a series of operations."""
