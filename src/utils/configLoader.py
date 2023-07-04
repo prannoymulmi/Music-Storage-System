@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import typer
 
-from db_config import create_db_and_tables, get_session
+from configs.db_config import create_db_and_tables, get_session
 
 
 class ConfigLoader:

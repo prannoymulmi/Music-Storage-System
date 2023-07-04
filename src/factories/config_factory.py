@@ -4,8 +4,8 @@ from utils.configLoader import ConfigLoader
 
 class ConfigFactory(AbstractFactory):
     "The Factory Class"
-    @staticmethod
-    def create_object(some_property):
+
+    def create_object(self, some_property):
         "A static method to get a concrete product"
         if some_property == 'config_loader':
             return ConfigLoader()

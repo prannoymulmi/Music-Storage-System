@@ -19,8 +19,8 @@ session = None
 def login(username: Annotated[str, typer.Option(prompt=True)],
           password: Annotated[str, typer.Option(prompt=True, hide_input=True)]):
     controller: LoginController = ControllerFactory().create_object("login_controller")
-    controller.login(username, password, load_app_config())
-    print("login")
+    result = controller.login(username, password, load_app_config())
+    print(result)
 
 
 @app.command()

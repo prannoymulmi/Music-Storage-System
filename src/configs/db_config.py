@@ -1,7 +1,7 @@
 from sqlmodel import Session, create_engine
 
 import role
-import user
+from models import user
 
 engine = create_engine(
     "sqlite:///test.db",
