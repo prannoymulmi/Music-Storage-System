@@ -1,6 +1,7 @@
 from unittest import mock
 from unittest.mock import MagicMock
 
+from sqlmodel import Session
 from typer.testing import CliRunner
 
 from main import app
@@ -28,22 +29,22 @@ def test_when_list_music_data_then_is_listed(
 ):
     test = MagicMock(ConfigLoader())
 
-    test.load_config.return_value = "YOL"
+    test.load_config.return_value = MagicMock(Session)
     mock__creator.side_effect = side_effect
     runner = CliRunner()
     result = runner.invoke(app, ['list-music-data'])
     assert 'Listing' in result.output
 
-# @mock.patch("src.main.ConfigFactory.create_object")
+@mock.patch("src.main.LoginController.login")
 def test_when_login_with_right_credentials_then_user_is_logged_on(
-
+    mock_login
 ):
     # test = MagicMock(ConfigLoader())
     #
-    # test.load_config.return_value = "YOL"
-    # mock__creator.side_effect = side_effect
+    mock_login.return_value = "login"
     runner = CliRunner()
     result = runner.invoke(app, ['login'], input="hello\nworld")
+    assert mock_login.call_count == 1
     assert 'login' in result.output
 
 
