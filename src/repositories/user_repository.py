@@ -59,7 +59,7 @@ class UserRepository:
 
         result = session.exec(statement)
         try:
-            data: User = result.one()
+            result.one()
             return True
         except NoResultFound:
             return False
