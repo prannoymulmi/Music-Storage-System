@@ -1,4 +1,3 @@
-import datetime
 from datetime import timezone, timedelta, datetime
 from unittest.mock import ANY
 from unittest.mock import Mock
@@ -12,12 +11,15 @@ from utils.jwt_utils import encode_jwt, decode_jwt, instance
 from utils.schema.TokenMessage import TokenMessage
 
 """
-Using freeze time to mock date and time, so that the test always returns deterministic results
+Using freeze time to mock date and time, 
+so that the test always returns deterministic results
 """
 @freeze_time("2023-06-8")
 def test_encode_jwt_when_default_sub_then_encode_is_called_with_right_parameters():
     iat = datetime.now(timezone.utc)
-    expected_message = TokenMessage(iss="music_storage_system", sub="", iat=get_int_from_datetime(iat),
+    expected_message = TokenMessage(iss="music_storage_system",
+                                    sub="",
+                                    iat=get_int_from_datetime(iat),
                                     exp=get_int_from_datetime(
                                         iat + timedelta(minutes=5)))
     instance.encode = Mock()

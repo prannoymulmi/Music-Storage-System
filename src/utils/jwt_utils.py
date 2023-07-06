@@ -18,7 +18,8 @@ Encode the message to JWT(JWS).
 """
 def encode_jwt(sub: str = ""):
     iat = datetime.now(timezone.utc)
-    message = TokenMessage(iss="music_storage_system", sub=sub, iat=get_int_from_datetime(iat),
+    message = TokenMessage(iss="music_storage_system",
+                           sub=sub, iat=get_int_from_datetime(iat),
                            exp=get_int_from_datetime(
                                iat + timedelta(minutes=5)))
     # A RSA key from a PEM file.
