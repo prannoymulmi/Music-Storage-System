@@ -33,7 +33,7 @@ class JWTUtils:
 
     @staticmethod
     def store_jwt_in_config(token: str):
-        file = open(f'music_storage_system_config', "w")
+        file = open('music_storage_system_config', "w")
         file.write(f'token:{token}')
 
     @staticmethod
