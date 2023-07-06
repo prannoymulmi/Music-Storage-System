@@ -9,7 +9,7 @@ from jwt import (
 )
 from jwt.utils import get_int_from_datetime
 
-from utils.schema.TokenMessage import TokenMessage
+from utils.schema.Token import Token
 
 instance = JWT()
 
@@ -18,9 +18,9 @@ Encode the message to JWT(JWS).
 """
 def encode_jwt(sub: str = ""):
     iat = datetime.now(timezone.utc)
-    message = TokenMessage(iss="music_storage_system",
-                           sub=sub, iat=get_int_from_datetime(iat),
-                           exp=get_int_from_datetime(
+    message = Token(iss="music_storage_system",
+                    sub=sub, iat=get_int_from_datetime(iat),
+                    exp=get_int_from_datetime(
                                iat + timedelta(minutes=5)))
     # A RSA key from a PEM file.
     with open(f'{get_project_root()}/private_key_for_testing_purposes.pem', 'rb') as fh:
