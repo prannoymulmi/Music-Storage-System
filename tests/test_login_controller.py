@@ -25,7 +25,6 @@ patch('utils.decorator_utils.encode_and_store_jwt', mock_decorator).start()
 from src.controllers.login_controller import LoginController
 
 
-
 @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
 @mock.patch.object(user_repository.UserRepository, "get_user_id")
 @mock.patch.object(argon2.PasswordHasher, "verify")
