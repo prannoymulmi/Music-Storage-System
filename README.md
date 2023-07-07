@@ -44,6 +44,13 @@ class Token(BaseModel):
     permission: [str]
 ```
 
+### Cyclomatic Complexity 
+
+test using 
+
+``` bash
+radon cc -a src 
+```
 
 ## References
 

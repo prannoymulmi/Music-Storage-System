@@ -10,3 +10,11 @@ def encode_and_store_jwt(function):
             JWTUtils.store_jwt_in_config(token)
         return token_input
     return wrapper
+
+
+def test(function):
+    def wrapper(*args, **kwargs):
+        token_input = function(*args, **kwargs)
+        print("token_input")
+        return token_input
+    return wrapper

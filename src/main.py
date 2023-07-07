@@ -1,5 +1,3 @@
-import warnings
-
 import typer
 from sqlmodel import Session
 from typing_extensions import Annotated
@@ -10,12 +8,7 @@ from factories.controller_factory import ControllerFactory
 from utils.schema.token_input import TokenInput
 
 app = typer.Typer()
-warnings.filterwarnings("ignore")
 
-# @click.group()
-# def cli():
-#     load_app_config()
-#     pass
 session = None
 @app.command()
 def login(username: Annotated[str, typer.Option(prompt=True)],
@@ -28,7 +21,8 @@ def login(username: Annotated[str, typer.Option(prompt=True)],
         print("access_denied")
 
 @app.command()
-def add_music_data():
+def add_music_data(username: Annotated[str, typer.Option(prompt=True)],
+          password: Annotated[str, typer.Option(prompt=True, hide_input=True)]):
     pass
     # click.echo("Dropped the database")
 
