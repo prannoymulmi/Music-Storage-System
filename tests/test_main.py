@@ -5,7 +5,10 @@ from sqlmodel import Session
 from typer.testing import CliRunner
 
 from main import app
+from models.role import Role
+from models.user import User
 from src.utils.configLoader import ConfigLoader
+from utils.schema.token_input import TokenInput
 
 
 # @mock.patch("src.main.ConfigLoader.load_config")
@@ -41,11 +44,11 @@ def test_when_login_with_right_credentials_then_user_is_logged_on(
 ):
     # test = MagicMock(ConfigLoader())
     #
-    mock_login.return_value = "login"
+    mock_login.return_value = TokenInput(user_data=User(), role=Role())
     runner = CliRunner()
     result = runner.invoke(app, ['login'], input="hello\nworld")
     assert mock_login.call_count == 1
-    assert 'login' in result.output
+    assert 'logged_in' in result.output
 
 
 @mock.patch("src.main.ConfigFactory.create_object")

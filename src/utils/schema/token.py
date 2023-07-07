@@ -10,3 +10,5 @@ class Token(BaseModel):
     sub: str
     iat: int
     exp: int
+    user_id: str
+    permissions: list[str]

@@ -1,11 +1,13 @@
+import warnings
+
+import typer
 from sqlmodel import Session
 from typing_extensions import Annotated
 
-import typer
-import warnings
+from controllers.login_controller import LoginController
 from factories.config_factory import ConfigFactory
 from factories.controller_factory import ControllerFactory
-from controllers.login_controller import LoginController
+from utils.schema.token_input import TokenInput
 
 app = typer.Typer()
 warnings.filterwarnings("ignore")
@@ -20,8 +22,10 @@ def login(username: Annotated[str, typer.Option(prompt=True)],
           password: Annotated[str, typer.Option(prompt=True, hide_input=True)]):
     controller: LoginController = ControllerFactory().create_object("login_controller")
     result = controller.login(username, password, load_app_config())
-    print(result)
-
+    if isinstance(result, TokenInput) and result:
+        print("logged_in")
+    else:
+        print("access_denied")
 
 @app.command()
 def add_music_data():

@@ -7,8 +7,11 @@ from freezegun import freeze_time
 from jwt.exceptions import JWTDecodeError
 from jwt.utils import get_int_from_datetime
 
+from models.role import Role
+from models.user import User
 from utils.jwt_utils import JWTUtils
-from utils.schema.Token import Token
+from utils.schema.token import Token
+from utils.schema.token_input import TokenInput
 
 """
 Using freeze time to mock date and time, 
@@ -18,13 +21,20 @@ so that the test always returns deterministic results
 def test_encode_jwt_when_default_sub_then_encode_is_called_with_right_parameters():
     iat = datetime.now(timezone.utc)
     expected_message = Token(iss="music_storage_system",
-                             sub="",
+                             sub="1",
+                             permissions=["test"],
+                             user_id="1",
                              iat=get_int_from_datetime(iat),
                              exp=get_int_from_datetime(
                                         iat + timedelta(minutes=5)))
 
     JWTUtils.instance.encode = Mock()
-    JWTUtils.encode_jwt()
+    JWTUtils.encode_jwt(TokenInput(user_data=User(id=1),
+                                   role=Role(
+                                       id=1,
+                                       role_name="test"
+                                   )
+                                   ))
     JWTUtils.instance.encode.assert_called_with(expected_message.dict(), ANY, alg='RS256')
 
 
