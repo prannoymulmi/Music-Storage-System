@@ -26,3 +26,25 @@ pip -V
 # Install all required dependencies
 pip install -r requirements.txt 
 ```
+
+### JWT Tokens
+The Jwt token store user claims like user id, expiry date, permissions (Jones, M., Bradley, J. and Sakimura, N., 2015).
+This token is stored in a config when the users successfully logs-in. The token in this
+application is only used for read actions, as this would give the user a better user experience 
+by not making them log-in multiple times to read data. However, for sensitive actions such as delete, modify, and add a
+re-authentication is required and the token is not used.
+
+```
+class Token(BaseModel):
+    iss: str
+    sub: str
+    iat: int
+    exp: int
+    user_id: str
+    permission: [str]
+```
+
+
+## References
+
+Jones, M., Bradley, J. and Sakimura, N., 2015. Json web token (jwt) (No. rfc7519).
