@@ -35,7 +35,6 @@ class UserRepository:
 
         result = session.exec(statement)
         data: Role = result.one()
-        print(data)
         # hashes the password into argon2id with random salt
         ph = PasswordHasher()
         hashed_password = ph.hash(password)
