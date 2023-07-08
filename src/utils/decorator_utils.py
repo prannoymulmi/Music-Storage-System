@@ -6,15 +6,15 @@ import os
 
 def encode_and_store_jwt(function):
     def wrapper(*args, **kwargs):
-        try:
-            token_input = function(*args, **kwargs)
-            if isinstance(token_input, TokenInput):
-                token = JWTUtils.encode_jwt(token_input)
-                JWTUtils.store_jwt_in_config(token)
-                os.environ["music_app_token"] = token
-            return token_input
-        except Exception as e:
-            raise e
+        token_input = function(*args, **kwargs)
+        if token_input == "access_denied":
+            raise UserDeniedError("access_denied")
+        if isinstance(token_input, TokenInput):
+            token = JWTUtils.encode_jwt(token_input)
+            JWTUtils.store_jwt_in_config(token)
+            os.environ["music_app_token"] = token
+        return token_input
+
     return wrapper
 
 

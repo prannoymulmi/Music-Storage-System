@@ -11,7 +11,7 @@ from models.user import User
 class UserRepository:
     """ Get User Data based on name"""
 
-    def get_user_id(self, session: Session, username: str) -> Any:
+    def get_user_by_username(self, session: Session, username: str) -> Any:
         statement = select(User).where(
             User.username == username)
         result = session.exec(statement)
@@ -24,7 +24,7 @@ class UserRepository:
                                         password: str,
                                         role_name: str
                                         ) -> Any:
-        # does nothing if a staff already exists
+        # does nothing if a user already exists
         if self.check_if_user_exists(username, session):
             return
 

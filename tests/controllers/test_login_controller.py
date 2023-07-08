@@ -31,40 +31,38 @@ from src.controllers.login_controller import LoginController
 
 
 @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
-@mock.patch.object(user_repository.UserRepository, "get_user_id")
+@mock.patch.object(user_repository.UserRepository, "get_user_by_username")
 @mock.patch.object(argon2.PasswordHasher, "verify")
 def test_login_when_password_correct_return_logged_in(
         mock_password_hasher, mock_user_repo, mock_role_repo
 ):
     # Given
-    mock_session = MagicMock(Session)
     mock_password_hasher.return_value = True
     mock_user_repo.return_value = User(password="password")
     mock_role_repo.return_value = Role(id=1, role_name="ADMIN")
 
     # When
     login = LoginController()
-    result = login.login("some_user", "password", mock_session)
+    result = login.login("some_user", "password")
 
     # Then
     assert isinstance(result, TokenInput)
 
 
 @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
-@mock.patch.object(user_repository.UserRepository, "get_user_id")
+@mock.patch.object(user_repository.UserRepository, "get_user_by_username")
 @mock.patch.object(argon2.PasswordHasher, "verify")
 def test_login_when_password_correct_return_access_denied(
         mock_password_hasher, mock_user_repo, mock_role_repo
 ):
     # Given
-    mock_session = MagicMock(Session)
     mock_password_hasher.return_value = False
     mock_user_repo.return_value = User(password="password")
     mock_role_repo.return_value = Role(id=1, role_name="ADMIN")
 
     # When
     login = LoginController()
-    result = login.login("some_user", "password", mock_session)
+    result = login.login("some_user", "password")
 
     # Then
-    #assert result == "access_denied"
+    assert result == "access_denied"

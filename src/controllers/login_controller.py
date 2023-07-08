@@ -22,12 +22,12 @@ class LoginController:
         self.__repo_factory = RepositoryFactory()
 
     @encode_and_store_jwt
-    def login(self, username, password, session):
+    def login(self, username, password):
 
         user_repo: UserRepository = self.__repo_factory.create_object("user_repo")
         role_repo: RoleRepository = self.__repo_factory.create_object("role_repo")
 
-        user: User = user_repo.get_user_id(self.__session, username)
+        user: User = user_repo.get_user_by_username(self.__session, username)
         role: Role = role_repo.get_role_by_id(self.__session, user.role_id)
 
         token_input = TokenInput(user_data=user, role=role)
