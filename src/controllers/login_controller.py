@@ -1,13 +1,14 @@
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 
+from exceptions.user_denied_exception import UserDeniedError
 from factories.config_factory import ConfigFactory
 from factories.repository_factory import RepositoryFactory
 from models.role import Role
 from models.user import User
 from repositories.role_repository import RoleRepository
 from repositories.user_repository import UserRepository
-from utils.decorator_utils import encode_and_store_jwt, test
+from utils.decorator_utils import encode_and_store_jwt, check_token_and_role
 from utils.schema.token_input import TokenInput
 
 
@@ -35,11 +36,10 @@ class LoginController:
             return token_input
         return "access_denied"
 
-    @test
+    @check_token_and_role(role="ADMIN")
     def add_new_user(self, username: str, password: str, role: str):
         user_repo: UserRepository = self.__repo_factory.create_object("user_repo")
         user_repo.create_user_or_else_return_none(self.__session, username, password, role)
-        print("hello")
 
     def verify_hashed_password(self, hashed_password, password):
         ph = PasswordHasher()

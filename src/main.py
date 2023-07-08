@@ -1,8 +1,11 @@
+import os
+
 import typer
 from sqlmodel import Session
 from typing_extensions import Annotated
 
 from controllers.login_controller import LoginController
+from exceptions.user_denied_exception import UserDeniedError
 from factories.config_factory import ConfigFactory
 from factories.controller_factory import ControllerFactory
 from utils.schema.token_input import TokenInput
@@ -18,6 +21,7 @@ def login(username: Annotated[str, typer.Option(prompt=True)],
     controller: LoginController = ControllerFactory().create_object("login_controller")
     result = controller.login(username, password, load_app_config())
     if isinstance(result, TokenInput) and result:
+        print(os.environ.get("music_app_token"))
         print("logged_in")
     else:
         print("access_denied")
@@ -30,15 +34,15 @@ def add_new_user_and_role(
 
 ):
     controller: LoginController = ControllerFactory().create_object("login_controller")
-    result = controller.login(user_name_admin, password_admin, load_app_config())
-    if isinstance(result, TokenInput) and result.role.role_name == "ADMIN":
+    try:
+        controller.login(user_name_admin, password_admin, load_app_config())
         print("logged_in")
-        new_user_name = typer.prompt("Please add new username?", hide_input=True)
+        new_user_name = typer.prompt("Please add new username?")
         new_user_password = typer.prompt("password?", confirmation_prompt=True, hide_input=True)
-        controller.add_new_user(new_user_name, new_user_password)
+        controller.add_new_user(new_user_name, new_user_password, "NORMAL_USER")
         print(new_user_name)
-    else:
-        print("access_denied")
+    except UserDeniedError as e:
+        print(e.message)
 
 
 @app.command()

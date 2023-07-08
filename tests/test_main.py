@@ -1,3 +1,4 @@
+import os
 from unittest import mock
 from unittest.mock import MagicMock
 
@@ -80,15 +81,16 @@ def test_when_add_new_user_as_a_admin_then_user_is_created(
     assert 'test_user' in result.output
 
 
+@mock.patch.object(os.environ, "get")
 @mock.patch("src.main.LoginController.login")
 def test_when_add_new_user_as_a_normal_user_then_access_denied(
-        mock_login
+        mock_login, mock_os
 ):
     test = MagicMock(ConfigLoader())
-
+    mock_os.return_value = ""
     test.load_config.return_value = "YOL"
     mock_login.return_value = TokenInput(user_data=User(), role=Role(role_name="SOME_ROLE"))
     # mock__creator.side_effect = side_effect
     runner = CliRunner()
-    result = runner.invoke(app, ['add-new-user-and-role'], input="hello\nworld\n")
+    result = runner.invoke(app, ['add-new-user-and-role'], input="hello\nworld\ntester\ntest_pass\ntest_pass\n")
     assert 'access_denied' in result.output
