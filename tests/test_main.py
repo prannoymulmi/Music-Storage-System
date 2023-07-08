@@ -26,6 +26,7 @@ def side_effect(arg):
     values = {'config_loader': test, 'b': 2, 'c': 3}
     return values[arg]
 
+
 @mock.patch("src.main.ConfigFactory.create_object")
 def test_when_list_music_data_then_is_listed(
         mock__creator
@@ -38,9 +39,10 @@ def test_when_list_music_data_then_is_listed(
     result = runner.invoke(app, ['list-music-data'])
     assert 'Listing' in result.output
 
+
 @mock.patch("src.main.LoginController.login")
 def test_when_login_with_right_credentials_then_user_is_logged_on(
-    mock_login
+        mock_login
 ):
     # test = MagicMock(ConfigLoader())
     #
@@ -62,3 +64,31 @@ def test_when_delete_music_data_with_right_credentials_then_music_data_is_delete
     runner = CliRunner()
     result = runner.invoke(app, ['delete-music-data'])
     assert 'deleting' in result.output
+
+@mock.patch("src.main.LoginController.add_new_user")
+@mock.patch("src.main.LoginController.login")
+def test_when_add_new_user_as_a_admin_then_user_is_created(
+        mock_login, mock_add_new_user
+):
+    test = MagicMock(ConfigLoader())
+
+    test.load_config.return_value = "YOL"
+    mock_login.return_value = TokenInput(user_data=User(), role=Role(role_name="ADMIN"))
+    # mock__creator.side_effect = side_effect
+    runner = CliRunner()
+    result = runner.invoke(app, ['add-new-user-and-role'], input="hello\nworld\ntest_user\ntest_pass\ntest_pass")
+    assert 'test_user' in result.output
+
+
+@mock.patch("src.main.LoginController.login")
+def test_when_add_new_user_as_a_normal_user_then_access_denied(
+        mock_login
+):
+    test = MagicMock(ConfigLoader())
+
+    test.load_config.return_value = "YOL"
+    mock_login.return_value = TokenInput(user_data=User(), role=Role(role_name="SOME_ROLE"))
+    # mock__creator.side_effect = side_effect
+    runner = CliRunner()
+    result = runner.invoke(app, ['add-new-user-and-role'], input="hello\nworld\n")
+    assert 'access_denied' in result.output

@@ -12,7 +12,6 @@ class UserRepository:
     """ Get User Data based on name"""
 
     def get_user_id(self, session: Session, username: str) -> Any:
-        self.create_user_or_else_return_none(session, username, "test", "ADMIN")
         statement = select(User).where(
             User.username == username)
         result = session.exec(statement)
