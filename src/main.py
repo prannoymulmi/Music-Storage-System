@@ -4,6 +4,7 @@ import typer
 from sqlmodel import Session
 from typing_extensions import Annotated
 
+from configs.db_seeder import seed_database
 from controllers.login_controller import LoginController
 from exceptions.user_denied_exception import UserDeniedError
 from factories.config_factory import ConfigFactory
@@ -67,6 +68,7 @@ def delete_music_data():
 def load_app_config() -> Session:
     loader = ConfigFactory().create_object('config_loader')
     session_from_config = loader.load_config()
+    seed_database(session_from_config)
     return session_from_config
 
 

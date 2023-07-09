@@ -14,3 +14,9 @@ class RoleRepository:
         result = session.exec(statement)
         data = result.one()
         return data
+
+    def create_and_add_role(self, session: Session, role: Role):
+        session.add(role)
+        session.commit()
+        session.refresh(role)
+        return role
