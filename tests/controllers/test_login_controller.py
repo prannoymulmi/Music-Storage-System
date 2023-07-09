@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from unittest import mock, TestCase
 from unittest.mock import MagicMock, patch, ANY
 
@@ -53,7 +54,10 @@ def test_login_when_password_correct_return_logged_in(
 ):
     # Given
     mock_password_hasher.return_value = True
-    mock_user_repo.return_value = User(password="password")
+    now = datetime.utcnow()
+    td = timedelta(minutes=12)
+    res = now - td
+    mock_user_repo.return_value = User(password="password", login_counter=0, last_login_attempt=res)
     mock_role_repo.return_value = Role(id=1, role_name="ADMIN")
 
     # When
@@ -74,7 +78,7 @@ def test_login_when_password_incorrect_return_access_denied(
 ):
     # Given
     mock_password_hasher.return_value = False
-    mock_user_repo.return_value = User(password="password")
+    mock_user_repo.return_value = User(password="password", login_counter=0, last_login_attempt=datetime.utcnow())
     mock_role_repo.return_value = Role(id=1, role_name="ADMIN")
 
     # When
@@ -82,6 +86,26 @@ def test_login_when_password_incorrect_return_access_denied(
     result = login.login("some_user", "wrongPassword")
     # Then
     mock_user_repo_update_user.assert_called_once()
+    assert result == "access_denied"
+
+@mock.patch.object(user_repository.UserRepository, "update_user")
+@mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
+@mock.patch.object(user_repository.UserRepository, "get_user_by_username")
+@mock.patch.object(argon2.PasswordHasher, "verify")
+def test_login_when_password_correct_but_login_counter_limit_exceeded_return_access_denied(
+        mock_password_hasher, mock_user_repo, mock_role_repo, mock_user_repo_update_user
+):
+    # Given
+    mock_user_repo.return_value = User(password="password", login_counter=6, last_login_attempt=datetime.utcnow())
+
+    # When
+    login = LoginController()
+    result = login.login("some_user", "right password")
+    # Then
+    mock_password_hasher.assert_not_called()
+    mock_role_repo.assert_not_called()
+    mock_user_repo_update_user.assert_not_called()
+    mock_user_repo.assert_called_once()
     assert result == "access_denied"
 
 
