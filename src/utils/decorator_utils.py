@@ -1,4 +1,5 @@
 from exceptions.user_denied_exception import UserDeniedError
+from exceptions.weak_password import WeakPasswordError
 from utils.jwt_utils import JWTUtils
 from utils.schema.token import Token
 from utils.schema.token_input import TokenInput
@@ -29,6 +30,8 @@ def check_token_and_role(role):
                 res = function(*args, **kwargs)
                 return res
             except UserDeniedError as e:
+                raise e
+            except WeakPasswordError as e:
                 raise e
             except Exception:
                 raise UserDeniedError("access_denied")

@@ -5,6 +5,7 @@ from argon2.exceptions import VerifyMismatchError
 
 from exceptions.user_denied_exception import UserDeniedError
 from exceptions.user_not_found import UserNotFound
+from exceptions.weak_password import WeakPasswordError
 from factories.config_factory import ConfigFactory
 from factories.repository_factory import RepositoryFactory
 from models.role import Role
@@ -13,6 +14,7 @@ from models.user import User
 from repositories.role_repository import RoleRepository
 from repositories.user_repository import UserRepository
 from utils.decorator_utils import encode_and_store_jwt, check_token_and_role
+from utils.password_utils import PasswordUtil
 from utils.schema.token_input import TokenInput
 
 
@@ -53,6 +55,8 @@ class LoginController:
         values = [member.value for member in RoleNames]
         if role not in values:
             raise UserDeniedError("role does not exist")
+        if PasswordUtil.is_password_compromised_password_in_have_i_been_pawned(password):
+            raise WeakPasswordError
         user_repo: UserRepository = self.__repo_factory.create_object("user_repo")
         user_repo.create_user_or_else_return_none(self.__session, username, password, role)
 

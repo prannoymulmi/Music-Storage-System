@@ -1,16 +1,17 @@
 from datetime import datetime, timedelta
-from unittest import mock, TestCase
-from unittest.mock import MagicMock, patch, ANY
+from unittest import mock
+from unittest.mock import patch, ANY
 
 import argon2
 import pytest
-from sqlmodel import Session
 
 from exceptions.user_denied_exception import UserDeniedError
+from exceptions.weak_password import WeakPasswordError
 from models.role import Role
 from models.role_names import RoleNames
 from models.user import User
 from repositories import user_repository, role_repository
+from utils import password_utils
 from utils.schema.token_input import TokenInput
 
 '''
@@ -18,22 +19,27 @@ The mock has to be patched before the login controller is imported so that the d
 If the mock is not done before importing then decorator is not mocked.
 <a href=https://medium.com/@arlindont/python-unittest-mock-decorator-ab32c22a12ff/>
 '''
+
+
 def mock_decorator_encode_jwt(function):
     def wrapper(*args, **kwargs):
         res = function(*args, **kwargs)
         if res == "access_denied":
             return res
         return TokenInput(user_data=User(id=1), role=Role(id=1, role_name="test"))
+
     return wrapper
 
 
 patch('utils.decorator_utils.encode_and_store_jwt', mock_decorator_encode_jwt).start()
+
 
 def mock_decorator_check_token(role):
     def first_warapper(function):
         def wrapper(*args, **kwargs):
             res = function(*args, **kwargs)
             return res
+
         return wrapper
 
     return first_warapper
@@ -85,6 +91,7 @@ def test_login_when_password_incorrect_return_access_denied(
     mock_user_repo_update_user.assert_called_once()
     assert result == "access_denied"
 
+
 @mock.patch.object(user_repository.UserRepository, "update_user")
 @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
 @mock.patch.object(user_repository.UserRepository, "get_user_by_username")
@@ -104,6 +111,7 @@ def test_login_when_password_correct_but_login_counter_limit_exceeded_return_acc
     mock_user_repo_update_user.assert_not_called()
     mock_user_repo.assert_called_once()
     assert result == "access_denied"
+
 
 @mock.patch.object(user_repository.UserRepository, "update_user")
 @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
@@ -130,12 +138,15 @@ def test_login_when_password_correct_but_login_counter_limit_exceeded_and_time_l
     mock_user_repo_update_user.assert_called_once()
     assert isinstance(result, TokenInput)
 
+
+@mock.patch.object(password_utils.PasswordUtil, "is_password_compromised_password_in_have_i_been_pawned")
 @mock.patch.object(user_repository.UserRepository, "create_user_or_else_return_none")
 def test_login_when_add_new_user_with_known_role_then_return_new_user(
-         mock_user_repo
+        mock_user_repo, mock_password_util
 ):
     # Given
-    mock_user_repo.return_value=True
+    mock_user_repo.return_value = True
+    mock_password_util.return_value = False
 
     # When
     login_controller = LoginController()
@@ -145,12 +156,29 @@ def test_login_when_add_new_user_with_known_role_then_return_new_user(
     mock_user_repo.assert_called_once()
 
 
+@mock.patch.object(password_utils.PasswordUtil, "is_password_compromised_password_in_have_i_been_pawned")
 @mock.patch.object(user_repository.UserRepository, "create_user_or_else_return_none")
-def test_login_when_add_new_user_with_unknown_role_then_return_user_denied_error_with_role_not_found(
-         mock_user_repo
+def test_login_when_add_new_user_with_known_role_then_return_new_user(
+        mock_user_repo, mock_password_util
 ):
     # Given
-    mock_user_repo.return_value=True
+    mock_user_repo.return_value = True
+    mock_password_util.return_value = True
+
+    # When
+    login_controller = LoginController()
+
+    # Then
+    with pytest.raises(WeakPasswordError, match="password is non-compliant"):
+        login_controller.add_new_user(ANY, ANY, RoleNames.normal_user.value)
+    mock_user_repo.assert_not_called()
+
+@mock.patch.object(user_repository.UserRepository, "create_user_or_else_return_none")
+def test_login_when_add_new_user_with_unknown_role_then_return_user_denied_error_with_role_not_found(
+        mock_user_repo
+):
+    # Given
+    mock_user_repo.return_value = True
 
     # When
     login_controller = LoginController()
