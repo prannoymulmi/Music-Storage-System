@@ -77,7 +77,7 @@ def test_when_add_new_user_as_a_admin_then_user_is_created(
     mock_login.return_value = TokenInput(user_data=User(), role=Role(role_name="ADMIN"))
     # mock__creator.side_effect = side_effect
     runner = CliRunner()
-    result = runner.invoke(app, ['add-new-user-and-role'], input="hello\nworld\ntest_user\ntest_pass\ntest_pass")
+    result = runner.invoke(app, ['add-new-user-and-role'], input="hello\nworld\ntest_user\ntest_pass\ntest_pass\nADMIN")
     assert 'test_user' in result.output
 
 
@@ -92,5 +92,5 @@ def test_when_add_new_user_as_a_normal_user_then_access_denied(
     mock_login.return_value = TokenInput(user_data=User(), role=Role(role_name="SOME_ROLE"))
     # mock__creator.side_effect = side_effect
     runner = CliRunner()
-    result = runner.invoke(app, ['add-new-user-and-role'], input="hello\nworld\ntester\ntest_pass\ntest_pass\n")
+    result = runner.invoke(app, ['add-new-user-and-role'], input="hello\nworld\ntester\ntest_pass\ntest_pass\nNORMAL_USER")
     assert 'access_denied' in result.output

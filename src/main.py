@@ -8,6 +8,7 @@ from controllers.login_controller import LoginController
 from exceptions.user_denied_exception import UserDeniedError
 from factories.config_factory import ConfigFactory
 from factories.controller_factory import ControllerFactory
+from models.role_names import RoleNames
 from utils.schema.token_input import TokenInput
 
 app = typer.Typer()
@@ -19,12 +20,13 @@ session = None
 def login(username: Annotated[str, typer.Option(prompt=True)],
           password: Annotated[str, typer.Option(prompt=True, hide_input=True)]):
     controller: LoginController = ControllerFactory().create_object("login_controller")
-    result = controller.login(username, password, load_app_config())
-    if isinstance(result, TokenInput) and result:
-        print(os.environ.get("music_app_token"))
-        print("logged_in")
-    else:
-        print("access_denied")
+    try:
+        result = controller.login(username, password)
+        if isinstance(result, TokenInput) and result:
+            print(os.environ.get("music_app_token"))
+            print("logged_in")
+    except UserDeniedError as e:
+        print(e.message)
 
 
 @app.command()
@@ -35,11 +37,12 @@ def add_new_user_and_role(
 ):
     controller: LoginController = ControllerFactory().create_object("login_controller")
     try:
-        controller.login(user_name_admin, password_admin, load_app_config())
+        controller.login(user_name_admin, password_admin)
         print("logged_in")
         new_user_name = typer.prompt("Please add new username?")
         new_user_password = typer.prompt("password?", confirmation_prompt=True, hide_input=True)
-        controller.add_new_user(new_user_name, new_user_password, "NORMAL_USER")
+        role = typer.prompt("role - ADMIN or NORMAL_USER")
+        controller.add_new_user(new_user_name, new_user_password, role)
         print(new_user_name)
     except UserDeniedError as e:
         print(e.message)

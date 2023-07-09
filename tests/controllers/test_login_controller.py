@@ -52,7 +52,7 @@ def test_login_when_password_correct_return_logged_in(
 @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
 @mock.patch.object(user_repository.UserRepository, "get_user_by_username")
 @mock.patch.object(argon2.PasswordHasher, "verify")
-def test_login_when_password_correct_return_access_denied(
+def test_login_when_password_incorrect_return_access_denied(
         mock_password_hasher, mock_user_repo, mock_role_repo
 ):
     # Given
@@ -62,7 +62,7 @@ def test_login_when_password_correct_return_access_denied(
 
     # When
     login = LoginController()
-    result = login.login("some_user", "password")
+    result = login.login("some_user", "wrongPassword")
 
     # Then
     assert result == "access_denied"

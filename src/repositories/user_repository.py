@@ -4,6 +4,7 @@ from argon2 import PasswordHasher
 from sqlalchemy.exc import NoResultFound
 from sqlmodel import Session, select
 
+from exceptions.user_not_found import UserNotFound
 from models.role import Role
 from models.user import User
 
@@ -15,8 +16,11 @@ class UserRepository:
         statement = select(User).where(
             User.username == username)
         result = session.exec(statement)
-        data = result.one()
-        return data
+        try :
+            data = result.one()
+            return data
+        except NoResultFound:
+            raise UserNotFound("User is not found")
 
     def create_user_or_else_return_none(self: str,
                                         session: Session,

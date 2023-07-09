@@ -28,6 +28,8 @@ def check_token_and_role(role):
                     raise UserDeniedError("access_denied")
                 res = function(*args, **kwargs)
                 return res
+            except UserDeniedError as e:
+                raise e
             except Exception:
                 raise UserDeniedError("access_denied")
         return wrapper
