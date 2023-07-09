@@ -36,4 +36,4 @@ class PasswordUtil:
             nonletters=2,  # need min. 2 non-letter characters (digits, specials, anything)
         )
         strength_compliant: bool = policy.password(passwd).test()
-        return not strength_compliant
+        return strength_compliant
