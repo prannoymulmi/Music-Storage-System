@@ -54,10 +54,7 @@ def test_login_when_password_correct_return_logged_in(
 ):
     # Given
     mock_password_hasher.return_value = True
-    now = datetime.utcnow()
-    td = timedelta(minutes=12)
-    res = now - td
-    mock_user_repo.return_value = User(password="password", login_counter=0, last_login_attempt=res)
+    mock_user_repo.return_value = User(password="password", login_counter=0, last_login_attempt=datetime.utcnow())
     mock_role_repo.return_value = Role(id=1, role_name="ADMIN")
 
     # When
@@ -108,6 +105,30 @@ def test_login_when_password_correct_but_login_counter_limit_exceeded_return_acc
     mock_user_repo.assert_called_once()
     assert result == "access_denied"
 
+@mock.patch.object(user_repository.UserRepository, "update_user")
+@mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
+@mock.patch.object(user_repository.UserRepository, "get_user_by_username")
+@mock.patch.object(argon2.PasswordHasher, "verify")
+def test_login_when_password_correct_but_login_counter_limit_exceeded_and_time_limit_crossed_return_logged_in(
+        mock_password_hasher, mock_user_repo, mock_role_repo, mock_user_repo_update_user
+):
+    # Given
+    mock_password_hasher.return_value = True
+    now = datetime.utcnow()
+    td = timedelta(minutes=12)
+    res = now - td
+    mock_user_repo.return_value = User(password="password", login_counter=6, last_login_attempt=res)
+    mock_role_repo.return_value = Role(id=1, role_name="ADMIN")
+
+    # When
+    login = LoginController()
+    result = login.login("some_user", "password")
+
+    # Then
+    mock_password_hasher.assert_called_once()
+    mock_role_repo.assert_called_once()
+    mock_user_repo_update_user.assert_called_once()
+    assert isinstance(result, TokenInput)
 
 @mock.patch.object(user_repository.UserRepository, "create_user_or_else_return_none")
 def test_login_when_add_new_user_with_known_role_then_return_new_user(
