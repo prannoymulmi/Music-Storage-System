@@ -16,11 +16,16 @@ class UserRepository:
         statement = select(User).where(
             User.username == username)
         result = session.exec(statement)
-        try :
+        try:
             data = result.one()
             return data
         except NoResultFound:
             raise UserNotFound("User is not found")
+
+    def update_user(self, session, user):
+        session.add(user)
+        session.commit()
+        session.refresh(user)
 
     def create_user_or_else_return_none(self: str,
                                         session: Session,

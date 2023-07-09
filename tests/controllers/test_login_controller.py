@@ -44,11 +44,12 @@ patch('utils.decorator_utils.check_token_and_role', mock_decorator_check_token).
 from src.controllers.login_controller import LoginController
 
 
+@mock.patch.object(user_repository.UserRepository, "update_user")
 @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
 @mock.patch.object(user_repository.UserRepository, "get_user_by_username")
 @mock.patch.object(argon2.PasswordHasher, "verify")
 def test_login_when_password_correct_return_logged_in(
-        mock_password_hasher, mock_user_repo, mock_role_repo
+        mock_password_hasher, mock_user_repo, mock_role_repo, mock_user_repo_update_user
 ):
     # Given
     mock_password_hasher.return_value = True
@@ -60,14 +61,16 @@ def test_login_when_password_correct_return_logged_in(
     result = login.login("some_user", "password")
 
     # Then
+    mock_user_repo_update_user.assert_called_once()
     assert isinstance(result, TokenInput)
 
 
+@mock.patch.object(user_repository.UserRepository, "update_user")
 @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
 @mock.patch.object(user_repository.UserRepository, "get_user_by_username")
 @mock.patch.object(argon2.PasswordHasher, "verify")
 def test_login_when_password_incorrect_return_access_denied(
-        mock_password_hasher, mock_user_repo, mock_role_repo
+        mock_password_hasher, mock_user_repo, mock_role_repo, mock_user_repo_update_user
 ):
     # Given
     mock_password_hasher.return_value = False
@@ -77,8 +80,8 @@ def test_login_when_password_incorrect_return_access_denied(
     # When
     login = LoginController()
     result = login.login("some_user", "wrongPassword")
-
     # Then
+    mock_user_repo_update_user.assert_called_once()
     assert result == "access_denied"
 
 

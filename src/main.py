@@ -23,7 +23,6 @@ def login(username: Annotated[str, typer.Option(prompt=True)],
     try:
         result = controller.login(username, password)
         if isinstance(result, TokenInput) and result:
-            print(os.environ.get("music_app_token"))
             print("logged_in")
     except UserDeniedError as e:
         print(e.message)
