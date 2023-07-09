@@ -156,14 +156,16 @@ def test_login_when_add_new_user_with_known_role_then_return_new_user(
     mock_user_repo.assert_called_once()
 
 
+@mock.patch.object(password_utils.PasswordUtil, "is_password_policy_non_compliant")
 @mock.patch.object(password_utils.PasswordUtil, "is_password_compromised_password_in_have_i_been_pawned")
 @mock.patch.object(user_repository.UserRepository, "create_user_or_else_return_none")
-def test_login_when_add_new_user_with_known_role_then_return_new_user(
-        mock_user_repo, mock_password_util
+def test_login_when_add_new_user_with_non_compliant_password_then_return_weak_password_error(
+        mock_user_repo, mock_password_util, mock_password_util_pass_strength
 ):
     # Given
     mock_user_repo.return_value = True
     mock_password_util.return_value = True
+    mock_password_util_pass_strength.return_value = True
 
     # When
     login_controller = LoginController()
