@@ -52,6 +52,23 @@ test using
 radon cc -a src 
 ```
 
+
+## Using Password Strength to set password policy
+This gives an easy method to set password policies for python projects (Password-strength. PyPI. (n.d.)). 
+Also, the entropy for the  password policies can be set easily to achieve a stronger password.
+```
+from password_strength import PasswordPolicy
+
+policy = PasswordPolicy.from_names(
+    length=8,  # min length: 8
+    uppercase=2,  # need min. 2 uppercase letters
+    numbers=2,  # need min. 2 digits
+    special=2,  # need min. 2 special characters
+    nonletters=2,  # need min. 2 non-letter characters (digits, specials, anything)
+)
+policy.test('ABcd12!')
+```
 ## References
 
 Jones, M., Bradley, J. and Sakimura, N., 2015. Json web token (jwt) (No. rfc7519).
+Password-strength. PyPI. (n.d.). https://pypi.org/project/password-strength/ 
