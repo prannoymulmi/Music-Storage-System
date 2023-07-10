@@ -4,6 +4,7 @@ from typing_extensions import Annotated
 
 from configs.db_seeder import seed_database
 from controllers.login_controller import LoginController
+from controllers.music_data_controller import MusicDataController
 from exceptions.user_denied_exception import UserDeniedError
 from exceptions.weak_password import WeakPasswordError
 from factories.config_factory import ConfigFactory
@@ -56,12 +57,13 @@ def add_music_data(
         music_score: int = typer.Option(),
         lyrics_file_path: str = typer.Option()
 ):
-    controller: LoginController = ControllerFactory().create_object("login_controller")
+    controller_login: LoginController = ControllerFactory().create_object("login_controller")
+    controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
     try:
-        controller.login(username, password)
+        data: TokenInput = controller_login.login(username, password)
         print("logged_in")
 
-        # controller.add_new_user(new_user_name, new_user_password, role)
+        controller_music.add_music_data(music_file_path, music_score, lyrics_file_path, data.user_data)
         # print(new_user_name)
     except UserDeniedError as e:
         print(e.message)
