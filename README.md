@@ -56,7 +56,8 @@ radon cc -a src
 ## Using Password Strength to set password policy
 This gives an easy method to set password policies for python projects (Password-strength. PyPI. (n.d.)). 
 Also, the entropy for the  password policies can be set easily to achieve a stronger password.
-```
+
+``` python
 from password_strength import PasswordPolicy
 
 policy = PasswordPolicy.from_names(
@@ -66,9 +67,19 @@ policy = PasswordPolicy.from_names(
     special=2,  # need min. 2 special characters
     nonletters=2,  # need min. 2 non-letter characters (digits, specials, anything)
 )
-policy.test('ABcd12!')
+policy.test('12345!')
 ```
-## References
 
-Jones, M., Bradley, J. and Sakimura, N., 2015. Json web token (jwt) (No. rfc7519).
-Password-strength. PyPI. (n.d.). https://pypi.org/project/password-strength/ 
+### Data Integrity
+The project handles with the upload of various music data such as audio files 
+and lyric file which has to ensure that no tampering within the database is 
+carried out. A checksum is calculated using SHA-256 (Rachmawati, D et.al, 2018)
+to ensure that the data inside the database are not tampered.
+
+### Encryption
+The sensitive data such as user_name, music_data are encrypted using SHA-512
+
+### References
+* Jones, M., Bradley, J. and Sakimura, N., 2015. Json web token (jwt) (No. rfc7519).
+* Password-strength. PyPI. (n.d.). https://pypi.org/project/password-strength/ 
+* Rachmawati, D., Tarigan, J.T. and Ginting, A.B.C., 2018, March. A comparative study of Message Digest 5 (MD5) and SHA256 algorithm. In Journal of Physics: Conference Series (Vol. 978, p. 012116). IOP Publishing.

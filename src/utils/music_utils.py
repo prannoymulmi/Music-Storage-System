@@ -1,4 +1,7 @@
 import hashlib
+import os
+
+
 class MusicUtils(object):
     _instance = None
 
@@ -24,3 +27,7 @@ class MusicUtils(object):
     @staticmethod
     def calculate_check_sum(data):
         return hashlib.sha256(data).hexdigest()
+
+    @staticmethod
+    def get_file_name_from_path(path):
+        return os.path.basename(path)

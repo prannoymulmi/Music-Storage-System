@@ -62,9 +62,7 @@ def add_music_data(
     try:
         data: TokenInput = controller_login.login(username, password)
         print("logged_in")
-
         controller_music.add_music_data(music_file_path, music_score, lyrics_file_path, data.user_data)
-        # print(new_user_name)
     except UserDeniedError as e:
         print(e.message)
 

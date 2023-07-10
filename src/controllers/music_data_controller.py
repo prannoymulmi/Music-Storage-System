@@ -30,12 +30,14 @@ class MusicDataController:
         music_file: bytes = self.__music_utils.get_file_from_path(music_file_path)
         lyrics_file: bytes = self.__music_utils.get_file_from_path(lyrics_file_path)
         combined_check_sum: str = self.__music_utils.calculate_check_sum(music_file+lyrics_file)
+        music_file_name: str = self.__music_utils.get_file_name_from_path(music_file_path)
+        lyrics_file_name: str = self.__music_utils.get_file_name_from_path(lyrics_file_path)
         music_data = MusicData(user_id=user.id,
-                               music_file_name=music_file_path,
+                               music_file_name=music_file_name,
                                music_file=music_file,
                                music_score=music_score,
                                checksum=combined_check_sum,
-                               lyrics_file_name=lyrics_file_path,
+                               lyrics_file_name=lyrics_file_name,
                                lyrics=lyrics_file
                                )
         self.__music_repo.create_and_add_new__music_data(self.__session, music_data)
