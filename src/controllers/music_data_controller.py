@@ -56,6 +56,7 @@ class MusicDataController:
             return self.set_music_data_output(results)
     def set_music_data_output(self, results):
         result_output: [MusicDataOutput] = []
+        format = "2020-06-18T14:55:28-05:00"
         for result in results:
             result_output.append(MusicDataOutput(
                 id=result.id,
@@ -63,6 +64,8 @@ class MusicDataController:
                 music_file_name=result.music_file_name,
                 checksum=result.checksum,
                 user_id=result.user_id,
-                lyrics_file_name=result.lyrics_file_name
+                lyrics_file_name=result.lyrics_file_name,
+                modified_timestamp=result.modified_timestamp.strftime(format),
+                created_timestamp=result.created_timestamp.strftime(format)
             ))
         return result_output

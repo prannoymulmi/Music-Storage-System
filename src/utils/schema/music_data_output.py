@@ -11,5 +11,5 @@ class MusicDataOutput(SQLModel):
     lyrics_file_name: str
     checksum: str
     user_id: Optional[int]
-    # modified_timestamp: datetime
-    # created_timestamp: datetime
+    modified_timestamp: str
+    created_timestamp: str
