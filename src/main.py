@@ -67,6 +67,10 @@ def add_music_data(
         print(e.message)
 
 
+'''
+This method only list the music data. If the user is an admin they can see all the user data, but a normal user
+can only see their own data.
+'''
 @app.command()
 def list_music_data(username: Annotated[str, typer.Option(prompt=True)],
                     password: Annotated[str, typer.Option(prompt=True, hide_input=True)]):
@@ -75,10 +79,11 @@ def list_music_data(username: Annotated[str, typer.Option(prompt=True)],
     try:
         data: TokenInput = controller_login.login(username, password)
         print("logged_in")
-        #result = controller_music.
+        results = controller_music.list_music_data(data.user_data)
+        for result in results:
+            print(result)
     except UserDeniedError as e:
         print(e.message)
-    print("Listing")
 
 
 @app.command()

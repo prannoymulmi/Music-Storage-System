@@ -3,10 +3,10 @@ from factories.repository_factory import RepositoryFactory
 from models.music_data import MusicData
 from models.user import User
 from repositories.music_repository import MusicRepository
-from repositories.user_repository import UserRepository
 from utils.configLoader import ConfigLoader
 from utils.decorator_utils import check_token_and_role
 from utils.music_utils import MusicUtils
+from utils.schema.music_data_output import MusicDataOutput
 
 
 class MusicDataController:
@@ -43,6 +43,26 @@ class MusicDataController:
                                )
         self.__music_repo.create_and_add_new__music_data(self.__session, music_data)
 
-    @check_token_and_role("ADMIN")
+    @check_token_and_role(role=["ADMIN"])
     def list_music_for_admin(self):
         pass
+
+    def list_music_data(self, user: User) -> [MusicDataOutput]:
+        if user.role_id == 1:
+            results = self.__music_repo.get_all_music_data(self.__session)
+            return self.set_music_data_output(results)
+        if user.role_id == 2:
+            results = self.__music_repo.get_music_data_by_user(self.__session, user)
+            return self.set_music_data_output(results)
+    def set_music_data_output(self, results):
+        result_output: [MusicDataOutput] = []
+        for result in results:
+            result_output.append(MusicDataOutput(
+                id=result.id,
+                music_score=result.music_score,
+                music_file_name=result.music_file_name,
+                checksum=result.checksum,
+                user_id=result.user_id,
+                lyrics_file_name=result.lyrics_file_name
+            ))
+        return result_output
