@@ -18,20 +18,6 @@ def encode_and_store_jwt(function):
 
     return wrapper
 
-def is_token_own_user(function):
-    def wrapper(*args, **kwargs):
-        try:
-            token = os.environ.get("music_app_token")
-            token_decoded: Token = JWTUtils.decode_jwt(token)
-            res = function(*args, **kwargs)
-        except UserDeniedError as e:
-            raise e
-        except WeakPasswordError as e:
-            raise e
-        except Exception:
-            raise UserDeniedError("access_denied")
-
-    return wrapper
 
 def check_token_and_role(role: [str]):
     def first_warapper(function):

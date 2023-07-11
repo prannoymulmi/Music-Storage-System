@@ -8,7 +8,7 @@ from models.role import Role
 class RoleRepository:
     """ Get User Data based on name"""
 
-    def get_role_by_id(self, session: Session, role_id: str) -> Any:
+    def get_role_by_id(self, session: Session, role_id: int) -> Any:
         statement = select(Role).where(
             Role.id == role_id)
         result = session.exec(statement)

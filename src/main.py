@@ -89,7 +89,7 @@ def update_music_data(
             music_score=music_score,
             lyrics_file_name=lyrics_file_path
         )
-        controller_music.update_music_data(music_data)
+        controller_music.update_music_data(login_data.user_data, music_data)
     except UserDeniedError as e:
         print(e.message)
 

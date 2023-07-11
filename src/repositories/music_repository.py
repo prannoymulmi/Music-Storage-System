@@ -29,7 +29,7 @@ class MusicRepository:
         result = session.exec(statement)
         return result.one()
 
-    def update_music_data(self, session: Session, music_data: MusicDataOutput):
+    def update_music_data(self, session: Session, music_data: MusicData):
         statement = select(MusicData).where(
             MusicData.id == music_data.id)
 

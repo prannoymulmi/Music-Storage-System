@@ -1,8 +1,11 @@
+from exceptions.user_denied_exception import UserDeniedError
 from factories.config_factory import ConfigFactory
 from factories.repository_factory import RepositoryFactory
 from models.music_data import MusicData
+from models.role import Role
 from models.user import User
 from repositories.music_repository import MusicRepository
+from repositories.role_repository import RoleRepository
 from utils.configLoader import ConfigLoader
 from utils.decorator_utils import check_token_and_role
 from utils.music_utils import MusicUtils
@@ -12,6 +15,7 @@ from utils.schema.music_data_output import MusicDataOutput
 class MusicDataController:
     __repo_factory: RepositoryFactory = None
     __music_repo: MusicRepository = None
+    __role_repo: RoleRepository = None
     __music_utils: MusicUtils = None
 
     def __init__(self) -> None:
@@ -20,6 +24,7 @@ class MusicDataController:
         self.__session = loader.load_config()
         self.__repo_factory = RepositoryFactory()
         self.__music_repo = self.__repo_factory.create_object("music_repo")
+        self.__role_repo = self.__repo_factory.create_object("role_repo")
         self.__music_utils = MusicUtils.instance()
 
     def add_music_data(
@@ -43,15 +48,21 @@ class MusicDataController:
                                )
         self.__music_repo.create_and_add_new__music_data(self.__session, music_data)
 
-    def update_music_data(self, music_data: MusicDataOutput):
-        data = self.__music_repo.get_music_data_by_music_id(self.__session, music_data.id)
-        self.set_update_music_data(data, music_data)
-        self.__music_repo.update_music_data(self.__session, data)
-        pass
+    def update_music_data(self, user_data: User, music_data: MusicDataOutput):
+        role: Role = self.__role_repo.get_role_by_id(self.__session, user_data.role_id)
+        data: MusicData = self.__music_repo.get_music_data_by_music_id(self.__session, music_data.id)
+        if role.role_name == "ADMIN":
+            self.set_update_music_data(data, music_data)
+            self.__music_repo.update_music_data(self.__session, data)
+        elif data.user_id == user_data.id:
+            self.set_update_music_data(data, music_data)
+            self.__music_repo.update_music_data(self.__session, data)
+        else:
+            raise UserDeniedError("access_denied")
+
 
     def set_update_music_data(self, data, music_data):
-        print(music_data)
-        if music_data.music_score != data.music_score:
+        if music_data.music_score != data.music_score and music_data.music_score != 0:
             data.music_score = music_data.music_score
         if self.__music_utils.get_file_name_from_path(music_data.lyrics_file_name):
             data.lyrics_file_name = music_data.lyrics_file_name
