@@ -43,17 +43,33 @@ class MusicDataController:
                                )
         self.__music_repo.create_and_add_new__music_data(self.__session, music_data)
 
-    @check_token_and_role(role=["ADMIN"])
-    def list_music_for_admin(self):
+    def update_music_data(self, music_data: MusicDataOutput):
+        data = self.__music_repo.get_music_data_by_music_id(self.__session, music_data.id)
+        self.set_update_music_data(data, music_data)
+        self.__music_repo.update_music_data(self.__session, data)
         pass
 
+    def set_update_music_data(self, data, music_data):
+        print(music_data)
+        if music_data.music_score != data.music_score:
+            data.music_score = music_data.music_score
+        if self.__music_utils.get_file_name_from_path(music_data.lyrics_file_name):
+            data.lyrics_file_name = music_data.lyrics_file_name
+            data.lyrics = self.__music_utils.get_file_from_path(music_data.lyrics_file_name)
+        if self.__music_utils.get_file_name_from_path(music_data.music_file_name):
+            data.music_file_name = self.__music_utils.get_file_name_from_path(music_data.music_file_name)
+            data.music_file = self.__music_utils.get_file_from_path(music_data.music_file_name)
+        data.checksum = self.__music_utils.calculate_check_sum(data.music_file + data.lyrics)
+
     def list_music_data(self, user: User) -> [MusicDataOutput]:
+        # If user is admin then list all music otherwise only their own
         if user.role_id == 1:
             results = self.__music_repo.get_all_music_data(self.__session)
             return self.set_music_data_output(results)
         if user.role_id == 2:
             results = self.__music_repo.get_music_data_by_user(self.__session, user)
             return self.set_music_data_output(results)
+
     def set_music_data_output(self, results):
         result_output: [MusicDataOutput] = []
         format = "2020-06-18T14:55:28-05:00"

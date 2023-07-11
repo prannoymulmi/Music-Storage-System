@@ -1,8 +1,9 @@
 
-from sqlmodel import Session, select
+from sqlmodel import Session, select, update
 
 from models.music_data import MusicData
 from models.user import User
+from utils.schema.music_data_output import MusicDataOutput
 
 
 class MusicRepository:
@@ -20,6 +21,24 @@ class MusicRepository:
 
         result = session.exec(statement)
         return result.all()
+
+    def get_music_data_by_music_id(self, session: Session,  music_id: int):
+        statement = select(MusicData).where(
+            MusicData.id == music_id)
+
+        result = session.exec(statement)
+        return result.one()
+
+    def update_music_data(self, session: Session, music_data: MusicDataOutput):
+        statement = select(MusicData).where(
+            MusicData.id == music_data.id)
+
+        result = session.exec(statement)
+        data = result.one()
+
+        session.add(data)
+        session.commit()
+        session.refresh(data)
 
     def get_all_music_data(self, session: Session):
         statement = select(MusicData)

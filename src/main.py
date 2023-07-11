@@ -9,6 +9,8 @@ from exceptions.user_denied_exception import UserDeniedError
 from exceptions.weak_password import WeakPasswordError
 from factories.config_factory import ConfigFactory
 from factories.controller_factory import ControllerFactory
+from models.music_data import MusicData
+from utils.schema.music_data_output import MusicDataOutput
 from utils.schema.token_input import TokenInput
 
 app = typer.Typer()
@@ -63,6 +65,31 @@ def add_music_data(
         data: TokenInput = controller_login.login(username, password)
         print("logged_in")
         controller_music.add_music_data(music_file_path, music_score, lyrics_file_path, data.user_data)
+    except UserDeniedError as e:
+        print(e.message)
+
+
+@app.command()
+def update_music_data(
+        username: Annotated[str, typer.Option(prompt=True)],
+        password: Annotated[str, typer.Option(prompt=True, hide_input=True)],
+        music_file_path: str = typer.Option(default=""),
+        music_score: int = typer.Option(default=0),
+        lyrics_file_path: str = typer.Option(default=""),
+        music_data_id: int = typer.Option()
+):
+    controller_login: LoginController = ControllerFactory().create_object("login_controller")
+    controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
+    try:
+        login_data: TokenInput = controller_login.login(username, password)
+        print("logged_in")
+        music_data = MusicDataOutput(
+            id=music_data_id,
+            music_file_name=music_file_path,
+            music_score=music_score,
+            lyrics_file_name=lyrics_file_path
+        )
+        controller_music.update_music_data(music_data)
     except UserDeniedError as e:
         print(e.message)
 
