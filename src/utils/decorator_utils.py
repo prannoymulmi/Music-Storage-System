@@ -19,16 +19,16 @@ def encode_and_store_jwt(function):
     return wrapper
 
 
-def check_token_and_role(role):
+def check_token_and_role(role: [str]):
     def first_warapper(function):
         def wrapper(*args, **kwargs):
             token = os.environ.get("music_app_token")
             try:
                 token_decoded: Token = JWTUtils.decode_jwt(token)
-                if role not in token_decoded["permissions"]:
-                    raise UserDeniedError("access_denied")
-                res = function(*args, **kwargs)
-                return res
+                if any(x in token_decoded["permissions"] for x in role) :
+                    res = function(*args, **kwargs)
+                    return res
+                raise UserDeniedError("access_denied")
             except UserDeniedError as e:
                 raise e
             except WeakPasswordError as e:

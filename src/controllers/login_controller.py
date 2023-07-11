@@ -50,7 +50,7 @@ class LoginController:
         except UserNotFound:
             return "access_denied"
 
-    @check_token_and_role(role="ADMIN")
+    @check_token_and_role(role=["ADMIN"])
     def add_new_user(self, username: str, password: str, role: str):
         values = [member.value for member in RoleNames]
         if role not in values:

@@ -37,8 +37,8 @@ def test_when_list_music_data_then_is_listed(
     test.load_config.return_value = MagicMock(Session)
     mock__creator.side_effect = side_effect
     runner = CliRunner()
-    result = runner.invoke(app, ['list-music-data'])
-    assert 'Listing' in result.output
+    result = runner.invoke(app, ['list-music-data'], input="hello\nworld")
+    assert 'hello' in result.output
 
 
 @mock.patch("src.main.LoginController.login")

@@ -68,7 +68,16 @@ def add_music_data(
 
 
 @app.command()
-def list_music_data():
+def list_music_data(username: Annotated[str, typer.Option(prompt=True)],
+                    password: Annotated[str, typer.Option(prompt=True, hide_input=True)]):
+    controller_login: LoginController = ControllerFactory().create_object("login_controller")
+    controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
+    try:
+        data: TokenInput = controller_login.login(username, password)
+        print("logged_in")
+        #result = controller_music.
+    except UserDeniedError as e:
+        print(e.message)
     print("Listing")
 
 

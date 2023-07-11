@@ -5,6 +5,7 @@ from models.user import User
 from repositories.music_repository import MusicRepository
 from repositories.user_repository import UserRepository
 from utils.configLoader import ConfigLoader
+from utils.decorator_utils import check_token_and_role
 from utils.music_utils import MusicUtils
 
 
@@ -41,3 +42,7 @@ class MusicDataController:
                                lyrics=lyrics_file
                                )
         self.__music_repo.create_and_add_new__music_data(self.__session, music_data)
+
+    @check_token_and_role("ADMIN")
+    def list_music_for_admin(self):
+        pass
