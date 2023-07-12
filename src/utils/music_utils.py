@@ -20,6 +20,8 @@ class MusicUtils(object):
 
     @staticmethod
     def get_file_from_path(path) -> bytes:
+        if not path:
+            return b''
         with open(path, 'rb') as file:
             binary_data = file.read()
         return binary_data
@@ -30,4 +32,6 @@ class MusicUtils(object):
 
     @staticmethod
     def get_file_name_from_path(path):
-        return os.path.basename(path)
+        if path:
+            return os.path.basename(path)
+        return ""

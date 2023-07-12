@@ -9,7 +9,7 @@ COMPLIANT_PASSWORD = "Amazing$GoodPassW0rd$4&?"
 NON_COMPLIANT_PASSWORD = "test"
 
 def test_check_is_password_compromised_password_in_have_i_been_pawned_when_breached_password_is_given_then_true_is_returned():
-    with open(f"{Path(__file__).parent.parent}/utils/password_hashes.txt") as f:
+    with open(f"{Path(__file__).parent.parent}/utils/test_password_hashes.txt") as f:
         s = f.read()
         # mock the response
         mock_response = MagicMock()
@@ -21,7 +21,7 @@ def test_check_is_password_compromised_password_in_have_i_been_pawned_when_breac
 
 
 def test_is_password_compromised_password_in_have_i_been_pawned_when_non_breached_password_is_given_then_false_is_returned():
-    with open(f"{Path(__file__).parent.parent}/utils/password_hashes.txt") as f:
+    with open(f"{Path(__file__).parent.parent}/utils/test_password_hashes.txt") as f:
         s = f.read()
         # mock the response
         mock_response = MagicMock()
