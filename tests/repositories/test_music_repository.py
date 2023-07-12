@@ -88,3 +88,17 @@ def test_when_get_all_music_data_then_the_correct_music_datas_are_returned():
     # When
     mock_session.exec.assert_called_once()
     mocked_scalar_res.all.assert_called_once()
+
+def test_when_create_and_add_new_music_data_then_the_correct_music_datas_are_created():
+    # Given
+    mock_session = MagicMock(Session)
+
+    music_repo = MusicRepository()
+
+    # When
+    music_repo.create_and_add_new__music_data(mock_session, MUSIC_DATA)
+
+    # When
+    mock_session.add.assert_called_once()
+    mock_session.commit.assert_called_once()
+    mock_session.refresh.assert_called_once()
