@@ -1,7 +1,9 @@
+import os
 from datetime import datetime
 
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
+from jwt.exceptions import JWTDecodeError
 
 from exceptions.user_denied_exception import UserDeniedError
 from exceptions.user_not_found import UserNotFound
@@ -14,7 +16,9 @@ from models.user import User
 from repositories.role_repository import RoleRepository
 from repositories.user_repository import UserRepository
 from utils.decorator_utils import encode_and_store_jwt, check_token_and_role
+from utils.jwt_utils import JWTUtils
 from utils.password_utils import PasswordUtil
+from utils.schema.token import Token
 from utils.schema.token_input import TokenInput
 
 
@@ -31,6 +35,7 @@ class LoginController:
         self.__repo_factory = RepositoryFactory()
         self.__user_repo = self.__repo_factory.create_object("user_repo")
         self.__role_repo = self.__repo_factory.create_object("role_repo")
+
 
     @encode_and_store_jwt
     def login(self, username, password):
@@ -49,6 +54,21 @@ class LoginController:
                 return "access_denied"
         except UserNotFound:
             return "access_denied"
+
+
+    def get_details_for_token(self):
+        try:
+            token = os.environ.get("music_app_token")
+            token_decoded: Token = JWTUtils.decode_jwt(token)
+            user: User = self.__user_repo.get_user_by_user_id(self.__session, int(token_decoded["user_id"]))
+            role: Role = self.__role_repo.get_role_by_id(self.__session, user.role_id)
+            token_input = TokenInput(user_data=user, role=role)
+            return token_input
+        except JWTDecodeError:
+            raise UserDeniedError("Credentials expired")
+        except Exception:
+            ''' If the token is expired or has been the user will be be denied access'''
+            raise UserDeniedError("access_denied")
 
     @check_token_and_role(role=["ADMIN"])
     def add_new_user(self, username: str, password: str, role: str):

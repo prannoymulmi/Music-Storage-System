@@ -22,6 +22,17 @@ class UserRepository:
         except NoResultFound:
             raise UserNotFound("User is not found")
 
+    def get_user_by_user_id(self, session: Session, user_id: int) -> Any:
+        statement = select(User).where(
+            User.id == user_id)
+        result = session.exec(statement)
+        try:
+            data = result.one()
+            return data
+        except NoResultFound:
+            raise UserNotFound("User is not found")
+
+
     def update_user(self, session, user):
         session.add(user)
         session.commit()

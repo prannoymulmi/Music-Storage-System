@@ -1,3 +1,5 @@
+from typing import Optional
+
 import typer
 from sqlmodel import Session
 from typing_extensions import Annotated
@@ -11,6 +13,7 @@ from factories.config_factory import ConfigFactory
 from factories.controller_factory import ControllerFactory
 from models.music_data import MusicData
 from utils.schema.music_data_output import MusicDataOutput
+from utils.schema.token import Token
 from utils.schema.token_input import TokenInput
 
 app = typer.Typer()
@@ -32,19 +35,18 @@ def login(username: Annotated[str, typer.Option(prompt=True)],
 
 @app.command()
 def add_new_user_and_role(
-        user_name_admin: Annotated[str, typer.Option(prompt=True)],
+        username_admin: Annotated[str, typer.Option(prompt=True)],
         password_admin: Annotated[str, typer.Option(prompt=True, hide_input=True)],
-
+        new_username: str = typer.Option("Please add new username?", prompt=True),
+        new_user_password: str = typer.Option("password?", confirmation_prompt=True, hide_input=True),
+        role: str = typer.Option("ROLE - ADMIN or NORMAL_USER", confirmation_prompt=True)
 ):
     controller: LoginController = ControllerFactory().create_object("login_controller")
     try:
-        controller.login(user_name_admin, password_admin)
+        controller.login(username_admin, password_admin)
         print("logged_in")
-        new_user_name = typer.prompt("Please add new username?")
-        new_user_password = typer.prompt("password?", confirmation_prompt=True, hide_input=True)
-        role = typer.prompt("role - ADMIN or NORMAL_USER")
-        controller.add_new_user(new_user_name, new_user_password, role)
-        print(new_user_name)
+        controller.add_new_user(new_username, new_user_password, role)
+        print(new_username)
     except UserDeniedError as e:
         print(e.message)
     except WeakPasswordError as e:
@@ -63,8 +65,8 @@ def add_music_data(
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
     try:
         data: TokenInput = controller_login.login(username, password)
-        print("logged_in")
         controller_music.add_music_data(music_file_path, music_score, lyrics_file_path, data.user_data)
+        print("data added")
     except UserDeniedError as e:
         print(e.message)
 
@@ -82,7 +84,6 @@ def update_music_data(
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
     try:
         login_data: TokenInput = controller_login.login(username, password)
-        print("logged_in")
         music_data = MusicDataOutput(
             id=music_data_id,
             music_file_name=music_file_path,
@@ -90,6 +91,7 @@ def update_music_data(
             lyrics_file_name=lyrics_file_path
         )
         controller_music.update_music_data(login_data.user_data, music_data)
+        print("updated data")
     except UserDeniedError as e:
         print(e.message)
 
@@ -99,12 +101,17 @@ This method only list the music data. If the user is an admin they can see all t
 can only see their own data.
 '''
 @app.command()
-def list_music_data(username: Annotated[str, typer.Option(prompt=True)],
-                    password: Annotated[str, typer.Option(prompt=True, hide_input=True)]):
+def list_music_data(username: str = typer.Option(default=""),
+                    password: str = typer.Option(hide_input=True, default="")):
     controller_login: LoginController = ControllerFactory().create_object("login_controller")
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
     try:
-        data: TokenInput = controller_login.login(username, password)
+        data: TokenInput = None
+        # If username and password are empty check if there is a valid token and get user details
+        if username == "" and password == "":
+            data = controller_login.get_details_for_token()
+        else:
+            data = controller_login.login(username, password)
         print("logged_in")
         results = controller_music.list_music_data(data.user_data)
         for result in results:

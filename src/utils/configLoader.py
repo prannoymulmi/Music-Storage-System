@@ -4,6 +4,7 @@ from pathlib import Path
 import typer
 
 from configs.db_config import create_db_and_tables, get_session
+from utils.music_utils import MusicUtils
 
 
 class ConfigLoader:
@@ -16,6 +17,9 @@ class ConfigLoader:
         create_db_and_tables()
         app_dir = typer.get_app_dir(self.APP_NAME)
         config_path: Path = Path(app_dir).parents[2] / "music_storage_system_config"
+        file = open(config_path, "r")
+        line = file.readline()
+        os.environ["music_app_token"] = line.split("token:")[1]
         if not config_path.is_file():
             print("Config file doesn't exist yet")
         return get_session()

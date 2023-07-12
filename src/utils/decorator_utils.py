@@ -1,5 +1,8 @@
+from jwt.exceptions import JWTDecodeError
+
 from exceptions.user_denied_exception import UserDeniedError
 from exceptions.weak_password import WeakPasswordError
+from models.user import User
 from utils.jwt_utils import JWTUtils
 from utils.schema.token import Token
 from utils.schema.token_input import TokenInput
@@ -34,6 +37,7 @@ def check_token_and_role(role: [str]):
             except WeakPasswordError as e:
                 raise e
             except Exception:
+                ''' If the token is expired or has been the user will be be denied access'''
                 raise UserDeniedError("access_denied")
         return wrapper
     return first_warapper

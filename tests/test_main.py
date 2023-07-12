@@ -5,7 +5,9 @@ from unittest.mock import MagicMock
 from sqlmodel import Session
 from typer.testing import CliRunner
 
+from controllers import login_controller, music_data_controller
 from main import app
+from models.music_data import MusicData
 from models.role import Role
 from models.user import User
 from src.utils.configLoader import ConfigLoader
@@ -27,18 +29,37 @@ def side_effect(arg):
     values = {'config_loader': test, 'b': 2, 'c': 3}
     return values[arg]
 
-
+@mock.patch.object(music_data_controller.MusicDataController, "list_music_data")
+@mock.patch.object(login_controller.LoginController, "login")
 @mock.patch("src.main.ConfigFactory.create_object")
 def test_when_list_music_data_then_is_listed(
-        mock__creator
+        mock__creator, mock_login_controller, mock_music_data
 ):
     test = MagicMock(ConfigLoader())
 
     test.load_config.return_value = MagicMock(Session)
     mock__creator.side_effect = side_effect
     runner = CliRunner()
-    result = runner.invoke(app, ['list-music-data'], input="hello\nworld")
-    assert 'hello' in result.output
+    result = runner.invoke(app, ['list-music-data', "--username", "test", "--password", "test"])
+    mock_login_controller.assert_called_once()
+    mock_music_data.assert_called_once()
+    assert 'logged_in' in result.output
+
+@mock.patch.object(music_data_controller.MusicDataController, "list_music_data")
+@mock.patch.object(login_controller.LoginController, "get_details_for_token")
+@mock.patch("src.main.ConfigFactory.create_object")
+def test_when_list_music_data_with_no_user_data_then_is_listed(
+        mock__creator, mock_login_controller, mock_music_data
+):
+    test = MagicMock(ConfigLoader())
+    mock_login_controller.returnValue = MusicData()
+    test.load_config.return_value = MagicMock(Session)
+    mock__creator.side_effect = side_effect
+    runner = CliRunner()
+    result = runner.invoke(app, ['list-music-data'])
+    mock_login_controller.assert_called_once()
+    mock_music_data.assert_called_once()
+    assert 'logged_in' in result.output
 
 
 @mock.patch("src.main.LoginController.login")
