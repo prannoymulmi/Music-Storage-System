@@ -70,6 +70,35 @@ policy = PasswordPolicy.from_names(
 policy.test('12345!')
 ```
 
+### Types of roles in the Project
+| Role id | Role Name   | Description                                              |
+|---------|-------------|----------------------------------------------------------|
+| 1       | ADMIN       | Is allowed to do all the actions                         |
+| 2       | NORMAL_USER | Is only allowed to view/change items created by the user |
+
+### Commands for the applicaiton
+``` bash
+# Add-new-role
+python src/main.py add-new-user-and-role --username-admin <CHANGE_USER> --password-admin <CHANGE_PASSWORD> --new-username <CHANGE_USER>--new-user-password <CHANGE_PASSWORD> --role NORMAL_USER
+
+# Login
+python src/main.py login --username <CHANGE_USER> --password <CHANGE_PASSWORD> 
+
+# Add Music Data
+python src/main.py add-music-data --username <CHANGE_USER> --password <CHANGE_PASSWORD>  --music-file-path audio_file_test.mp3 --music-score 1 --lyrics-file-path test.txt  
+
+# list with token
+ python src/main.py list-music-data  
+
+ #list without token
+ python src/main.py list-music-data --username <CHANGE_USER> --password <CHANGE_PASSWORD>
+
+
+# Update music data
+python src/main.py update-music-data --username <CHANGE_USER> --password <CHANGE_PASSWORD> --music-file-path audio_file_test.mp3 --music-data-id 8
+
+ 
+```
 ### Data Integrity
 The project handles with the upload of various music data such as audio files 
 and lyric file which has to ensure that no tampering within the database is 
