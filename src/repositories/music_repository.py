@@ -8,13 +8,6 @@ from utils.schema.music_data_output import MusicDataOutput
 
 class MusicRepository:
 
-    # def get_role_by_id(self, session: Session, role_id: str) -> Any:
-    #     statement = select(Role).where(
-    #         Role.id == role_id)
-    #     result = session.exec(statement)
-    #     data = result.one()
-    #     return data
-
     def get_music_data_by_user(self, session: Session,  user: User):
         statement = select(MusicData).where(
             MusicData.user_id == user.id)
