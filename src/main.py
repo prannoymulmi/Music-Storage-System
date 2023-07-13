@@ -135,10 +135,8 @@ def delete_music_data(
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
     try:
         data: TokenInput = controller_login.login(username, password)
-        results = controller_music.list_music_data(data.user_data)
-        print("Listing Data")
-        for result in results:
-            print(result)
+        controller_music.delete_music_data(data.user_data, music_data_id)
+        print("Data Deleted")
     except UserDeniedError as e:
         print(e.message)
 

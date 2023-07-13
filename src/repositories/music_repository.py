@@ -44,3 +44,12 @@ class MusicRepository:
         session.commit()
         session.refresh(music_data)
         return music_data
+
+    def delete_data_by_id(self, session: Session, music_data_id: int):
+        statement = select(MusicData).where(
+            MusicData.id == music_data_id)
+
+        result = session.exec(statement)
+        data = result.one()
+        session.delete(data)
+        session.commit()

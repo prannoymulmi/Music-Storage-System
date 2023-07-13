@@ -1,6 +1,5 @@
 from sqlalchemy.exc import NoResultFound
 
-from exceptions.data_not_found import DataNotFoundError
 from exceptions.user_denied_exception import UserDeniedError
 from factories.config_factory import ConfigFactory
 from factories.repository_factory import RepositoryFactory
@@ -13,7 +12,6 @@ from utils.configLoader import ConfigLoader
 from utils.decorator_utils import check_token_and_role
 from utils.music_utils import MusicUtils
 from utils.schema.music_data_output import MusicDataOutput
-import os
 
 
 class MusicDataController:
@@ -57,10 +55,7 @@ class MusicDataController:
         try:
             role: Role = self.__role_repo.get_role_by_id(self.__session, user_data.role_id)
             data: MusicData = self.__music_repo.get_music_data_by_music_id(self.__session, to_be_changed_music_data.id)
-            if role.role_name == "ADMIN":
-                self.set_update_music_data(data, to_be_changed_music_data)
-                self.__music_repo.update_music_data(self.__session, data)
-            elif data.user_id == user_data.id:
+            if role.role_name == "ADMIN" or data.user_id == user_data.id:
                 self.set_update_music_data(data, to_be_changed_music_data)
                 self.__music_repo.update_music_data(self.__session, data)
             else:
@@ -103,13 +98,13 @@ class MusicDataController:
         # Check if the music_file_name has changed
         to_be_changed_music_file_name = self.__music_utils.get_file_name_from_path(
             to_be_changed_music_data.music_file_name)
-        if to_be_changed_music_file_name != data.music_file_name and to_be_changed_music_file_name != "":
+        if to_be_changed_music_file_name != data.music_file_name:
             data.music_file_name = to_be_changed_music_file_name
         # Check if music file bytes have changed
         to_be_changed_music_file = self.__music_utils.get_file_from_path(to_be_changed_music_data.music_file_name)
         to_be_changed_music_file_checksum = self.__music_utils.calculate_check_sum(to_be_changed_music_file)
         if to_be_changed_music_file_checksum != self.__music_utils.calculate_check_sum(
-                data.music_file) and to_be_changed_music_file_name != "":
+                data.music_file):
             data.music_file = to_be_changed_music_file
 
     def list_music_data(self, user: User) -> [MusicDataOutput]:
@@ -137,5 +132,17 @@ class MusicDataController:
             ))
         return result_output
 
-    def delete_music_data(self, session, music_data_id):
-        pass
+    @check_token_and_role(role=["ADMIN", "NORMAL_USER"])
+    def delete_music_data(self, user: User, music_id: int):
+        try:
+            role: Role = self.__role_repo.get_role_by_id(self.__session, user.role_id)
+            data: MusicData = self.__music_repo.get_music_data_by_music_id(self.__session, music_id)
+            if role.role_name == "ADMIN" or data.user_id == user.id:
+                self.__music_repo.delete_data_by_id(self.__session, music_id)
+            else:
+                raise UserDeniedError("access_denied")
+        except NoResultFound:
+            '''
+            In case of no result is found a generic message is delivered to not give away important infos
+            '''
+            raise UserDeniedError("Error: data cannot be Deleted")

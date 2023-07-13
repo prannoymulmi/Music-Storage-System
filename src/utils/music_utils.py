@@ -2,6 +2,8 @@ import hashlib
 import os
 
 from exceptions.data_not_found import DataNotFoundError
+from models.role import Role
+from models.user import User
 
 
 class MusicUtils(object):
@@ -40,3 +42,11 @@ class MusicUtils(object):
         if path:
             return os.path.basename(path)
         return ""
+
+    @staticmethod
+    def run_function_according_to_role(role:Role, user: User, data: User):
+        if role.role_name == "ADMIN" or data.id == user.id:
+            pass
+        else:
+            pass
+

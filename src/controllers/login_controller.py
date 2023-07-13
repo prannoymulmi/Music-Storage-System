@@ -72,6 +72,7 @@ class LoginController:
 
     @check_token_and_role(role=["ADMIN"])
     def add_new_user(self, username: str, password: str, role: str):
+        # Check
         values = [member.value for member in RoleNames]
         if role not in values:
             raise UserDeniedError("role does not exist")

@@ -84,8 +84,8 @@ def test_when_delete_music_data_with_right_credentials_then_music_data_is_delete
     test.load_config.return_value = "YOL"
     mock__creator.side_effect = side_effect
     runner = CliRunner()
-    result = runner.invoke(app, ['delete-music-data'])
-    assert 'deleting' in result.output
+    result = runner.invoke(app, ['delete-music-data', "--username", "test", "--password", "test", "--music-data-id", "1"])
+    assert 'Data Deleted' in result.output
 
 @mock.patch("src.main.LoginController.add_new_user")
 @mock.patch("src.main.LoginController.login")
