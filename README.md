@@ -46,7 +46,7 @@ class Token(BaseModel):
 
 ### Cyclomatic Complexity 
 
-test using 
+The cyclomatic complexity of the code can be tested using the following commands
 
 ``` bash
 radon cc -a src 
@@ -96,9 +96,17 @@ python src/main.py add-music-data --username <CHANGE_USER> --password <CHANGE_PA
 
 # Update music data
 python src/main.py update-music-data --username <CHANGE_USER> --password <CHANGE_PASSWORD> --music-file-path audio_file_test.mp3 --music-data-id 8
-
- 
 ```
+
+### Run tests with coverage
+
+```bash
+coverage run --source=src -m pytest -v tests && coverage report -m 
+
+# Generate result in 
+coverage html && open htmlcov/index.html  
+```
+
 ### Data Integrity
 The project handles with the upload of various music data such as audio files 
 and lyric file which has to ensure that no tampering within the database is 

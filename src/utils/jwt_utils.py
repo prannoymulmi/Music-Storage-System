@@ -41,13 +41,21 @@ class JWTUtils:
         file.write(f'token:{token}')
 
     @staticmethod
-    def decode_jwt(jwt_token: str):
+    def decode_jwt(jwt_token: str) -> Token:
         with open(f'{JWTUtils.get_project_root()}/public_key.json', 'r') as fh:
             verifying_key = jwk_from_dict(json.load(fh))
 
         message_received = JWTUtils.instance.decode(
             jwt_token, verifying_key, do_time_check=True)
-        return message_received
+        token: Token = Token(
+            iss=message_received["iss"],
+            sub=message_received["sub"],
+            iat=message_received["iat"],
+            exp=message_received["exp"],
+            user_id=message_received["user_id"],
+            permissions=message_received["permissions"]
+        )
+        return token
 
     @staticmethod
     def get_project_root() -> Path:

@@ -1,6 +1,5 @@
-from typing import Optional
-
 import typer
+from sqlalchemy.exc import NoResultFound
 from sqlmodel import Session
 from typing_extensions import Annotated
 
@@ -11,9 +10,7 @@ from exceptions.user_denied_exception import UserDeniedError
 from exceptions.weak_password import WeakPasswordError
 from factories.config_factory import ConfigFactory
 from factories.controller_factory import ControllerFactory
-from models.music_data import MusicData
 from utils.schema.music_data_output import MusicDataOutput
-from utils.schema.token import Token
 from utils.schema.token_input import TokenInput
 
 app = typer.Typer()
@@ -22,8 +19,10 @@ session = None
 
 
 @app.command()
-def login(username: Annotated[str, typer.Option(prompt=True)],
-          password: Annotated[str, typer.Option(prompt=True, hide_input=True)]):
+def login(
+        username: Annotated[str, typer.Option(prompt=True)],
+        password: Annotated[str, typer.Option(prompt=True, hide_input=True)]
+):
     controller: LoginController = ControllerFactory().create_object("login_controller")
     try:
         result = controller.login(username, password)
@@ -101,8 +100,10 @@ This method only list the music data. If the user is an admin they can see all t
 can only see their own data.
 '''
 @app.command()
-def list_music_data(username: str = typer.Option(default=""),
-                    password: str = typer.Option(hide_input=True, default="")):
+def list_music_data(
+        username: str = typer.Option(default=""),
+        password: str = typer.Option(hide_input=True, default="")
+):
     controller_login: LoginController = ControllerFactory().create_object("login_controller")
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
     try:
@@ -112,8 +113,8 @@ def list_music_data(username: str = typer.Option(default=""),
             data = controller_login.get_details_for_token()
         else:
             data = controller_login.login(username, password)
-        print("logged_in")
         results = controller_music.list_music_data(data.user_data)
+        print("Listing Data")
         for result in results:
             print(result)
     except UserDeniedError as e:
@@ -121,8 +122,21 @@ def list_music_data(username: str = typer.Option(default=""),
 
 
 @app.command()
-def delete_music_data():
-    print("deleting")
+def delete_music_data(
+        username: str = typer.Option(),
+        password: str = typer.Option(hide_input=True),
+        music_data_id: int = typer.Option()
+):
+    controller_login: LoginController = ControllerFactory().create_object("login_controller")
+    controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
+    try:
+        data: TokenInput = controller_login.login(username, password)
+        results = controller_music.list_music_data(data.user_data)
+        print("Listing Data")
+        for result in results:
+            print(result)
+    except UserDeniedError as e:
+        print(e.message)
 
 
 def load_app_config() -> Session:

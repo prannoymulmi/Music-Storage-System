@@ -28,7 +28,7 @@ def check_token_and_role(role: [str]):
             try:
                 token = os.environ.get("music_app_token")
                 token_decoded: Token = JWTUtils.decode_jwt(token)
-                if any(x in token_decoded["permissions"] for x in role) :
+                if any(x in token_decoded.permissions for x in role):
                     res = function(*args, **kwargs)
                     return res
                 raise UserDeniedError("access_denied")

@@ -43,7 +43,7 @@ def test_when_list_music_data_then_is_listed(
     result = runner.invoke(app, ['list-music-data', "--username", "test", "--password", "test"])
     mock_login_controller.assert_called_once()
     mock_music_data.assert_called_once()
-    assert 'logged_in' in result.output
+    assert 'Listing Data' in result.output
 
 @mock.patch.object(music_data_controller.MusicDataController, "list_music_data")
 @mock.patch.object(login_controller.LoginController, "get_details_for_token")
@@ -59,7 +59,7 @@ def test_when_list_music_data_with_no_user_data_then_is_listed(
     result = runner.invoke(app, ['list-music-data'])
     mock_login_controller.assert_called_once()
     mock_music_data.assert_called_once()
-    assert 'logged_in' in result.output
+    assert 'Listing Data' in result.output
 
 
 @mock.patch("src.main.LoginController.login")

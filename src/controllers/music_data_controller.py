@@ -12,6 +12,7 @@ from utils.configLoader import ConfigLoader
 from utils.decorator_utils import check_token_and_role
 from utils.music_utils import MusicUtils
 from utils.schema.music_data_output import MusicDataOutput
+import os
 
 
 class MusicDataController:
@@ -50,7 +51,8 @@ class MusicDataController:
                                )
         self.__music_repo.create_and_add_new__music_data(self.__session, music_data)
 
-    def update_music_data(self, user_data: User, to_be_changed_music_data: MusicDataOutput):
+    @check_token_and_role(role=["ADMIN", "NORMAL_USER"])
+    def update_music_data(self, user_data: User, to_be_changed_music_data: MusicData):
         try:
             role: Role = self.__role_repo.get_role_by_id(self.__session, user_data.role_id)
             data: MusicData = self.__music_repo.get_music_data_by_music_id(self.__session, to_be_changed_music_data.id)
@@ -66,24 +68,35 @@ class MusicDataController:
             '''
             In case of no result is found a generic message is delivered to not give away important infos
             '''
-            print("music data cannot be updated")
+            raise UserDeniedError("data cannot be updated")
 
 
-    def set_update_music_data(self, data, to_be_changed_music_data):
+    def set_update_music_data(self, data: MusicData, to_be_changed_music_data):
         if to_be_changed_music_data.music_score != data.music_score and to_be_changed_music_data.music_score != 0:
             data.music_score = to_be_changed_music_data.music_score
 
-        # Check if the binary data has changed
-        if self.__music_utils.get_file_name_from_path(to_be_changed_music_data.lyrics_file_name):
-            data.lyrics_file_name = to_be_changed_music_data.lyrics_file_name
-        if self.__music_utils.get_file_from_path(to_be_changed_music_data.music_file_name) != data.music_file:
-            data.music_file = self.__music_utils.get_file_from_path(to_be_changed_music_data.music_file_name)
+        # Check if the music_file_name has changed
+        to_be_changed_music_file_name = self.__music_utils.get_file_name_from_path(to_be_changed_music_data.music_file_name)
+        if to_be_changed_music_file_name != data.music_file_name and to_be_changed_music_file_name != "":
+            data.music_file_name = to_be_changed_music_file_name
 
-        # Check if the file_names have changed
-        if self.__music_utils.get_file_from_path(to_be_changed_music_data.lyrics_file_name) != data.lyrics:
-            data.lyrics = self.__music_utils.get_file_from_path(to_be_changed_music_data.lyrics_file_name)
-        if self.__music_utils.get_file_name_from_path(to_be_changed_music_data.music_file_name):
-            data.music_file_name = self.__music_utils.get_file_name_from_path(to_be_changed_music_data.music_file_name)
+        # Check if music file bytes have changed
+        to_be_changed_music_file = self.__music_utils.get_file_from_path(to_be_changed_music_data.music_file_name)
+        to_be_changed_music_file_checksum = self.__music_utils.calculate_check_sum(to_be_changed_music_file)
+        if to_be_changed_music_file_checksum != self.__music_utils.calculate_check_sum(data.music_file) and to_be_changed_music_file_name != "":
+            data.music_file = to_be_changed_music_file
+
+        # check if lyrics_name has changed
+        to_be_changed_lyrics_file_name = self.__music_utils.get_file_name_from_path(to_be_changed_music_data.lyrics_file_name)
+        if to_be_changed_lyrics_file_name != data.lyrics_file_name and to_be_changed_lyrics_file_name != "":
+            data.lyrics_file_name = to_be_changed_lyrics_file_name
+
+        # Check if the lyrics_file have changed
+        to_be_changed_lyrics_file = self.__music_utils.get_file_from_path(to_be_changed_music_data.lyrics_file_name)
+        to_be_changed_lyrics_file_checksum = self.__music_utils.calculate_check_sum(to_be_changed_lyrics_file)
+        if to_be_changed_lyrics_file_checksum != self.__music_utils.calculate_check_sum(data.lyrics) and to_be_changed_lyrics_file_name != "":
+            data.lyrics = to_be_changed_lyrics_file
+
         # recalculate the checksum
         data.checksum = self.__music_utils.calculate_check_sum(data.music_file + data.lyrics)
 
@@ -111,3 +124,6 @@ class MusicDataController:
                 created_timestamp=result.created_timestamp.strftime(format)
             ))
         return result_output
+
+    def delete_music_data(self, session, music_data_id):
+        pass
