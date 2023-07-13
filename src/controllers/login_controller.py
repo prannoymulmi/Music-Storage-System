@@ -60,7 +60,7 @@ class LoginController:
         try:
             token = os.environ.get("music_app_token")
             token_decoded: Token = JWTUtils.decode_jwt(token)
-            user: User = self.__user_repo.get_user_by_user_id(self.__session, int(token_decoded["user_id"]))
+            user: User = self.__user_repo.get_user_by_user_id(self.__session, int(token_decoded.user_id))
             role: Role = self.__role_repo.get_role_by_id(self.__session, user.role_id)
             token_input = TokenInput(user_data=user, role=role)
             return token_input

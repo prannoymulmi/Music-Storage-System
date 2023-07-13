@@ -2,10 +2,12 @@ import os
 from unittest import mock
 from unittest.mock import MagicMock
 
+import pytest
 from sqlmodel import Session
 from typer.testing import CliRunner
 
 from controllers import login_controller, music_data_controller
+from exceptions.user_denied_exception import UserDeniedError
 from main import app
 from models.music_data import MusicData
 from models.role import Role
@@ -75,17 +77,32 @@ def test_when_login_with_right_credentials_then_user_is_logged_on(
     assert 'logged_in' in result.output
 
 
-@mock.patch("src.main.ConfigFactory.create_object")
+@mock.patch.object(music_data_controller.MusicDataController, "delete_music_data")
+@mock.patch("src.main.LoginController.login")
 def test_when_delete_music_data_with_right_credentials_then_music_data_is_deleted(
-        mock__creator
+        mock_login, mock_music_repo_delete
 ):
     test = MagicMock(ConfigLoader())
 
-    test.load_config.return_value = "YOL"
-    mock__creator.side_effect = side_effect
+    mock_login.load_config.return_value = TokenInput(user_data=User(), role=Role(role_name="NORMAL_USER"))
     runner = CliRunner()
     result = runner.invoke(app, ['delete-music-data', "--username", "test", "--password", "test", "--music-data-id", "1"])
     assert 'Data Deleted' in result.output
+    mock_music_repo_delete.assert_called_once()
+
+@mock.patch.object(music_data_controller.MusicDataController, "delete_music_data")
+@mock.patch.object(login_controller.LoginController, "login")
+def test_when_delete_music_data_with_wrong_credentials_then_access_denied(
+        mock_login, mock_music_repo_delete
+):
+
+    mock_login.side_effect = UserDeniedError("error")
+    runner = CliRunner()
+    result = runner.invoke(app, ['delete-music-data', "--username", "test", "--password", "test", "--music-data-id", "1"])
+    assert 'Data Deleted' not in result.output
+    assert 'error' in result.output
+    mock_music_repo_delete.assert_not_called()
+
 
 @mock.patch("src.main.LoginController.add_new_user")
 @mock.patch("src.main.LoginController.login")

@@ -1,17 +1,22 @@
+import os
 from datetime import datetime, timedelta
 from unittest import mock
 from unittest.mock import patch, ANY
 
 import argon2
 import pytest
+from argon2.exceptions import VerifyMismatchError
+from jwt.exceptions import JWTDecodeError
 
 from exceptions.user_denied_exception import UserDeniedError
+from exceptions.user_not_found import UserNotFound
 from exceptions.weak_password import WeakPasswordError
 from models.role import Role
 from models.role_names import RoleNames
 from models.user import User
 from repositories import user_repository, role_repository
-from utils import password_utils
+from utils import password_utils, jwt_utils
+from utils.schema.token import Token
 from utils.schema.token_input import TokenInput
 
 '''
@@ -89,6 +94,41 @@ def test_login_when_password_incorrect_return_access_denied(
     result = login.login("some_user", "wrongPassword")
     # Then
     mock_user_repo_update_user.assert_called_once()
+    assert result == "access_denied"
+
+@mock.patch.object(user_repository.UserRepository, "update_user")
+@mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
+@mock.patch.object(user_repository.UserRepository, "get_user_by_username")
+@mock.patch.object(argon2.PasswordHasher, "verify")
+def test_login_when_password_incorrect_with_hash_throwing_error_return_access_denied(
+        mock_password_hasher, mock_user_repo, mock_role_repo, mock_user_repo_update_user
+):
+    # Given
+    mock_password_hasher.side_effect = VerifyMismatchError
+    mock_user_repo.return_value = User(password="password", login_counter=0, last_login_attempt=datetime.utcnow())
+    mock_role_repo.return_value = Role(id=1, role_name="ADMIN")
+
+    # When
+    login = LoginController()
+    result = login.login("some_user", "wrongPassword")
+    # Then
+    mock_user_repo_update_user.assert_called_once()
+    assert result == "access_denied"
+
+
+@mock.patch.object(user_repository.UserRepository, "get_user_by_username")
+def test_login_when_password_incorrect_return_access_denied(
+        mock_user_repo
+):
+    # Given
+    mock_user_repo.side_effect = UserNotFound
+
+    # When
+    login = LoginController()
+
+    result = login.login("some_user", "wrongPassword")
+    # Then
+    mock_user_repo.assert_called_once()
     assert result == "access_denied"
 
 
@@ -175,6 +215,7 @@ def test_login_when_add_new_user_with_non_compliant_password_then_return_weak_pa
         login_controller.add_new_user(ANY, ANY, RoleNames.normal_user.value)
     mock_user_repo.assert_not_called()
 
+
 @mock.patch.object(user_repository.UserRepository, "create_user_or_else_return_none")
 def test_login_when_add_new_user_with_unknown_role_then_return_user_denied_error_with_role_not_found(
         mock_user_repo
@@ -190,3 +231,65 @@ def test_login_when_add_new_user_with_unknown_role_then_return_user_denied_error
         login_controller.add_new_user(ANY, ANY, "test")
 
     mock_user_repo.assert_not_called()
+
+
+@mock.patch.object(os.environ, "get")
+@mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
+@mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
+@mock.patch.object(user_repository.UserRepository, "get_user_by_user_id")
+def test_get_details_for_token_when_token_is_correct_then_token_input_is_returned(
+        mock_user_repo, mock_role_repo, mock_jwt, mock_os
+):
+    mock_os.return_value = "some_token"
+    mock_jwt.return_value = Token(user_id=1, permissions=["TEST_Permissions"])
+    user = User(role_id=1)
+    mock_user_repo.return_value = user
+    role = Role(role_name="TEST")
+    mock_role_repo.return_value = role
+    expected = TokenInput(user_data=user, role=role)
+
+    login_controller = LoginController()
+
+    result = login_controller.get_details_for_token()
+
+    assert result == expected
+
+
+@mock.patch.object(os.environ, "get")
+@mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
+@mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
+@mock.patch.object(user_repository.UserRepository, "get_user_by_user_id")
+def test_get_details_for_token_when_jwt_has_error_is_correct_then_user_denied_is_returned(
+        mock_user_repo, mock_role_repo, mock_jwt, mock_os
+):
+    mock_os.return_value = "some_token"
+    mock_jwt.side_effect = JWTDecodeError
+
+
+    login_controller = LoginController()
+
+    with pytest.raises(UserDeniedError, match="Credentials expired"):
+        login_controller.get_details_for_token()
+
+    mock_user_repo.assert_not_called()
+    mock_role_repo.assert_not_called()
+
+
+@mock.patch.object(os.environ, "get")
+@mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
+@mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
+@mock.patch.object(user_repository.UserRepository, "get_user_by_user_id")
+def test_get_details_for_token_when_exception_is_correct_then_user_denied_is_returned(
+        mock_user_repo, mock_role_repo, mock_jwt, mock_os
+):
+    mock_os.return_value = "some_token"
+    mock_jwt.side_effect = Exception
+
+
+    login_controller = LoginController()
+
+    with pytest.raises(UserDeniedError, match="access_denied"):
+        login_controller.get_details_for_token()
+
+    mock_user_repo.assert_not_called()
+    mock_role_repo.assert_not_called()
