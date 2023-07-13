@@ -1,6 +1,8 @@
 import hashlib
 import os
 
+from exceptions.data_not_found import DataNotFoundError
+
 
 class MusicUtils(object):
     _instance = None
@@ -21,10 +23,13 @@ class MusicUtils(object):
     @staticmethod
     def get_file_from_path(path) -> bytes:
         if not path:
-            return b''
-        with open(path, 'rb') as file:
-            binary_data = file.read()
-        return binary_data
+            raise DataNotFoundError(f'Error: Path: {path} not found')
+        try:
+            with open(path, 'rb') as file:
+                binary_data = file.read()
+            return binary_data
+        except Exception:
+            raise DataNotFoundError(f'{path} not found')
 
     @staticmethod
     def calculate_check_sum(data):

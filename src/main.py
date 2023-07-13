@@ -6,10 +6,12 @@ from typing_extensions import Annotated
 from configs.db_seeder import seed_database
 from controllers.login_controller import LoginController
 from controllers.music_data_controller import MusicDataController
+from exceptions.data_not_found import DataNotFoundError
 from exceptions.user_denied_exception import UserDeniedError
 from exceptions.weak_password import WeakPasswordError
 from factories.config_factory import ConfigFactory
 from factories.controller_factory import ControllerFactory
+from models.music_data import MusicData
 from utils.schema.music_data_output import MusicDataOutput
 from utils.schema.token_input import TokenInput
 
@@ -83,7 +85,7 @@ def update_music_data(
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
     try:
         login_data: TokenInput = controller_login.login(username, password)
-        music_data = MusicDataOutput(
+        music_data = MusicData(
             id=music_data_id,
             music_file_name=music_file_path,
             music_score=music_score,
@@ -92,6 +94,8 @@ def update_music_data(
         controller_music.update_music_data(login_data.user_data, music_data)
         print("updated data")
     except UserDeniedError as e:
+        print(e.message)
+    except DataNotFoundError as e:
         print(e.message)
 
 

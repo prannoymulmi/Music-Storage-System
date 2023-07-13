@@ -1,5 +1,6 @@
 from sqlalchemy.exc import NoResultFound
 
+from exceptions.data_not_found import DataNotFoundError
 from exceptions.user_denied_exception import UserDeniedError
 from factories.config_factory import ConfigFactory
 from factories.repository_factory import RepositoryFactory
@@ -68,8 +69,7 @@ class MusicDataController:
             '''
             In case of no result is found a generic message is delivered to not give away important infos
             '''
-            raise UserDeniedError("data cannot be updated")
-
+            raise UserDeniedError("Error: data cannot be updated")
 
     def set_update_music_data(self, data: MusicData, to_be_changed_music_data):
         if to_be_changed_music_data.music_score != data.music_score and to_be_changed_music_data.music_score != 0:
@@ -83,10 +83,12 @@ class MusicDataController:
         data.checksum = self.__music_utils.calculate_check_sum(data.music_file + data.lyrics)
 
     def check_and_update_lyrics_data(self, data, to_be_changed_music_data):
+        if not bool(to_be_changed_music_data.lyrics_file_name):
+            return
         # check if lyrics_name has changed
         to_be_changed_lyrics_file_name = self.__music_utils.get_file_name_from_path(
             to_be_changed_music_data.lyrics_file_name)
-        if to_be_changed_lyrics_file_name != data.lyrics_file_name and to_be_changed_lyrics_file_name != "":
+        if to_be_changed_lyrics_file_name != data.lyrics_file_name:
             data.lyrics_file_name = to_be_changed_lyrics_file_name
         # Check if the lyrics_file have changed
         to_be_changed_lyrics_file = self.__music_utils.get_file_from_path(to_be_changed_music_data.lyrics_file_name)
@@ -96,6 +98,8 @@ class MusicDataController:
             data.lyrics = to_be_changed_lyrics_file
 
     def check_and_update_music_file_data(self, data, to_be_changed_music_data):
+        if not bool(to_be_changed_music_data.music_file_name):
+            return
         # Check if the music_file_name has changed
         to_be_changed_music_file_name = self.__music_utils.get_file_name_from_path(
             to_be_changed_music_data.music_file_name)
