@@ -43,7 +43,7 @@ class LoginController:
             user: User = self.__user_repo.get_user_by_username(self.__session, username)
             time_delta = (datetime.utcnow().timestamp() - user.last_login_attempt.timestamp())/60
             if user.login_counter > 5 and time_delta <= 10:
-                return "access_denied"
+                raise UserDeniedError("User is blocked")
             if self.verify_hashed_password(user.password, password):
                 self.reset_login_counter(user)
                 role: Role = self.__role_repo.get_role_by_id(self.__session, user.role_id)
@@ -51,9 +51,9 @@ class LoginController:
                 return token_input
             else:
                 self.increase_login_counter(user)
-                return "access_denied"
+                raise UserDeniedError("access_denied")
         except UserNotFound:
-            return "access_denied"
+            raise UserDeniedError("Username or password is wrong")
 
 
     def get_details_for_token(self):

@@ -12,8 +12,6 @@ import os
 def encode_and_store_jwt(function):
     def wrapper(*args, **kwargs):
         token_input = function(*args, **kwargs)
-        if token_input == "access_denied":
-            raise UserDeniedError("access_denied")
         if isinstance(token_input, TokenInput):
             token = JWTUtils.encode_jwt(token_input)
             JWTUtils.store_jwt_in_config(token)
