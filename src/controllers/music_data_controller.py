@@ -75,30 +75,38 @@ class MusicDataController:
         if to_be_changed_music_data.music_score != data.music_score and to_be_changed_music_data.music_score != 0:
             data.music_score = to_be_changed_music_data.music_score
 
-        # Check if the music_file_name has changed
-        to_be_changed_music_file_name = self.__music_utils.get_file_name_from_path(to_be_changed_music_data.music_file_name)
-        if to_be_changed_music_file_name != data.music_file_name and to_be_changed_music_file_name != "":
-            data.music_file_name = to_be_changed_music_file_name
+        self.check_and_update_music_file_data(data, to_be_changed_music_data)
 
-        # Check if music file bytes have changed
-        to_be_changed_music_file = self.__music_utils.get_file_from_path(to_be_changed_music_data.music_file_name)
-        to_be_changed_music_file_checksum = self.__music_utils.calculate_check_sum(to_be_changed_music_file)
-        if to_be_changed_music_file_checksum != self.__music_utils.calculate_check_sum(data.music_file) and to_be_changed_music_file_name != "":
-            data.music_file = to_be_changed_music_file
-
-        # check if lyrics_name has changed
-        to_be_changed_lyrics_file_name = self.__music_utils.get_file_name_from_path(to_be_changed_music_data.lyrics_file_name)
-        if to_be_changed_lyrics_file_name != data.lyrics_file_name and to_be_changed_lyrics_file_name != "":
-            data.lyrics_file_name = to_be_changed_lyrics_file_name
-
-        # Check if the lyrics_file have changed
-        to_be_changed_lyrics_file = self.__music_utils.get_file_from_path(to_be_changed_music_data.lyrics_file_name)
-        to_be_changed_lyrics_file_checksum = self.__music_utils.calculate_check_sum(to_be_changed_lyrics_file)
-        if to_be_changed_lyrics_file_checksum != self.__music_utils.calculate_check_sum(data.lyrics) and to_be_changed_lyrics_file_name != "":
-            data.lyrics = to_be_changed_lyrics_file
+        self.check_and_update_lyrics_data(data, to_be_changed_music_data)
 
         # recalculate the checksum
         data.checksum = self.__music_utils.calculate_check_sum(data.music_file + data.lyrics)
+
+    def check_and_update_lyrics_data(self, data, to_be_changed_music_data):
+        # check if lyrics_name has changed
+        to_be_changed_lyrics_file_name = self.__music_utils.get_file_name_from_path(
+            to_be_changed_music_data.lyrics_file_name)
+        if to_be_changed_lyrics_file_name != data.lyrics_file_name and to_be_changed_lyrics_file_name != "":
+            data.lyrics_file_name = to_be_changed_lyrics_file_name
+        # Check if the lyrics_file have changed
+        to_be_changed_lyrics_file = self.__music_utils.get_file_from_path(to_be_changed_music_data.lyrics_file_name)
+        to_be_changed_lyrics_file_checksum = self.__music_utils.calculate_check_sum(to_be_changed_lyrics_file)
+        if to_be_changed_lyrics_file_checksum != self.__music_utils.calculate_check_sum(
+                data.lyrics) and to_be_changed_lyrics_file_name != "":
+            data.lyrics = to_be_changed_lyrics_file
+
+    def check_and_update_music_file_data(self, data, to_be_changed_music_data):
+        # Check if the music_file_name has changed
+        to_be_changed_music_file_name = self.__music_utils.get_file_name_from_path(
+            to_be_changed_music_data.music_file_name)
+        if to_be_changed_music_file_name != data.music_file_name and to_be_changed_music_file_name != "":
+            data.music_file_name = to_be_changed_music_file_name
+        # Check if music file bytes have changed
+        to_be_changed_music_file = self.__music_utils.get_file_from_path(to_be_changed_music_data.music_file_name)
+        to_be_changed_music_file_checksum = self.__music_utils.calculate_check_sum(to_be_changed_music_file)
+        if to_be_changed_music_file_checksum != self.__music_utils.calculate_check_sum(
+                data.music_file) and to_be_changed_music_file_name != "":
+            data.music_file = to_be_changed_music_file
 
     def list_music_data(self, user: User) -> [MusicDataOutput]:
         # If user is admin then list all music otherwise only their own
