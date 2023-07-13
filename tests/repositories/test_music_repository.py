@@ -102,3 +102,18 @@ def test_when_create_and_add_new_music_data_then_the_correct_music_datas_are_cre
     mock_session.add.assert_called_once()
     mock_session.commit.assert_called_once()
     mock_session.refresh.assert_called_once()
+
+
+def test_when_delete_data_by_id_and_correct_id_then_the_correct_music_data_is_deleted():
+    # Given
+    mock_session = MagicMock(Session)
+
+    music_repo = MusicRepository()
+
+    # When
+    music_repo.delete_data_by_id(mock_session, 1)
+
+    # When
+    mock_session.exec.assert_called_once()
+    mock_session.delete.assert_called_once()
+    mock_session.commit.assert_called_once()
