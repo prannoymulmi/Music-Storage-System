@@ -341,3 +341,63 @@ def test_update_music_data_when_role_is_normal_user_and_partial_music_file_updat
 
     music_controller.update_music_data(user, music_data_input)
     mock_music_repo_update_music.assert_has_calls(mock_session, music_data_updated)
+
+@mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
+@mock.patch.object(configLoader.ConfigLoader, "load_config")
+@mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
+@mock.patch.object(music_repository.MusicRepository, "update_music_data")
+@mock.patch.object(music_repository.MusicRepository, "get_music_data_by_music_id")
+def test_update_music_data_when_role_is_normal_user_and_partial_music_file_with_lyrics_updated_then_the_data_is_updated_with_new_checksum(
+        mock_music_repo_get_music,
+        mock_music_repo_update_music,
+        mock_role_repo,
+        mock_config_loader,
+        mock_decode_jwt
+):
+    mock_session = MagicMock(Session)
+
+    mock_config_loader.return_value = mock_session
+    mock_decode_jwt.return_value = Token(permissions=["NORMAL_USER"])
+    mock_role_repo.return_value = Role(id=2, role_name="NORMAL_USER")
+    root_path: str = f"{Path(__file__).parent.parent.parent}"
+
+    music_utils = MusicUtils.instance()
+
+    music_file_path = f"{root_path}/audio_file_test.mp3"
+    lyrics_file_path = f"{root_path}/test.txt"
+    music_score = 100
+
+    music_file = music_utils.get_file_from_path(music_file_path)
+    lyrics_file = music_utils.get_file_from_path(lyrics_file_path)
+    music_controller = MusicDataController()
+    combined_check_sum = music_utils.calculate_check_sum(music_file + lyrics_file)
+    user = User(id=1)
+    music_data = MusicData(user_id=user.id,
+                           music_file_name="audio_file_test.mp3",
+                           music_file=music_file,
+                           music_score=music_score,
+                           checksum=combined_check_sum,
+                           lyrics_file_name="test.txt",
+                           lyrics=lyrics_file,
+                           id=1
+                           )
+
+    mock_music_repo_get_music.return_value = music_data
+
+    lyrics_file_path_updated = f"{root_path}/test2.txt"
+    lyrics_file_updated = music_utils.get_file_from_path(lyrics_file_path_updated)
+    new_check_sum = music_utils.calculate_check_sum(lyrics_file_updated + lyrics_file)
+    music_data_input = MusicData(id=1,
+                                 lyrics_file_name=lyrics_file_path_updated)
+    music_data_updated = MusicData(user_id=user.id,
+                           music_file_name="audio_file_test.mp3",
+                           music_file=music_file,
+                           music_score=music_score,
+                           checksum=new_check_sum,
+                           lyrics_file_name="test2.txt",
+                           lyrics=lyrics_file_updated,
+                           id=1
+                           )
+
+    music_controller.update_music_data(user, music_data_input)
+    mock_music_repo_update_music.assert_has_calls(mock_session, music_data_updated)
