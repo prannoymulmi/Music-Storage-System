@@ -3,6 +3,7 @@ from unittest import mock
 from unittest.mock import MagicMock
 
 import pytest
+from sqlalchemy.exc import NoResultFound
 from sqlmodel import Session
 
 from controllers.music_data_controller import MusicDataController
@@ -99,14 +100,14 @@ def test_update_music_data_when_role_is_normal_user_then_the_data_is_updated(
     music_data_input = MusicDataOutput(id=1, music_score=1)
 
     music_data_updated = MusicData(user_id=user.id,
-                           music_file_name="audio_file_test.mp3",
-                           music_file=music_file,
-                           music_score=1,
-                           checksum=combined_check_sum,
-                           lyrics_file_name="test.txt",
-                           lyrics=lyrics_file,
-                           id=1
-                           )
+                                   music_file_name="audio_file_test.mp3",
+                                   music_file=music_file,
+                                   music_score=1,
+                                   checksum=combined_check_sum,
+                                   lyrics_file_name="test.txt",
+                                   lyrics=lyrics_file,
+                                   id=1
+                                   )
 
     music_controller.update_music_data(user, music_data_input)
     mock_music_repo_update_music.assert_has_calls(mock_session, music_data_updated)
@@ -160,17 +161,18 @@ def test_update_music_data_when_role_is_normal_user_and_music_file_updated_then_
     music_file_updated = music_utils.get_file_from_path(music_file_path_updated)
     new_check_sum = music_utils.calculate_check_sum(music_file_updated + lyrics_file)
     music_data_updated = MusicData(user_id=user.id,
-                           music_file_name="audio_file_test_two.mp3",
-                           music_file=music_file_updated,
-                           music_score=1,
-                           checksum=new_check_sum,
-                           lyrics_file_name="test.txt",
-                           lyrics=lyrics_file,
-                           id=1
-                           )
+                                   music_file_name="audio_file_test_two.mp3",
+                                   music_file=music_file_updated,
+                                   music_score=1,
+                                   checksum=new_check_sum,
+                                   lyrics_file_name="test.txt",
+                                   lyrics=lyrics_file,
+                                   id=1
+                                   )
 
     music_controller.update_music_data(user, music_data_input)
     mock_music_repo_update_music.assert_has_calls(mock_session, music_data_updated)
+
 
 @mock.patch.object(configLoader.ConfigLoader, "load_config")
 @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
@@ -279,6 +281,7 @@ def test_update_music_data_when_role_is_Admin_and_different_user_id_then_the_dat
     music_controller.update_music_data(user, music_data_input)
     mock_music_repo_update_music.assert_has_calls(mock_session, music_data_updated)
 
+
 @mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
 @mock.patch.object(configLoader.ConfigLoader, "load_config")
 @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
@@ -321,8 +324,6 @@ def test_update_music_data_when_role_is_normal_user_and_partial_music_file_updat
 
     mock_music_repo_get_music.return_value = music_data
 
-
-
     music_file_path_updated = f"{root_path}/audio_file_test_two.mp3"
     music_file_updated = music_utils.get_file_from_path(music_file_path_updated)
     new_check_sum = music_utils.calculate_check_sum(music_file_updated + lyrics_file)
@@ -330,17 +331,18 @@ def test_update_music_data_when_role_is_normal_user_and_partial_music_file_updat
                                  music_score=1,
                                  music_file_name=music_file_path_updated)
     music_data_updated = MusicData(user_id=user.id,
-                           music_file_name="audio_file_test_two.mp3",
-                           music_file=music_file_updated,
-                           music_score=1,
-                           checksum=new_check_sum,
-                           lyrics_file_name="test.txt",
-                           lyrics=lyrics_file,
-                           id=1
-                           )
+                                   music_file_name="audio_file_test_two.mp3",
+                                   music_file=music_file_updated,
+                                   music_score=1,
+                                   checksum=new_check_sum,
+                                   lyrics_file_name="test.txt",
+                                   lyrics=lyrics_file,
+                                   id=1
+                                   )
 
     music_controller.update_music_data(user, music_data_input)
     mock_music_repo_update_music.assert_has_calls(mock_session, music_data_updated)
+
 
 @mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
 @mock.patch.object(configLoader.ConfigLoader, "load_config")
@@ -390,14 +392,152 @@ def test_update_music_data_when_role_is_normal_user_and_partial_music_file_with_
     music_data_input = MusicData(id=1,
                                  lyrics_file_name=lyrics_file_path_updated)
     music_data_updated = MusicData(user_id=user.id,
-                           music_file_name="audio_file_test.mp3",
-                           music_file=music_file,
-                           music_score=music_score,
-                           checksum=new_check_sum,
-                           lyrics_file_name="test2.txt",
-                           lyrics=lyrics_file_updated,
-                           id=1
-                           )
+                                   music_file_name="audio_file_test.mp3",
+                                   music_file=music_file,
+                                   music_score=music_score,
+                                   checksum=new_check_sum,
+                                   lyrics_file_name="test2.txt",
+                                   lyrics=lyrics_file_updated,
+                                   id=1
+                                   )
 
     music_controller.update_music_data(user, music_data_input)
     mock_music_repo_update_music.assert_has_calls(mock_session, music_data_updated)
+
+
+@mock.patch.object(music_repository.MusicRepository, "get_music_data_by_user")
+@mock.patch.object(music_repository.MusicRepository, "get_all_music_data")
+def test_list_music_data_when_admin_then_and_no_data_get_empty_music_data_list(
+        mock_music_repo_get_all,
+        mock_music_repo_get_by_user
+):
+    mock_music_repo_get_all.return_value = []
+    user = User(role_id=1)
+
+    controller = MusicDataController()
+
+    controller.list_music_data(user)
+    mock_music_repo_get_all.assert_called_once()
+    mock_music_repo_get_by_user.assert_not_called()
+
+@mock.patch.object(music_repository.MusicRepository, "get_music_data_by_user")
+@mock.patch.object(music_repository.MusicRepository, "get_all_music_data")
+def test_list_music_data_when_normal_user_then_and_no_data_get_empty_music_data_list(
+        mock_music_repo_get_all,
+        mock_music_repo_get_by_user
+):
+    mock_music_repo_get_all.return_value = []
+    user = User(role_id=2)
+
+    controller = MusicDataController()
+
+    controller.list_music_data(user)
+    mock_music_repo_get_all.assert_not_called()
+    mock_music_repo_get_by_user.assert_called_once()
+
+
+@mock.patch.object(music_repository.MusicRepository, "get_music_data_by_user")
+@mock.patch.object(music_repository.MusicRepository, "get_all_music_data")
+def test_list_music_data_when_normal_user_then_and_some_data_get_then_get_music_data_list(
+        mock_music_repo_get_all,
+        mock_music_repo_get_by_user
+):
+    mock_music_repo_get_all.return_value = [MusicDataOutput(
+        id=1,
+        music_score=1,
+    )]
+    user = User(role_id=2)
+
+    controller = MusicDataController()
+
+    controller.list_music_data(user)
+    mock_music_repo_get_all.assert_not_called()
+    mock_music_repo_get_by_user.assert_called_once()
+
+@mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
+@mock.patch.object(music_repository.MusicRepository, "delete_data_by_id")
+@mock.patch.object(music_repository.MusicRepository, "get_music_data_by_music_id")
+@mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
+def test_delete_music_data_when_admin_then_data_not_created_by_user_is_deleted(
+        mock_role_repo,
+        mock_music_repo_get,
+        mock_music_repo_delete,
+        mock_jwt
+):
+    user = User(id=100)
+    mock_role_repo.return_value = Role(role_name="ADMIN")
+    mock_music_repo_get.return_value = MusicData(id=1, user_id=103)
+    mock_jwt.return_value = Token(permissions=["ADMIN"])
+
+    controller = MusicDataController()
+
+    controller.delete_music_data(user, 1)
+
+    mock_music_repo_delete.assert_called_once()
+
+
+@mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
+@mock.patch.object(music_repository.MusicRepository, "delete_data_by_id")
+@mock.patch.object(music_repository.MusicRepository, "get_music_data_by_music_id")
+@mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
+def test_delete_music_data_when_not_then_data_not_created_by_user_then_access_denied(
+        mock_role_repo,
+        mock_music_repo_get,
+        mock_music_repo_delete,
+        mock_jwt
+):
+    user = User(id=100)
+    mock_role_repo.return_value = Role(role_name="NORMAL_USER")
+    mock_music_repo_get.return_value = MusicData(id=1, user_id=103)
+    mock_jwt.return_value = Token(permissions=["NORMAL_USER"])
+
+    controller = MusicDataController()
+
+    with pytest.raises(UserDeniedError, match="access_denied"):
+        controller.delete_music_data(user, 1)
+
+    mock_music_repo_delete.assert_not_called()
+
+@mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
+@mock.patch.object(music_repository.MusicRepository, "delete_data_by_id")
+@mock.patch.object(music_repository.MusicRepository, "get_music_data_by_music_id")
+@mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
+def test_delete_music_data_when_normal_user_then_data__created_by_user_then_data_is_deleted(
+        mock_role_repo,
+        mock_music_repo_get,
+        mock_music_repo_delete,
+        mock_jwt
+):
+    user = User(id=100)
+    mock_role_repo.return_value = Role(role_name="NORMAL_USER")
+    mock_music_repo_get.return_value = MusicData(id=1, user_id=100)
+    mock_jwt.return_value = Token(permissions=["NORMAL_USER"])
+
+    controller = MusicDataController()
+
+    controller.delete_music_data(user, 1)
+
+    mock_music_repo_delete.assert_called_once()
+
+
+@mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
+@mock.patch.object(music_repository.MusicRepository, "delete_data_by_id")
+@mock.patch.object(music_repository.MusicRepository, "get_music_data_by_music_id")
+@mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
+def test_delete_music_data_when_normal_user_then_data_created_by_user__and_no_data_is_found_then_data_cannot_be_deleted(
+        mock_role_repo,
+        mock_music_repo_get,
+        mock_music_repo_delete,
+        mock_jwt
+):
+    user = User(id=100)
+    mock_role_repo.return_value = Role(role_name="NORMAL_USER")
+    mock_music_repo_get.side_effect = NoResultFound
+    mock_jwt.return_value = Token(permissions=["NORMAL_USER"])
+
+    controller = MusicDataController()
+
+    with pytest.raises(UserDeniedError, match="Error: data cannot be Deleted"):
+        controller.delete_music_data(user, 1)
+
+    mock_music_repo_delete.assert_not_called()
