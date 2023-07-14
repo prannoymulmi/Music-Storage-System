@@ -19,15 +19,6 @@ from utils import configLoader
 from utils.schema.token_input import TokenInput
 
 
-# @mock.patch("src.main.ConfigLoader.load_config")
-# def test_list_music_data(
-#         mock__ConfigLoader__load_config
-# ):
-#     mock__ConfigLoader__load_config.return_value = None
-#     runner = CliRunner()
-#     result = runner.invoke(cli, ['list-music-data'])
-#     assert 'listing' in result.output
-
 class TestMain(unittest.TestCase):
 
     def setUp(self):
@@ -105,7 +96,9 @@ class TestMain(unittest.TestCase):
         with self.mock_config:
             mock_login.load_config.return_value = TokenInput(user_data=User(), role=Role(role_name="NORMAL_USER"))
             runner = CliRunner()
-            result = runner.invoke(app, ['delete-music-data', "--username", "test", "--password", "test", "--music-data-id", "1"])
+            result = runner.invoke(app,
+                                   ['delete-music-data', "--username", "test", "--password", "test", "--music-data-id",
+                                    "1"])
             assert 'Data Deleted' in result.output
             mock_music_repo_delete.assert_called_once()
 
@@ -119,7 +112,9 @@ class TestMain(unittest.TestCase):
         with self.mock_config:
             mock_login.side_effect = UserDeniedError("error")
             runner = CliRunner()
-            result = runner.invoke(app, ['delete-music-data', "--username", "test", "--password", "test", "--music-data-id", "1"])
+            result = runner.invoke(app,
+                                   ['delete-music-data', "--username", "test", "--password", "test", "--music-data-id",
+                                    "1"])
             assert 'Data Deleted' not in result.output
             assert 'error' in result.output
             mock_music_repo_delete.assert_not_called()
@@ -138,7 +133,8 @@ class TestMain(unittest.TestCase):
             mock_login.return_value = TokenInput(user_data=User(), role=Role(role_name="ADMIN"))
             # mock__creator.side_effect = side_effect
             runner = CliRunner()
-            result = runner.invoke(app, ['add-new-user-and-role'], input="hello\nworld\ntest_user\ntest_pass\ntest_pass\nADMIN")
+            result = runner.invoke(app, ['add-new-user-and-role'],
+                                   input="hello\nworld\ntest_user\ntest_pass\ntest_pass\nADMIN")
             assert 'test_user' in result.output
 
     @mock.patch.object(os.environ, "get")
@@ -155,5 +151,44 @@ class TestMain(unittest.TestCase):
             mock_login.return_value = TokenInput(user_data=User(), role=Role(role_name="SOME_ROLE"))
             # mock__creator.side_effect = side_effect
             runner = CliRunner()
-            result = runner.invoke(app, ['add-new-user-and-role'], input="hello\nworld\ntester\ntest_pass\ntest_pass\nNORMAL_USER")
+            result = runner.invoke(app, ['add-new-user-and-role'],
+                                   input="hello\nworld\ntester\ntest_pass\ntest_pass\nNORMAL_USER")
             assert 'access_denied' in result.output
+
+    @mock.patch.object(music_data_controller.MusicDataController, "get_music_data_by_id")
+    @mock.patch("src.main.LoginController.login")
+    def test_when_delete_music_data_as_normal_user_and_own_data_then_music_data_is_downloaded(
+            self,
+            mock_login,
+            mock_music_repo_get
+    ):
+        with self.mock_config:
+            mock_login.return_value = TokenInput(user_data=User(), role=Role(role_name="NORMAL_USER"))
+            music_data = MusicData(id=1, music_score=100, music_file_name="some_file", lyrics_file_name="some_file")
+            mock_music_repo_get.return_value = music_data
+            runner = CliRunner()
+            result = runner.invoke(app, ['download-music-data', "--username", "test", "--password", "test",
+                                         "--music-data-id", "1"])
+            assert f'ID: {music_data.id}' in result.output
+            mock_music_repo_get.assert_called_once()
+
+    @mock.patch.object(music_data_controller.MusicDataController, "get_music_data_by_id")
+    @mock.patch("src.main.LoginController.login")
+    def test_when_delete_music_data_as_normal_user_and_wrong_credentials_then_access_denied(
+            self,
+            mock_login,
+            mock_music_repo_get
+    ):
+        with self.mock_config:
+            mock_login.side_effect = UserDeniedError("error")
+            music_data = MusicData(id=1, music_score=100, music_file_name="some_file", lyrics_file_name="some_file")
+            mock_music_repo_get.return_value = music_data
+            runner = CliRunner()
+
+            result = runner.invoke(app, ['download-music-data', "--username", "test", "--password", "test",
+                                         "--music-data-id", "1"])
+            mock_music_repo_get.assert_not_called()
+            assert "error" in result.output
+
+
+
