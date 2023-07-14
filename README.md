@@ -94,16 +94,16 @@ python src/main.py add-music-data --username <CHANGE_USER> --password <CHANGE_PA
  python src/main.py list-music-data --username <CHANGE_USER> --password <CHANGE_PASSWORD>
 
 # Update music data
-python src/main.py update-music-data --username <CHANGE_USER> --password <CHANGE_PASSWORD> --music-file-path audio_file_test.mp3 --music-data-id 8
+python src/main.py update-music-data --username <CHANGE_USER> --password <CHANGE_PASSWORD> --music-file-path tests/files/audio_file_test.mp3 --music-data-id <CHANGE_MUSIC_DATA_ID>
 
 # Update music data without music file
-python src/main.py update-music-data --username <CHANGE_USER> --password <CHANGE_PASSWORD>  --music-data-id 8 --lyrics-file-path test.txt  --music-score 2132 
+python src/main.py update-music-data --username <CHANGE_USER> --password <CHANGE_PASSWORD>  --music-data-id <CHANGE_MUSIC_DATA_ID> --lyrics-file-path tests/files/test.txt  --music-score 2132 
 
 # Delete music as normal user
-python src/main.py delete-music-data --username <CHANGE_USER> --password <CHANGE_PASSWORD> --music-data-id 8
+python src/main.py delete-music-data --username <CHANGE_USER> --password <CHANGE_PASSWORD> --music-data-id <CHANGE_MUSIC_DATA_ID>
 
 # Download data as an admin
-python src/main.py download-music-data --username <CHANGE_USER> --password <CHANGE_USER> --music-data-id 3
+python src/main.py download-music-data --username <CHANGE_USER> --password <CHANGE_USER> --music-data-id <CHANGE_MUSIC_DATA_ID>
 ```
 
 ### Run tests with coverage
