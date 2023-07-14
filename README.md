@@ -93,9 +93,17 @@ python src/main.py add-music-data --username <CHANGE_USER> --password <CHANGE_PA
  #list without token
  python src/main.py list-music-data --username <CHANGE_USER> --password <CHANGE_PASSWORD>
 
-
 # Update music data
 python src/main.py update-music-data --username <CHANGE_USER> --password <CHANGE_PASSWORD> --music-file-path audio_file_test.mp3 --music-data-id 8
+
+# Update music data without music file
+python src/main.py update-music-data --username <CHANGE_USER> --password <CHANGE_PASSWORD>  --music-data-id 8 --lyrics-file-path test.txt  --music-score 2132 
+
+# Delete music as normal user
+python src/main.py delete-music-data --username <CHANGE_USER> --password <CHANGE_PASSWORD> --music-data-id 8
+
+# Download data as an admin
+python src/main.py download-music-data --username <CHANGE_USER> --password <CHANGE_USER> --music-data-id 3
 ```
 
 ### Run tests with coverage
