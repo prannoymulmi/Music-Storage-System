@@ -14,7 +14,7 @@ from models.role import Role
 from models.user import User
 from repositories import music_repository, role_repository
 from tests.test_config import session_fixture
-from utils import configLoader, jwt_utils
+from utils import configLoader, jwt_utils, music_utils
 from utils.music_utils import MusicUtils
 from utils.schema.music_data_output import MusicDataOutput
 from utils.schema.token import Token
@@ -22,7 +22,10 @@ from utils.schema.token import Token
 '''
 Using a class in order to apply global patch on database settings
 '''
+
+
 class TestMusicDataController(unittest.TestCase):
+    root_path: str = f"{Path(__file__).parent.parent}/files"
 
     def setUp(self):
         # Using in memory database for tests.
@@ -42,13 +45,13 @@ class TestMusicDataController(unittest.TestCase):
         mock_config_loader.return_value = mock_session
 
         music_data_controller: MusicDataController = MusicDataController()
-        root_path: str = f"{Path(__file__).parent.parent.parent}"
+
         user = User(id=1)
 
         music_utils = MusicUtils.instance()
 
-        music_file_path = f"{root_path}/audio_file_test.mp3"
-        lyrics_file_path = f"{root_path}/test.txt"
+        music_file_path = f"{self.root_path}/audio_file_test.mp3"
+        lyrics_file_path = f"{self.root_path}/test.txt"
         music_score = 100
 
         music_file = music_utils.get_file_from_path(music_file_path)
@@ -86,12 +89,11 @@ class TestMusicDataController(unittest.TestCase):
 
         mock_decode_jwt.return_value = Token(permissions=["NORMAL_USER"])
         mock_role_repo.return_value = Role(id=2, role_name="NORMAL_USER")
-        root_path: str = f"{Path(__file__).parent.parent.parent}"
 
         music_utils = MusicUtils.instance()
 
-        music_file_path = f"{root_path}/audio_file_test.mp3"
-        lyrics_file_path = f"{root_path}/test.txt"
+        music_file_path = f"{self.root_path}/audio_file_test.mp3"
+        lyrics_file_path = f"{self.root_path}/test.txt"
         music_score = 100
 
         music_file = music_utils.get_file_from_path(music_file_path)
@@ -126,7 +128,6 @@ class TestMusicDataController(unittest.TestCase):
         music_controller.update_music_data(user, music_data_input)
         mock_music_repo_update_music.assert_has_calls(mock_session, music_data_updated)
 
-
     @mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
     @mock.patch.object(configLoader.ConfigLoader, "load_config")
     @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
@@ -145,12 +146,11 @@ class TestMusicDataController(unittest.TestCase):
         mock_config_loader.return_value = mock_session
         mock_decode_jwt.return_value = Token(permissions=["NORMAL_USER"])
         mock_role_repo.return_value = Role(id=2, role_name="NORMAL_USER")
-        root_path: str = f"{Path(__file__).parent.parent.parent}"
 
         music_utils = MusicUtils.instance()
 
-        music_file_path = f"{root_path}/audio_file_test.mp3"
-        lyrics_file_path = f"{root_path}/test.txt"
+        music_file_path = f"{self.root_path}/audio_file_test.mp3"
+        lyrics_file_path = f"{self.root_path}/test.txt"
         music_score = 100
 
         music_file = music_utils.get_file_from_path(music_file_path)
@@ -172,7 +172,7 @@ class TestMusicDataController(unittest.TestCase):
 
         music_data_input = MusicDataOutput(id=1, music_score=1)
 
-        music_file_path_updated = f"{root_path}/audio_file_test_two.mp3"
+        music_file_path_updated = f"{self.root_path}/audio_file_test_two.mp3"
         music_file_updated = music_utils.get_file_from_path(music_file_path_updated)
         new_check_sum = music_utils.calculate_check_sum(music_file_updated + lyrics_file)
         music_data_updated = MusicData(user_id=user.id,
@@ -187,7 +187,6 @@ class TestMusicDataController(unittest.TestCase):
 
         music_controller.update_music_data(user, music_data_input)
         mock_music_repo_update_music.assert_has_calls(mock_session, music_data_updated)
-
 
     @mock.patch.object(configLoader.ConfigLoader, "load_config")
     @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
@@ -205,12 +204,11 @@ class TestMusicDataController(unittest.TestCase):
         mock_config_loader.return_value = mock_session
 
         mock_role_repo.return_value = Role(id=2, role_name="NORMAL_USER")
-        root_path: str = f"{Path(__file__).parent.parent.parent}"
 
         music_utils = MusicUtils.instance()
 
-        music_file_path = f"{root_path}/audio_file_test.mp3"
-        lyrics_file_path = f"{root_path}/test.txt"
+        music_file_path = f"{self.root_path}/audio_file_test.mp3"
+        lyrics_file_path = f"{self.root_path}/test.txt"
         music_score = 100
 
         music_file = music_utils.get_file_from_path(music_file_path)
@@ -255,12 +253,11 @@ class TestMusicDataController(unittest.TestCase):
         mock_config_loader.return_value = mock_session
         mock_decode_jwt.return_value = Token(permissions=["ADMIN"])
         mock_role_repo.return_value = Role(id=2, role_name="ADMIN")
-        root_path: str = f"{Path(__file__).parent.parent.parent}"
 
         music_utils = MusicUtils.instance()
 
-        music_file_path = f"{root_path}/audio_file_test.mp3"
-        lyrics_file_path = f"{root_path}/test.txt"
+        music_file_path = f"{self.root_path}/audio_file_test.mp3"
+        lyrics_file_path = f"{self.root_path}/test.txt"
         music_score = 100
 
         music_file = music_utils.get_file_from_path(music_file_path)
@@ -283,7 +280,7 @@ class TestMusicDataController(unittest.TestCase):
 
         music_data_input = MusicDataOutput(id=1, music_score=1)
 
-        music_file_path_updated = f"{root_path}/audio_file_test_two.mp3"
+        music_file_path_updated = f"{self.root_path}/audio_file_test_two.mp3"
         music_file_updated = music_utils.get_file_from_path(music_file_path_updated)
         new_check_sum = music_utils.calculate_check_sum(music_file_updated + lyrics_file)
 
@@ -318,12 +315,11 @@ class TestMusicDataController(unittest.TestCase):
         mock_config_loader.return_value = mock_session
         mock_decode_jwt.return_value = Token(permissions=["NORMAL_USER"])
         mock_role_repo.return_value = Role(id=2, role_name="NORMAL_USER")
-        root_path: str = f"{Path(__file__).parent.parent.parent}"
 
         music_utils = MusicUtils.instance()
 
-        music_file_path = f"{root_path}/audio_file_test.mp3"
-        lyrics_file_path = f"{root_path}/test.txt"
+        music_file_path = f"{self.root_path}/audio_file_test.mp3"
+        lyrics_file_path = f"{self.root_path}/test.txt"
         music_score = 100
 
         music_file = music_utils.get_file_from_path(music_file_path)
@@ -343,7 +339,7 @@ class TestMusicDataController(unittest.TestCase):
 
         mock_music_repo_get_music.return_value = music_data
 
-        music_file_path_updated = f"{root_path}/audio_file_test_two.mp3"
+        music_file_path_updated = f"{self.root_path}/audio_file_test_two.mp3"
         music_file_updated = music_utils.get_file_from_path(music_file_path_updated)
         new_check_sum = music_utils.calculate_check_sum(music_file_updated + lyrics_file)
         music_data_input = MusicData(id=1,
@@ -380,12 +376,11 @@ class TestMusicDataController(unittest.TestCase):
         mock_config_loader.return_value = mock_session
         mock_decode_jwt.return_value = Token(permissions=["NORMAL_USER"])
         mock_role_repo.return_value = Role(id=2, role_name="NORMAL_USER")
-        root_path: str = f"{Path(__file__).parent.parent.parent}"
 
         music_utils = MusicUtils.instance()
 
-        music_file_path = f"{root_path}/audio_file_test.mp3"
-        lyrics_file_path = f"{root_path}/test.txt"
+        music_file_path = f"{self.root_path}/audio_file_test.mp3"
+        lyrics_file_path = f"{self.root_path}/test.txt"
         music_score = 100
 
         music_file = music_utils.get_file_from_path(music_file_path)
@@ -405,7 +400,7 @@ class TestMusicDataController(unittest.TestCase):
 
         mock_music_repo_get_music.return_value = music_data
 
-        lyrics_file_path_updated = f"{root_path}/test2.txt"
+        lyrics_file_path_updated = f"{self.root_path}/test2.txt"
         lyrics_file_updated = music_utils.get_file_from_path(lyrics_file_path_updated)
         new_check_sum = music_utils.calculate_check_sum(lyrics_file_updated + lyrics_file)
         music_data_input = MusicData(id=1,
@@ -422,6 +417,89 @@ class TestMusicDataController(unittest.TestCase):
 
         music_controller.update_music_data(user, music_data_input)
         mock_music_repo_update_music.assert_has_calls(mock_session, music_data_updated)
+
+    @mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
+    @mock.patch.object(configLoader.ConfigLoader, "load_config")
+    @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
+    @mock.patch.object(music_repository.MusicRepository, "update_music_data")
+    @mock.patch.object(music_repository.MusicRepository, "get_music_data_by_music_id")
+    def test_update_music_data_when_role_is_normal_user_and_data_does_not_belong_to_the_user_then_user_denied_is_raised(
+            self,
+            mock_music_repo_get_music,
+            mock_music_repo_update_music,
+            mock_role_repo,
+            mock_config_loader,
+            mock_decode_jwt
+    ):
+        mock_session = MagicMock(Session)
+
+        mock_config_loader.return_value = mock_session
+        mock_decode_jwt.return_value = Token(permissions=["NORMAL_USER"])
+        mock_role_repo.return_value = Role(id=2, role_name="NORMAL_USER")
+
+        music_utils = MusicUtils.instance()
+
+        music_file_path = f"{self.root_path}/audio_file_test.mp3"
+        lyrics_file_path = f"{self.root_path}/test.txt"
+        music_score = 100
+
+        music_file = music_utils.get_file_from_path(music_file_path)
+        lyrics_file = music_utils.get_file_from_path(lyrics_file_path)
+        music_controller = MusicDataController()
+        combined_check_sum = music_utils.calculate_check_sum(music_file + lyrics_file)
+        user = User(id=1)
+        different_user_id = 101
+        music_data = MusicData(user_id=different_user_id,
+                               music_file_name="audio_file_test.mp3",
+                               music_file=music_file,
+                               music_score=music_score,
+                               checksum=combined_check_sum,
+                               lyrics_file_name="test.txt",
+                               lyrics=lyrics_file,
+                               id=1
+                               )
+
+        mock_music_repo_get_music.return_value = music_data
+
+        lyrics_file_path_updated = f"{self.root_path}/test2.txt"
+        music_data_input = MusicData(id=1,
+                                     lyrics_file_name=lyrics_file_path_updated)
+
+        with pytest.raises(UserDeniedError, match="access_denied"):
+            music_controller.update_music_data(user, music_data_input)
+        mock_music_repo_update_music.assert_not_called()
+
+    @mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
+    @mock.patch.object(configLoader.ConfigLoader, "load_config")
+    @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
+    @mock.patch.object(music_repository.MusicRepository, "update_music_data")
+    @mock.patch.object(music_repository.MusicRepository, "get_music_data_by_music_id")
+    def test_update_music_data_when_role_is_normal_user_and_data_not_found_then_user_denied_is_raised(
+            self,
+            mock_music_repo_get_music,
+            mock_music_repo_update_music,
+            mock_role_repo,
+            mock_config_loader,
+            mock_decode_jwt
+    ):
+        mock_session = MagicMock(Session)
+
+        mock_config_loader.return_value = mock_session
+        mock_decode_jwt.return_value = Token(permissions=["NORMAL_USER"])
+        mock_role_repo.return_value = Role(id=2, role_name="NORMAL_USER")
+
+        music_controller = MusicDataController()
+        user = User(id=1)
+
+        mock_music_repo_get_music.side_effect = NoResultFound
+
+        lyrics_file_path_updated = f"{self.root_path}/test2.txt"
+        music_data_input = MusicData(id=1,
+                                     lyrics_file_name=lyrics_file_path_updated)
+
+        with pytest.raises(UserDeniedError, match="Error: data cannot be updated"):
+            music_controller.update_music_data(user, music_data_input)
+        mock_music_repo_update_music.assert_not_called()
 
     @mock.patch.object(music_repository.MusicRepository, "get_music_data_by_user")
     @mock.patch.object(music_repository.MusicRepository, "get_all_music_data")
@@ -570,3 +648,119 @@ class TestMusicDataController(unittest.TestCase):
                 controller.delete_music_data(user, 1)
 
             mock_music_repo_delete.assert_not_called()
+
+    @mock.patch.object(music_utils.MusicUtils, "write_bytes_to_file")
+    @mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
+    @mock.patch.object(music_repository.MusicRepository, "get_music_data_by_music_id")
+    @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
+    def test_get_music_data_by_id_when_normal_user__with_data_being_from_user_then_music_data_is_downloaded(
+            self,
+            mock_role_repo,
+            mock_music_repo_get,
+            mock_jwt,
+            mock_music_utils
+    ):
+        with self.mock_config:
+            user = User(id=100)
+            mock_role_repo.return_value = Role(role_name="NORMAL_USER")
+            mock_music_repo_get.return_value = MusicData(
+                id=1,
+                user_id=100,
+                music_file_name="test_file.mp3",
+                music_file=b'1231',
+                lyrics=b'FFFF',
+                lyrics_file_name="lyrics.txt"
+            )
+            mock_jwt.return_value = Token(permissions=["NORMAL_USER"])
+
+            controller = MusicDataController()
+
+            controller.get_music_data_by_id(user, 1)
+            assert mock_music_utils.call_count == 2
+
+    @mock.patch.object(music_utils.MusicUtils, "write_bytes_to_file")
+    @mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
+    @mock.patch.object(music_repository.MusicRepository, "get_music_data_by_music_id")
+    @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
+    def test_get_music_data_by_id_when_admin__with_data_not_being_from_user_then_music_data_is_downloaded(
+            self,
+            mock_role_repo,
+            mock_music_repo_get,
+            mock_jwt,
+            mock_music_utils
+    ):
+        with self.mock_config:
+            # User id and the user id in the music data is different
+            user = User(id=201)
+            mock_role_repo.return_value = Role(role_name="ADMIN")
+            mock_music_repo_get.return_value = MusicData(
+                id=1,
+                user_id=100,
+                music_file_name="test_file.mp3",
+                music_file=b'1231',
+                lyrics=b'FFFF',
+                lyrics_file_name="lyrics.txt"
+            )
+            mock_jwt.return_value = Token(permissions=["ADMIN"])
+
+            controller = MusicDataController()
+
+            controller.get_music_data_by_id(user, 1)
+            assert mock_music_utils.call_count == 2
+
+    @mock.patch.object(music_utils.MusicUtils, "write_bytes_to_file")
+    @mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
+    @mock.patch.object(music_repository.MusicRepository, "get_music_data_by_music_id")
+    @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
+    def test_get_music_data_by_id_when_admin__with_data_not_found_then_user_denied_is_raised(
+            self,
+            mock_role_repo,
+            mock_music_repo_get,
+            mock_jwt,
+            mock_music_utils
+    ):
+        with self.mock_config:
+            # User id and the user id in the music data is different
+            user = User(id=201)
+            mock_role_repo.return_value = Role(role_name="ADMIN")
+            mock_music_repo_get.side_effect = NoResultFound
+
+            mock_jwt.return_value = Token(permissions=["ADMIN"])
+
+            controller = MusicDataController()
+
+            with pytest.raises(UserDeniedError, match="Error: data cannot be Found"):
+                controller.get_music_data_by_id(user, 1)
+            mock_music_utils.assert_not_called()
+
+    @mock.patch.object(music_utils.MusicUtils, "write_bytes_to_file")
+    @mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
+    @mock.patch.object(music_repository.MusicRepository, "get_music_data_by_music_id")
+    @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
+    def test_get_music_data_by_id_when_normal_user_but_data_does_not_belong_to_them_then_user_denied_is_raised(
+            self,
+            mock_role_repo,
+            mock_music_repo_get,
+            mock_jwt,
+            mock_music_utils
+    ):
+        with self.mock_config:
+            # User id and the user id in the music data is different
+            user = User(id=201)
+            mock_role_repo.return_value = Role(role_name="NORMAL_USER")
+            mock_music_repo_get.return_value = MusicData(
+                id=1,
+                user_id=100,
+                music_file_name="test_file.mp3",
+                music_file=b'1231',
+                lyrics=b'FFFF',
+                lyrics_file_name="lyrics.txt"
+            )
+
+            mock_jwt.return_value = Token(permissions=["NORMAL_USER"])
+
+            controller = MusicDataController()
+
+            with pytest.raises(UserDeniedError, match="access_denied"):
+                controller.get_music_data_by_id(user, 1)
+            mock_music_utils.assert_not_called()

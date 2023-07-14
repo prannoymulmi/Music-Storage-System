@@ -146,3 +146,20 @@ class MusicDataController:
             In case of no result is found a generic message is delivered to not give away important infos
             '''
             raise UserDeniedError("Error: data cannot be Deleted")
+
+    @check_token_and_role(role=["ADMIN", "NORMAL_USER"])
+    def get_music_data_by_id(self, user: User, music_id: int):
+        try:
+            role: Role = self.__role_repo.get_role_by_id(self.__session, user.role_id)
+            data: MusicData = self.__music_repo.get_music_data_by_music_id(self.__session, music_id)
+            if role.role_name == "ADMIN" or data.user_id == user.id:
+                MusicUtils.write_bytes_to_file(data.lyrics, data.lyrics_file_name)
+                MusicUtils.write_bytes_to_file(data.music_file, data.music_file_name)
+                return data
+            else:
+                raise UserDeniedError("access_denied")
+        except NoResultFound:
+            '''
+            In case of no result is found a generic message is delivered to not give away important infos
+            '''
+            raise UserDeniedError("Error: data cannot be Found")

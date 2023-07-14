@@ -45,7 +45,7 @@ def add_new_user_and_role(
     controller: LoginController = ControllerFactory().create_object("login_controller")
     try:
         controller.login(username_admin, password_admin)
-        print("logged_in")
+        print(f'logged_in as {username_admin}')
         controller.add_new_user(new_username, new_user_password, role)
         print(new_username)
     except UserDeniedError as e:
@@ -111,7 +111,7 @@ def list_music_data(
     controller_login: LoginController = ControllerFactory().create_object("login_controller")
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
     try:
-        data: TokenInput = None
+        data: TokenInput
         # If username and password are empty check if there is a valid token and get user details
         if username == "" and password == "":
             data = controller_login.get_details_for_token()
@@ -140,6 +140,21 @@ def delete_music_data(
     except UserDeniedError as e:
         print(e.message)
 
+
+@app.command()
+def download_music_data(
+        username: str = typer.Option(),
+        password: str = typer.Option(hide_input=True),
+        music_data_id: int = typer.Option()
+):
+    controller_login: LoginController = ControllerFactory().create_object("login_controller")
+    controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
+    try:
+        data: TokenInput = controller_login.login(username, password)
+        music_data: MusicData = controller_music.get_music_data_by_id(data.user_data, music_data_id)
+        print(f' ID: {music_data.id} Music Score:  {music_data.music_score} Music File: {music_data.music_file_name} Lyrics File: {music_data.lyrics_file_name}')
+    except UserDeniedError as e:
+        print(e.message)
 
 def load_app_config() -> Session:
     loader = ConfigFactory().create_object('config_loader')

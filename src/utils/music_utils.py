@@ -44,9 +44,17 @@ class MusicUtils(object):
         return ""
 
     @staticmethod
-    def run_function_according_to_role(role:Role, user: User, data: User):
+    def write_bytes_to_file(bytes_to_write: bytes, path: str):
+        try:
+            with open(path, 'wb') as file:
+                file.write(bytes_to_write)
+        except Exception:
+            raise DataNotFoundError(f'{path} not found')
+
+    @staticmethod
+    def run_function_according_to_role(role: Role, user: User, data: User, function):
         if role.role_name == "ADMIN" or data.id == user.id:
-            pass
+            function()
         else:
             pass
 
