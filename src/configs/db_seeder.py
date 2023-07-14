@@ -5,7 +5,9 @@ from models.role_names import RoleNames
 from repositories.role_repository import RoleRepository
 from repositories.user_repository import UserRepository
 
-
+'''
+For testing purposes the DB will will have an admin user whose credentials can be changed here.
+'''
 def seed_database(session_from_config):
     role_repo: RoleRepository = RepositoryFactory().create_object("role_repo")
 
