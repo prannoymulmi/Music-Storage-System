@@ -71,6 +71,9 @@ policy.test('12345!')
 ```
 
 ### Types of roles in the Project
+Currently, there are only two types of roles in this application but can the roles can be extended
+by modification of some code.
+
 | Role id | Role Name   | Description                                              |
 |---------|-------------|----------------------------------------------------------|
 | 1       | ADMIN       | Is allowed to do all the actions                         |
@@ -107,7 +110,7 @@ python src/main.py download-music-data --username <CHANGE_USER> --password <CHAN
 ```
 
 ### Run tests with coverage
-
+To prove the 
 ```bash
 coverage run --source=src -m pytest -v tests && coverage report -m 
 
