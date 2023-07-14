@@ -13,7 +13,6 @@ is newly recreated for every test so that there are no side effects.
 """
 
 
-@pytest.fixture(name="session", scope="function", autouse=True)
 def session_fixture():
     engine = create_engine(
         "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
@@ -21,4 +20,4 @@ def session_fixture():
     user.SQLModel.metadata.create_all(engine)
     role.SQLModel.metadata.create_all(engine)
     with Session(engine) as session:
-        yield session
+        return session
