@@ -2,37 +2,40 @@ import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from jwt import (
-    JWT,
-    jwk_from_dict,
-    jwk_from_pem,
-)
-from jwt.utils import get_int_from_datetime
+import jwt
+from cryptography.hazmat.primitives import serialization
+from jwt import DecodeError
+
+from exceptions.jwt_decode_error import JWTDecodeError
+# from jwt import (
+#     JWT,
+#     jwk_from_dict,
+#     jwk_from_pem, jwk_from_bytes,
+# )
 
 from utils.schema.token import Token
 from utils.schema.token_input import TokenInput
 
 
 class JWTUtils:
-    instance = JWT()
-
     """
     Encode the message to JWT(JWS).
     """
+
     @staticmethod
     def encode_jwt(data: TokenInput):
         iat = datetime.now(timezone.utc)
         message = Token(iss="music_storage_system",
                         sub=data.user_data.id,
-                        iat=get_int_from_datetime(iat),
+                        iat=iat.timestamp(),
                         user_id=data.user_data.id,
                         permissions=[data.role.role_name],
-                        exp=get_int_from_datetime(
-                            iat + timedelta(minutes=5)))
+                        exp=(iat + timedelta(minutes=5)).timestamp()
+                        )
         # A RSA key from a PEM file.
         with open(f'{JWTUtils.get_project_root()}/private_key_for_testing_purposes.pem', 'rb') as fh:
-            signing_key = jwk_from_pem(pem_content=fh.read())
-        compact_jws = JWTUtils.instance.encode(message.dict(), signing_key, alg='RS256')
+            signing_key = fh.read()
+        compact_jws = jwt.encode(message.dict(), signing_key, algorithm='EdDSA')
         return compact_jws
 
     @staticmethod
@@ -42,20 +45,23 @@ class JWTUtils:
 
     @staticmethod
     def decode_jwt(jwt_token: str) -> Token:
-        with open(f'{JWTUtils.get_project_root()}/public_key.json', 'r') as fh:
-            verifying_key = jwk_from_dict(json.load(fh))
+        try:
+            with open(f'{JWTUtils.get_project_root()}/public_key_for_testing_purposes.pem', 'rb') as fh:
+                verifying_key = fh.read()
 
-        message_received = JWTUtils.instance.decode(
-            jwt_token, verifying_key, do_time_check=True)
-        token: Token = Token(
-            iss=message_received["iss"],
-            sub=message_received["sub"],
-            iat=message_received["iat"],
-            exp=message_received["exp"],
-            user_id=message_received["user_id"],
-            permissions=message_received["permissions"]
-        )
-        return token
+            message_received = jwt.decode(
+                jwt_token, verifying_key, algorithms=["EdDSA"])
+            token: Token = Token(
+                iss=message_received["iss"],
+                sub=message_received["sub"],
+                iat=message_received["iat"],
+                exp=message_received["exp"],
+                user_id=message_received["user_id"],
+                permissions=message_received["permissions"]
+            )
+            return token
+        except DecodeError as e:
+            raise JWTDecodeError("Cannot decode")
 
     @staticmethod
     def get_project_root() -> Path:

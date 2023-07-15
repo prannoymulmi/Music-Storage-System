@@ -3,8 +3,8 @@ from datetime import datetime
 
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
-from jwt.exceptions import JWTDecodeError
 
+from exceptions.jwt_decode_error import JWTDecodeError
 from exceptions.user_denied_exception import UserDeniedError
 from exceptions.user_not_found import UserNotFound
 from exceptions.weak_password import WeakPasswordError

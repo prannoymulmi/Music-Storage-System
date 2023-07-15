@@ -1,4 +1,4 @@
-from jwt.exceptions import JWTDecodeError
+from exceptions.jwt_decode_error import JWTDecodeError
 
 from exceptions.data_not_found import DataNotFoundError
 from exceptions.user_denied_exception import UserDeniedError

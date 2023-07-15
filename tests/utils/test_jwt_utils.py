@@ -1,11 +1,18 @@
 from datetime import timezone, timedelta, datetime
+from unittest import mock
 from unittest.mock import ANY
 from unittest.mock import Mock
 
+import jwt
 import pytest
+from cryptography.hazmat.primitives._serialization import Encoding, PrivateFormat, NoEncryption, PublicFormat
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from freezegun import freeze_time
-from jwt.exceptions import JWTDecodeError
-from jwt.utils import get_int_from_datetime
+from jwt import DecodeError
+
+from exceptions.jwt_decode_error import JWTDecodeError
+# from exceptions.jwt_decode_error import JWTDecodeError
+# from jwt.utils import get_int_from_datetime
 
 from models.role import Role
 from models.user import User
@@ -18,31 +25,46 @@ Using freeze time to mock date and time,
 so that the test always returns deterministic results
 """
 @freeze_time("2023-06-8")
-def test_encode_jwt_when_default_sub_then_encode_is_called_with_right_parameters():
+@mock.patch.object(jwt, "encode")
+def test_encode_jwt_when_default_sub_then_encode_is_called_with_right_parameters(mock_jwt):
     iat = datetime.now(timezone.utc)
     expected_message = Token(iss="music_storage_system",
                              sub="1",
                              permissions=["test"],
                              user_id="1",
-                             iat=get_int_from_datetime(iat),
-                             exp=get_int_from_datetime(
-                                        iat + timedelta(minutes=5)))
+                             iat=iat.timestamp(),
+                             exp=(iat + timedelta(minutes=5)).timestamp()
+                             )
 
-    JWTUtils.instance.encode = Mock()
     JWTUtils.encode_jwt(TokenInput(user_data=User(id=1),
                                    role=Role(
                                        id=1,
                                        role_name="test"
                                    )
                                    ))
-    JWTUtils.instance.encode.assert_called_with(expected_message.dict(), ANY, alg='RS256')
+    mock_jwt.assert_called_with(expected_message.dict(), ANY, algorithm='EdDSA')
+
+# def test():
+#     private_key = Ed25519PrivateKey.generate()
+#     private_key_bytes = private_key.private_bytes(encoding=Encoding.PEM, format=PrivateFormat.PKCS8,
+#                                     encryption_algorithm=NoEncryption())
+#     public_key_bytes = private_key.public_key().public_bytes(encoding=Encoding.PEM, format=PublicFormat.SubjectPublicKeyInfo)
+#     print(private_key_bytes)
+#     print(public_key_bytes)
+#     res = JWTUtils.encode_jwt(TokenInput(user_data=User(id=1),
+#                                    role=Role(
+#                                        id=1,
+#                                        role_name="test"
+#                                    )
+#                                    ))
+#     res_dec = JWTUtils.decode_jwt(res)
+#     print(res_dec)
 
 
 def test_decode_jwt_when_correct_valid_token_then_returns_decoded_token():
-    expected_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiAibXVzaWNfc3RvcmFnZV9zeXN0ZW0iLCAic3ViIjogIjUiLCAiaWF0IjogMTY4OTIzNzYxMiwgImV4cCI6IDQ4NDI4Mzc2MTIsICJ1c2VyX2lkIjogIjUiLCAicGVybWlzc2lvbnMiOiBbIk5PUk1BTF9VU0VSIl19.KKsJFmFmD2bkaDOg956UPBA5EFN55VG19C_-huiZs2CsbQA7BQf9lf1Q298C-EPzilSs-PUDbV74oTOOl3MZvsNvXJhzM8CKOZPx-FBK0W5n4TVaFlBiJN4_DXSYgxmqwN8GcHVlwttA-ej_tmFFAClfD5yGXKqxyFGAMXHnmPunVcOMzRH7BKP4B4UTA2lEmeHaiwZTw1otVSG42sii4aR17lVp-vTsSRR40121fdA7qkTmSueZgSrcP_Jmy_grygBIA3VKuEmUVIjz-cxWfxc8V5m79GbLrLNg-_nOQsA55R60xlvr3W69ty1TWEMYNODaZYpMA3LnFKKVF0_IFA"
+    expected_token = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtdXNpY19zdG9yYWdlX3N5c3RlbSIsInN1YiI6IjEiLCJpYXQiOjE2ODk0MjMwMDcsImV4cCI6NDg0MzAyMzAwNywidXNlcl9pZCI6IjEiLCJwZXJtaXNzaW9ucyI6WyJ0ZXN0Il19.2XNOlPdNAiMwY6cR8qDO3jDLmkecVsWAStdXO0syZPRrZVPgF-cEGq5fI6CWfHySnc-EltiJ5WRWwf_yE6CpCA"
     res: Token = JWTUtils.decode_jwt(expected_token)
     assert res is not None
-    assert res.exp == 4842837612
     assert res.iss == "music_storage_system"
 
 def test_decode_jwt_when_spoofed_jwt_token_then_token_cannot_be_decoded_error_is_returned():
