@@ -34,15 +34,11 @@ application is only used for read actions, as this would give the user a better 
 by not making them log-in multiple times to read data. However, for sensitive actions such as delete, modify, and add a
 re-authentication is required and the token is not used.
 
-```
-class Token(BaseModel):
-    iss: str
-    sub: str
-    iat: int
-    exp: int
-    user_id: str
-    permission: [str]
-```
+#### JWT Signature Algorithm
+ To prevent tampering of data an asymmetric digital signature EdDSA using Ed25519 algorithm because of the following reasons:
+ * This algorithm is lightweight and performant due to its small key sizes (64 or 114 bytes) and signatures (Josefsson, S. and Liusvaara, I., 2017).
+ * The algorithm is collision resilient. 
+ * It provides protection against different kinds of attacks like side-channel analysis, differential power analysis attacks(Bisheh-Niasar, M et.al, 2021)
 
 ### Cyclomatic Complexity 
 
@@ -128,6 +124,8 @@ to ensure that the data inside the database are not tampered.
 The sensitive data such as user_name, music_data are encrypted using SHA-512
 
 ### References
+* Bisheh-Niasar, M., Azarderakhsh, R. and Mozaffari-Kermani, M., 2021. Cryptographic accelerators for digital signature based on Ed25519. IEEE Transactions on Very Large Scale Integration (VLSI) Systems, 29(7), pp.1297-1305.
 * Jones, M., Bradley, J. and Sakimura, N., 2015. Json web token (jwt) (No. rfc7519).
+* Josefsson, S. and Liusvaara, I., 2017. Edwards-curve digital signature algorithm (EdDSA) (No. rfc8032).
 * Password-strength. PyPI. (n.d.). https://pypi.org/project/password-strength/ 
 * Rachmawati, D., Tarigan, J.T. and Ginting, A.B.C., 2018, March. A comparative study of Message Digest 5 (MD5) and SHA256 algorithm. In Journal of Physics: Conference Series (Vol. 978, p. 012116). IOP Publishing.
