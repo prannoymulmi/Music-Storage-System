@@ -123,7 +123,7 @@ The Jwt token store user claims like user id, expiry date, permissions (Jones, M
 This token is stored in a config when the users successfully logs-in. The token in this
 application is only used for read actions, as this would give the user a better user experience
 by not making them log-in multiple times to read data. However, for sensitive actions such as delete, modify, and add a
-re-authentication is required and the token is not used.
+re-authentication is always required for each action.
 
 #### JWT Signature Algorithm
 
@@ -134,7 +134,8 @@ reasons:
   S. and Liusvaara, I., 2017).
 * The algorithm is collision resilient.
 * It provides protection against different kinds of attacks like side-channel analysis, differential power analysis
-  attacks(Bisheh-Niasar, M et.al, 2021)
+  attacks(Bisheh-Niasar, M et.al, 2021).
+* It is a well renowned algorithm to apply digital signatures (Bisheh-Niasar, M et.al, 2021).
 
 ### Data Encryption
 
