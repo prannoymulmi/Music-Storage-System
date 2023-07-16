@@ -65,7 +65,7 @@ python src/main.py add-new-user-and-role --username-admin <CHANGE_USER> --passwo
 python src/main.py login --username <CHANGE_USER> --password <CHANGE_PASSWORD> 
 
 # Add Music Data
-python src/main.py add-music-data --username <CHANGE_USER> --password <CHANGE_PASSWORD>  --music-file-path audio_file_test.mp3 --music-score 1 --lyrics-file-path test.txt  
+python src/main.py add-music-data --username <CHANGE_USER> --password <CHANGE_PASSWORD>  --music-file-path tests/files/audio_file_test.mp3 --music-score 1 --lyrics-file-path tests/files/test.txt  
 
 # list with token
  python src/main.py list-music-data  

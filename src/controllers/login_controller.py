@@ -16,6 +16,7 @@ from models.user import User
 from repositories.role_repository import RoleRepository
 from repositories.user_repository import UserRepository
 from utils.decorator_utils import encode_and_store_jwt, check_token_and_role
+from utils.encryption_utils import EncryptionUtils
 from utils.jwt_utils import JWTUtils
 from utils.password_utils import PasswordUtil
 from utils.schema.token import Token
@@ -58,7 +59,8 @@ class LoginController:
 
     def get_details_for_token(self):
         try:
-            token = os.environ.get("music_app_token")
+            token_encrypted = os.environ.get("music_app_token")
+            token = EncryptionUtils.decrypt(token_encrypted)
             token_decoded: Token = JWTUtils.decode_jwt(token)
             user: User = self.__user_repo.get_user_by_user_id(self.__session, int(token_decoded.user_id))
             role: Role = self.__role_repo.get_role_by_id(self.__session, user.role_id)

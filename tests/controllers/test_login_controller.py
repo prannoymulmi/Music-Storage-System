@@ -17,7 +17,7 @@ from models.role_names import RoleNames
 from models.user import User
 from repositories import user_repository, role_repository
 from tests.test_config import session_fixture
-from utils import password_utils, jwt_utils, configLoader
+from utils import password_utils, jwt_utils, configLoader, encryption_utils
 from utils.schema.token import Token
 from utils.schema.token_input import TokenInput
 
@@ -269,6 +269,7 @@ class TestLoginController(unittest.TestCase):
 
             mock_user_repo.assert_not_called()
 
+    @mock.patch.object(encryption_utils.EncryptionUtils, "decrypt")
     @mock.patch.object(os.environ, "get")
     @mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
     @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
@@ -278,10 +279,12 @@ class TestLoginController(unittest.TestCase):
             mock_user_repo,
             mock_role_repo,
             mock_jwt,
-            mock_os
+            mock_os,
+            mock_decrypt
     ):
         with self.mock_config:
             mock_os.return_value = "some_token"
+            mock_decrypt.return_value = "some_token"
             mock_jwt.return_value = Token(user_id=1, permissions=["TEST_Permissions"])
             user = User(role_id=1)
             mock_user_repo.return_value = user
@@ -295,7 +298,7 @@ class TestLoginController(unittest.TestCase):
 
             assert result == expected
 
-
+    @mock.patch.object(encryption_utils.EncryptionUtils, "decrypt")
     @mock.patch.object(os.environ, "get")
     @mock.patch.object(jwt_utils.JWTUtils, "decode_jwt")
     @mock.patch.object(role_repository.RoleRepository, "get_role_by_id")
@@ -305,12 +308,13 @@ class TestLoginController(unittest.TestCase):
             mock_user_repo,
             mock_role_repo,
             mock_jwt,
-            mock_os
+            mock_os,
+            mock_decrypt
     ):
         with self.mock_config:
             mock_os.return_value = "some_token"
             mock_jwt.side_effect = JWTDecodeError
-
+            mock_decrypt.return_value = "some_token"
 
             login_controller = LoginController()
 

@@ -7,6 +7,7 @@ from cryptography.hazmat.primitives import serialization
 from jwt import DecodeError
 
 from exceptions.jwt_decode_error import JWTDecodeError
+from utils.encryption_utils import EncryptionUtils
 # from jwt import (
 #     JWT,
 #     jwk_from_dict,
@@ -41,7 +42,8 @@ class JWTUtils:
     @staticmethod
     def store_jwt_in_config(token: str):
         file = open('music_storage_system_config', "w")
-        file.write(f'token:{token}')
+        encrypted_token = EncryptionUtils.encrypt(token)
+        file.write(f'token:{encrypted_token}')
 
     @staticmethod
     def decode_jwt(jwt_token: str) -> Token:
@@ -50,7 +52,11 @@ class JWTUtils:
                 verifying_key = fh.read()
 
             message_received = jwt.decode(
-                jwt_token, verifying_key, algorithms=["EdDSA"])
+                jwt_token,
+                verifying_key,
+                algorithms=["EdDSA"]
+            )
+
             token: Token = Token(
                 iss=message_received["iss"],
                 sub=message_received["sub"],
