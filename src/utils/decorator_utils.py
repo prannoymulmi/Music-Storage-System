@@ -37,6 +37,8 @@ def check_token_and_role(role: [str]):
                 raise e
             except DataNotFoundError as e:
                 raise e
-
+            except Exception:
+                ''' If the token is expired or has been the user will be be denied access'''
+                raise UserDeniedError("access_denied")
         return wrapper
     return first_warapper
