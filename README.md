@@ -97,6 +97,16 @@ coverage run --source=src -m pytest -v tests && coverage report -m
 coverage html && open htmlcov/index.html  
 ```
 
+### Libraries Used
+
+| Library     | Description                                         |
+|-------------|-----------------------------------------------------|
+| Typer       | Create the Entry Point for the CLI APP              |
+| SQLModel    | ORM mapper for Python to interact with the database |
+| PyJWT       | To Create JWT Tokens                                |
+| argon2-cffi | To Hash data using Argon2                           |
+| Pycrptdom   | To encrypt data using AES-256                       |
+
 ### Types of roles in the Project
 
 Currently, there are only two types of roles in this application but can the roles can be extended
@@ -131,18 +141,24 @@ reasons:
 To ensure data confidentiality in the project, the data has to be encrypted using a cryptographic algorithm. As
 the cryptographic algorithm, the symmetric key algorithm AES-256 is applied to encrypt the sensitive data.
 
-This
-algorithm is chosen for the following reasons:
+This algorithm is chosen for the following reasons:
 
 * AES-256 provides a good mixture of performance for memory, integrity and confidentiality (
   Mushtaq, M.F. et al. 2017).
-* A good level of avalanche effect, making small changes in the data will not change the encrypted text making it less
+* A good level of avalanche effect, making small changes in the data will change the encrypted text making it less
   predictable to break.
 * Memory performance is essential for this application as binary data, such as audio files and lyrics, will also be
   encrypted, which is more memory intensive than small texts.
 * AES-256 can resist quantum computing attacks based on shor's algorithm (Rao, S., Mahto et al. 201).
   ![alt text](./docs/encryption-algorithm-table.png)
-  Encryption Algorithm comparison (Mushtaq, M.F. et al. 2017)
+
+<p style="text-align: center;"><b>Encryption Algorithm comparison (Mushtaq, M.F. et al. 2017)</b></p> 
+
+According to Hameed, M.E et al. 2019, Counter Mode(CTR) of AES encryption is the one of the best and most accepted block
+ciphers modes. However, the CTR mode cannot prevent bit-flipping of by third person, but the Galois/Counter Mode (GCM)
+an
+extension of the CTR prevents its holding all the advantages of CTR, i.e. parallelization, and performance (Satoh, A.,
+2006). Therefore out of the different mode GCM is applied to this project.
 
 ### Data Integrity
 
@@ -155,6 +171,9 @@ inside the database are not tampered with for spoofing attacks.
 
 * Bisheh-Niasar, M., Azarderakhsh, R. and Mozaffari-Kermani, M., 2021. Cryptographic accelerators for digital signature
   based on Ed25519. IEEE Transactions on Very Large Scale Integration (VLSI) Systems, 29(7), pp.1297-1305.
+* Hameed, M.E., Ibrahim, M.M., Abd Manap, N. and Attiah, M.L., 2019. Comparative study of several operation modes of AES
+  algorithm for encryption ECG biomedical signal. International Journal of Electrical and Computer Engineering, 9(6),
+  p.4850.
 * Jones, M., Bradley, J. and Sakimura, N., 2015. Json web token (jwt) (No. rfc7519).
 * Josefsson, S. and Liusvaara, I., 2017. Edwards-curve digital signature algorithm (EdDSA) (No. rfc8032).
 * Mushtaq, M.F., Jamel, S., Disina, A.H., Pindar, Z.A., Shakir, N.S.A. and Deris, M.M., 2017. A survey on the
@@ -164,3 +183,5 @@ inside the database are not tampered with for spoofing attacks.
   SHA256 algorithm. In Journal of Physics: Conference Series (Vol. 978, p. 012116). IOP Publishing.
 * Rao, S., Mahto, D., Yadav, D.K. and Khan, D.A., 2017. The AES-256 cryptosystem resists quantum attacks. Int. J. Adv.
   Res. Comput. Sci, 8(3), pp.404-408.
+* Satoh, A., 2006, May. High-speed hardware architectures for authenticated encryption mode GCM. In 2006 IEEE
+  International Symposium on Circuits and Systems (pp. 4-pp). IEEE.
