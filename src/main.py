@@ -74,8 +74,8 @@ def add_music_data(
 
 @app.command()
 def update_music_data(
-        username: Annotated[str, typer.Option(prompt=True)],
-        password: Annotated[str, typer.Option(prompt=True, hide_input=True)],
+        username: str = typer.Option(default=""),
+        password: str = typer.Option(hide_input=True, default=""),
         music_file_path: str = typer.Option(default=""),
         music_score: int = typer.Option(default=0),
         lyrics_file_path: str = typer.Option(default=""),

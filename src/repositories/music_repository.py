@@ -25,12 +25,18 @@ class MusicRepository:
         return decrypted_result
 
     def update_music_data(self, session: Session, music_data: MusicData):
+
         statement = select(MusicData).where(
             MusicData.id == music_data.id)
 
         result = session.exec(statement)
         data = result.one()
-
+        data.music_score = music_data.music_score
+        data.music_file_name = EncryptionUtils.encrypt(music_data.music_file_name)
+        data.music_file = bytes(EncryptionUtils.encrypt(music_data.music_file), "utf-8")
+        data.lyrics = bytes(EncryptionUtils.encrypt(music_data.lyrics), "utf-8")
+        data.lyrics_file_name = EncryptionUtils.encrypt(music_data.lyrics_file_name)
+        data.checksum = music_data.checksum
         session.add(data)
         session.commit()
         session.refresh(data)
@@ -71,7 +77,10 @@ class MusicRepository:
             checksum=music_data.checksum,
             user_id=music_data.user_id,
             lyrics_file_name=EncryptionUtils.encrypt(music_data.lyrics_file_name),
-            lyrics=EncryptionUtils.encrypt(music_data.lyrics)
+            lyrics=EncryptionUtils.encrypt(music_data.lyrics),
+            modified_timestamp=music_data.modified_timestamp,
+            created_timestamp=music_data.modified_timestamp,
+            id=music_data.id
         )
 
     def decrypt_music_data(self, music_data: MusicData):
@@ -92,11 +101,9 @@ class MusicRepository:
         return MusicData(
             music_score=music_data.music_score,
             music_file_name=EncryptionUtils.decrypt(music_data.music_file_name),
-
             checksum=music_data.checksum,
             user_id=music_data.user_id,
             lyrics_file_name=EncryptionUtils.decrypt(music_data.lyrics_file_name),
-
             modified_timestamp=music_data.modified_timestamp,
             created_timestamp=music_data.modified_timestamp,
             id=music_data.id
