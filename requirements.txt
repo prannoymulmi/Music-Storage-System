@@ -18,6 +18,7 @@ packaging==23.1
 password-strength==0.0.3.post2
 pluggy==1.2.0
 pycparser==2.21
+pycryptodome==3.18.0
 pydantic==1.10.10
 PyJWT==2.7.0
 pytest==7.4.0

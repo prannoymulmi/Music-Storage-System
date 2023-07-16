@@ -55,7 +55,7 @@ policy = PasswordPolicy.from_names(
 policy.test('12345!')
 ```
 
-### Commands for the applicaiton
+### Commands for the application
 
 ``` bash
 # Add-new-role
@@ -154,11 +154,18 @@ This algorithm is chosen for the following reasons:
 
 <p style="text-align: center;"><b>Encryption Algorithm comparison (Mushtaq, M.F. et al. 2017)</b></p> 
 
+#### AES-256 Mode Selection
+
 According to Hameed, M.E et al. 2019, Counter Mode(CTR) of AES encryption is the one of the best and most accepted block
 ciphers modes. However, the CTR mode cannot prevent bit-flipping of by third person, but the Galois/Counter Mode (GCM)
 an
-extension of the CTR prevents its holding all the advantages of CTR, i.e. parallelization, and performance (Satoh, A.,
+extension of the CTR prevents its holding all the advantages of CTR, i.e. parallelization, integrtiy using
+authentication, and performance (Satoh, A.,
 2006). Therefore out of the different mode GCM is applied to this project.
+
+###### Private Key and salt generation
+Using Scrypt to generate human-readable private keys for AES-256 with GCM mode is selected
+as it is a secure algorithm (Encryption and decryption with AES GCM (n.d))
 
 ### Data Integrity
 
@@ -171,6 +178,9 @@ inside the database are not tampered with for spoofing attacks.
 
 * Bisheh-Niasar, M., Azarderakhsh, R. and Mozaffari-Kermani, M., 2021. Cryptographic accelerators for digital signature
   based on Ed25519. IEEE Transactions on Very Large Scale Integration (VLSI) Systems, 29(7), pp.1297-1305.
+* Encryption and decryption with AES GCM (n.d) Essential Programming Books. Available
+  from: https://www.programming-books.io/essential/go/encryption-and-decryption-with-aes-gcm-474ffe54eb92473b908b5ef162789cad (
+  Accessed: 16 July 2023).
 * Hameed, M.E., Ibrahim, M.M., Abd Manap, N. and Attiah, M.L., 2019. Comparative study of several operation modes of AES
   algorithm for encryption ECG biomedical signal. International Journal of Electrical and Computer Engineering, 9(6),
   p.4850.
