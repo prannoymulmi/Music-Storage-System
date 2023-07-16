@@ -1,3 +1,5 @@
+import os
+import secrets
 from unittest import mock
 from unittest.mock import MagicMock, ANY
 
@@ -30,6 +32,7 @@ def test_when_get_user_by_username_with_correct_id_then_user_is_returned():
     assert user is not None
     assert user.username == ANY_USER_NAME
 
+
 def test_when_get_user_by_username_with_no_result_found_then_user_not_found_raised():
     # Given
     mock_session = MagicMock(Session)
@@ -42,6 +45,7 @@ def test_when_get_user_by_username_with_no_result_found_then_user_not_found_rais
     # When
     with pytest.raises(UserNotFound, match="User is not found"):
         user_repo.get_user_by_username(mock_session, ANY)
+
 
 def test_when_get_user_by_id_with_correct_id_then_user_is_returned():
     # Given
@@ -83,7 +87,8 @@ def test_when_get_user_by_id_with_no_result_found_then_user_not_found_raised():
     with pytest.raises(UserNotFound, match="User is not found"):
         user_repo.get_user_by_user_id(mock_session, ANY)
 
-def test_update_user_when_correct_details_then_is_updated():
+@mock.patch.object(os.environ, "get")
+def test_update_user_when_correct_details_then_is_updated(mock_os):
     mock_session = MagicMock(Session)
 
     user_repo = UserRepository()
@@ -93,6 +98,7 @@ def test_update_user_when_correct_details_then_is_updated():
     mock_session.add.assert_called_once()
     mock_session.commit.assert_called_once()
     mock_session.refresh.assert_called_once()
+
 
 def test_when_check_if_user_exists_with_no_result_found_then_return_false():
     # Given
@@ -111,6 +117,7 @@ def test_when_check_if_user_exists_with_no_result_found_then_return_false():
     result = user_repo.check_if_user_exists(ANY, mock_session)
 
     assert not result
+
 
 def test_when_check_if_user_exists_then_return_true():
     # Given
