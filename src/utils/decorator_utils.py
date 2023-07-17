@@ -1,3 +1,4 @@
+import typer
 
 from exceptions.data_not_found import DataNotFoundError
 from exceptions.user_denied_exception import UserDeniedError
@@ -40,12 +41,3 @@ def check_token_and_role(role: [str]):
                 raise UserDeniedError("access_denied")
         return wrapper
     return first_warapper
-
-
-def test(function):
-    print("r")
-    def wrapper(*args, **kwargs):
-
-        res = function(*args, **kwargs)
-        return res
-    return wrapper

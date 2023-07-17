@@ -209,17 +209,20 @@ class TestLoginController(unittest.TestCase):
             mock_user_repo_update_user.assert_called_once()
             assert isinstance(result, TokenInput)
 
+    @mock.patch.object(password_utils.PasswordUtil, "is_password_policy_non_compliant")
     @mock.patch.object(password_utils.PasswordUtil, "is_password_compromised_password_in_have_i_been_pawned")
     @mock.patch.object(user_repository.UserRepository, "create_user_or_else_return_none")
     def test_login_when_add_new_user_with_known_role_then_return_new_user(
             self,
             mock_user_repo,
-            mock_password_util
+            mock_password_util,
+            mock_password_util_password_check
     ):
         with self.mock_config:
             # Given
             mock_user_repo.return_value = True
             mock_password_util.return_value = False
+            mock_password_util_password_check.return_value = False
 
             # When
             login_controller = LoginController()

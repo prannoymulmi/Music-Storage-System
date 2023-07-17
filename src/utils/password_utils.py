@@ -1,7 +1,7 @@
 import hashlib
+import re
 
 import requests
-from password_strength import PasswordPolicy
 from pydantic.fields import defaultdict
 
 
@@ -28,12 +28,7 @@ class PasswordUtil:
 
     @staticmethod
     def is_password_policy_non_compliant(passwd: str):
-        policy = PasswordPolicy.from_names(
-            length=8,  # min length: 2
-            uppercase=2,  # need min. 2 uppercase letters
-            numbers=2,  # need min. 2 digits
-            special=2,  # need min. 2 special characters
-            nonletters=2,  # need min. 2 non-letter characters (digits, specials, anything)
-        )
-        strength_compliant: bool = policy.password(passwd).test()
-        return strength_compliant
+        password_pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
+        # matches = re.match(r'[A-Za-z0-9@#$%^&+=]{8,}', passwd)
+        matches = re.match(password_pattern, passwd)
+        return matches is None

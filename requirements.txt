@@ -15,7 +15,7 @@ idna==3.4
 iniconfig==2.0.0
 mando==0.7.1
 packaging==23.1
-password-strength==0.0.3.post2
+pip-autoremove==0.10.0
 pluggy==1.2.0
 pycparser==2.21
 pycryptodome==3.18.0

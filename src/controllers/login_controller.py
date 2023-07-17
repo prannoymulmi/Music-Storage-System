@@ -78,7 +78,7 @@ class LoginController:
         values = [member.value for member in RoleNames]
         if role not in values:
             raise UserDeniedError("role does not exist")
-        if PasswordUtil.is_password_compromised_password_in_have_i_been_pawned(password) and PasswordUtil.is_password_policy_non_compliant(password):
+        if PasswordUtil.is_password_compromised_password_in_have_i_been_pawned(password) or PasswordUtil.is_password_policy_non_compliant(password):
             raise WeakPasswordError
         user_repo: UserRepository = self.__repo_factory.create_object("user_repo")
         user_repo.create_user_or_else_return_none(self.__session, username, password, role)

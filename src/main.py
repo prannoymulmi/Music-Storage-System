@@ -11,17 +11,16 @@ from exceptions.weak_password import WeakPasswordError
 from factories.config_factory import ConfigFactory
 from factories.controller_factory import ControllerFactory
 from models.music_data import MusicData
-from utils.decorator_utils import test
+from utils.general_utils import GeneralUtils
 from utils.schema.token_input import TokenInput
 
 app = typer.Typer()
 
 session = None
 
-@test
 @app.command()
 def login(
-        username: Annotated[str, typer.Option(prompt=True)],
+        username: Annotated[str, typer.Option(prompt=True, callback=GeneralUtils.sanitize_input)],
         password: Annotated[str, typer.Option(prompt=True, hide_input=True)]
 ):
     controller: LoginController = ControllerFactory().create_object("login_controller")
