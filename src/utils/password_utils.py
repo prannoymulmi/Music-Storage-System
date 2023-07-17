@@ -13,6 +13,7 @@ class PasswordUtil:
         sha1.update(passwd.encode())
         hex_digest = sha1.hexdigest().upper()
         # get the first five SHA1 hex
+        # Only the get the last five chars of the hash as per documentation  https://haveibeenpwned.com/API/v2
         hex_digest_f5 = hex_digest[:5]
         # The remaining hex
         hex_digest_remaining = hex_digest[5:]
@@ -29,6 +30,6 @@ class PasswordUtil:
     def is_password_policy_non_compliant(passwd: str):
         # <a href=https://uibakery.io/regex-library/password-regex-python> strong password regex
         # password_pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[\[\]<>#?!@$%^&*-]).{8,30}$"
-        password_pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[\[\]<>#?!@$%^&*-]).{8,30}$"
-        matches = re.match(password_pattern, passwd)
+        pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[\[\]<>#?!@$%^&*-]).{8,30}$"
+        matches = re.match(pattern, passwd)
         return matches is None
