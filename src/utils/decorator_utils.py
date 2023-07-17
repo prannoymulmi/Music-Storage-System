@@ -1,4 +1,4 @@
-import typer
+import os
 
 from exceptions.data_not_found import DataNotFoundError
 from exceptions.user_denied_exception import UserDeniedError
@@ -6,7 +6,7 @@ from exceptions.weak_password import WeakPasswordError
 from utils.jwt_utils import JWTUtils
 from utils.schema.token import Token
 from utils.schema.token_input import TokenInput
-import os
+
 
 def encode_and_store_jwt(function):
     def wrapper(*args, **kwargs):
