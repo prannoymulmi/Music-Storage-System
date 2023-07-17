@@ -1,14 +1,10 @@
 from datetime import timezone, timedelta, datetime
 from unittest import mock
 from unittest.mock import ANY
-from unittest.mock import Mock
 
 import jwt
 import pytest
-from cryptography.hazmat.primitives._serialization import Encoding, PrivateFormat, NoEncryption, PublicFormat
-from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from freezegun import freeze_time
-from jwt import DecodeError
 
 from exceptions.jwt_decode_error import JWTDecodeError
 # from exceptions.jwt_decode_error import JWTDecodeError

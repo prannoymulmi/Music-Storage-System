@@ -1,7 +1,6 @@
 from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, create_engine
 
-import pytest
 
 from models import user, role
 

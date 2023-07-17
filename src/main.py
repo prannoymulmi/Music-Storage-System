@@ -1,5 +1,4 @@
 import typer
-from sqlalchemy.exc import NoResultFound
 from sqlmodel import Session
 from typing_extensions import Annotated
 
@@ -12,14 +11,14 @@ from exceptions.weak_password import WeakPasswordError
 from factories.config_factory import ConfigFactory
 from factories.controller_factory import ControllerFactory
 from models.music_data import MusicData
-from utils.schema.music_data_output import MusicDataOutput
+from utils.decorator_utils import test
 from utils.schema.token_input import TokenInput
 
 app = typer.Typer()
 
 session = None
 
-
+@test
 @app.command()
 def login(
         username: Annotated[str, typer.Option(prompt=True)],

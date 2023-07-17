@@ -1,10 +1,9 @@
 
-from sqlmodel import Session, select, update
+from sqlmodel import Session, select
 
 from models.music_data import MusicData
 from models.user import User
 from utils.encryption_utils import EncryptionUtils
-from utils.schema.music_data_output import MusicDataOutput
 
 
 class MusicRepository:

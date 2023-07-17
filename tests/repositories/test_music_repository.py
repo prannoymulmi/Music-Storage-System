@@ -7,6 +7,8 @@ from sqlmodel import Session
 
 from models.music_data import MusicData
 from utils import encryption_utils
+from models.user import User
+from repositories.music_repository import MusicRepository
 
 MUSIC_DATA = MusicData(id=101,
                        music_score=1,
@@ -16,8 +18,6 @@ MUSIC_DATA = MusicData(id=101,
                        lyrics=b"asdasda",
                        lyrics_file_name="test_lyrics"
                        )
-from models.user import User
-from repositories.music_repository import MusicRepository
 
 
 @mock.patch.object(encryption_utils.EncryptionUtils, "decrypt")

@@ -1,4 +1,3 @@
-from factories.config_factory import ConfigFactory
 from factories.repository_factory import RepositoryFactory
 from models.role import Role
 from models.role_names import RoleNames

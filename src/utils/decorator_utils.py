@@ -1,9 +1,7 @@
-from exceptions.jwt_decode_error import JWTDecodeError
 
 from exceptions.data_not_found import DataNotFoundError
 from exceptions.user_denied_exception import UserDeniedError
 from exceptions.weak_password import WeakPasswordError
-from models.user import User
 from utils.jwt_utils import JWTUtils
 from utils.schema.token import Token
 from utils.schema.token_input import TokenInput
@@ -42,3 +40,12 @@ def check_token_and_role(role: [str]):
                 raise UserDeniedError("access_denied")
         return wrapper
     return first_warapper
+
+
+def test(function):
+    print("r")
+    def wrapper(*args, **kwargs):
+
+        res = function(*args, **kwargs)
+        return res
+    return wrapper

@@ -1,11 +1,9 @@
 import os
-import secrets
 from pathlib import Path
 
 import typer
 
 from configs.db_config import create_db_and_tables, get_session
-from utils.music_utils import MusicUtils
 
 
 class ConfigLoader:

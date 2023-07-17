@@ -3,7 +3,6 @@ import unittest
 from unittest import mock
 from unittest.mock import MagicMock
 
-import pytest
 from sqlmodel import Session
 from typer.testing import CliRunner
 

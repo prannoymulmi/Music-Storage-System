@@ -1,9 +1,7 @@
-import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import jwt
-from cryptography.hazmat.primitives import serialization
 from jwt import DecodeError
 
 from exceptions.jwt_decode_error import JWTDecodeError
@@ -66,7 +64,7 @@ class JWTUtils:
                 permissions=message_received["permissions"]
             )
             return token
-        except DecodeError as e:
+        except DecodeError:
             raise JWTDecodeError("Cannot decode")
 
     @staticmethod
