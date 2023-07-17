@@ -17,7 +17,7 @@ class PasswordUtil:
         hex_digest_f5 = hex_digest[:5]
         # The remaining hex
         hex_digest_remaining = hex_digest[5:]
-        r = requests.get(HAVE_I_BEEN_PAWNED_URL.format(hex_digest_f5))
+        r = requests.get(HAVE_I_BEEN_PAWNED_URL.format(hex_digest_f5), timeout=5)
         leaked_passwd_freq = defaultdict(int)
         for passwd_freq in r.content.splitlines():
             pass_parts = passwd_freq.split(b":")

@@ -118,7 +118,7 @@ class MusicDataController:
 
     def set_music_data_output(self, results):
         result_output: [MusicDataOutput] = []
-        format = "2020-06-18T14:55:28-05:00"
+        format = "%Y-%m-%dT%H:%M:%S-%S"
         for result in results:
             result_output.append(MusicDataOutput(
                 id=result.id,

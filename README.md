@@ -144,7 +144,7 @@ According to Hameed, M.E et al. 2019, Counter Mode(CTR) of AES encryption is the
 ciphers modes. However, the CTR mode cannot prevent bit-flipping of by third person, but the Galois/Counter Mode (GCM)
 an
 extension of the CTR prevents its holding all the advantages of CTR, i.e. parallelization, integrtiy using
-authentication, and performance (Satoh, A.,
+authenticated encryption, and performance (Satoh, A.,
 2006). Therefore out of the different mode GCM is applied to this project.
 
 ###### Private Key and salt generation

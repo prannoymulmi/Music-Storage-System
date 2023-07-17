@@ -1,9 +1,9 @@
 import os
 from base64 import b64encode, b64decode
 
-from Crypto.Cipher import AES
-from Crypto.Protocol.KDF import scrypt
-from Crypto.Random import get_random_bytes
+from Cryptodome.Cipher import AES
+from Cryptodome.Protocol.KDF import scrypt
+from Cryptodome.Random import get_random_bytes
 
 from exceptions.encryption_error import EncryptionError
 
@@ -11,7 +11,7 @@ BLOCK_IV_SIZE = 16
 KEY_SIZE = 32
 
 '''
-Block Size and Initialization Vector (IV) for AES-256 is 16 bytes. See <a href=https://www.cryptosys.net/manapi/api_blockciphersizes.html/>
+Block Size for AES-256 is 16 bytes. See <a href=https://www.cryptosys.net/manapi/api_blockciphersizes.html/>
 
 Code Referenced from <a href=https://nitratine.net/blog/post/python-gcm-encryption-tutorial/>
 '''
@@ -36,7 +36,6 @@ class EncryptionUtils:
         # In Format cipher_text:salt:nonce:tag
         return f"{b64encode(cipher_text).decode('utf-8')}:{b64encode(salt).decode('utf-8')}:{b64encode(cipher_config.nonce).decode('utf-8')}:{b64encode(tag).decode('utf-8')}"
 
-
     @staticmethod
     def decrypt(encrypted_text):
         key = EncryptionUtils.get_encryption_key()
@@ -51,6 +50,7 @@ class EncryptionUtils:
         cipher_text = b64decode(aes_data[0])
         salt = b64decode(aes_data[1])
         nonce = b64decode(aes_data[2])
+        # The tag is the result of GCM mode which allows authenticated encryption, therefore no one can crate the tag without the key
         tag = b64decode(aes_data[3])
 
         try:

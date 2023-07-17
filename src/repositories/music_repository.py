@@ -78,7 +78,7 @@ class MusicRepository:
             lyrics_file_name=EncryptionUtils.encrypt(music_data.lyrics_file_name),
             lyrics=EncryptionUtils.encrypt(music_data.lyrics),
             modified_timestamp=music_data.modified_timestamp,
-            created_timestamp=music_data.modified_timestamp,
+            created_timestamp=music_data.created_timestamp,
             id=music_data.id
         )
 
@@ -92,7 +92,7 @@ class MusicRepository:
             lyrics_file_name=EncryptionUtils.decrypt(music_data.lyrics_file_name),
             lyrics=EncryptionUtils.decrypt(music_data.lyrics),
             modified_timestamp=music_data.modified_timestamp,
-            created_timestamp=music_data.modified_timestamp,
+            created_timestamp=music_data.created_timestamp,
             id=music_data.id
         )
 
@@ -104,6 +104,6 @@ class MusicRepository:
             user_id=music_data.user_id,
             lyrics_file_name=EncryptionUtils.decrypt(music_data.lyrics_file_name),
             modified_timestamp=music_data.modified_timestamp,
-            created_timestamp=music_data.modified_timestamp,
+            created_timestamp=music_data.created_timestamp,
             id=music_data.id
         )
