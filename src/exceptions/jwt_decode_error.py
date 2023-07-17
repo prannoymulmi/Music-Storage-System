@@ -6,7 +6,7 @@ class JWTDecodeError(Exception):
 
     """
 
-    def __init__(self, message: str = "password is non-compliant") -> None:
+    def __init__(self, message: str = "JWT decode error") -> None:
         self.message = message
         super().__init__(self.message)
 

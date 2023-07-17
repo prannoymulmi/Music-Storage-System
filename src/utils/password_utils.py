@@ -28,7 +28,8 @@ class PasswordUtil:
 
     @staticmethod
     def is_password_policy_non_compliant(passwd: str):
-        password_pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
+        # <a href=https://uibakery.io/regex-library/password-regex-python> strong password regex
+        password_pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[\[\]<>#?!@$%^&*-]).{8,30}$"
         # matches = re.match(r'[A-Za-z0-9@#$%^&+=]{8,}', passwd)
         matches = re.match(password_pattern, passwd)
         return matches is None

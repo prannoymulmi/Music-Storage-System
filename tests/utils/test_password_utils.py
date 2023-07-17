@@ -38,3 +38,7 @@ def test_is_password_policy_non_compliant_when_compliant_password_then_return_fa
 def test_is_password_policy_non_compliant_when_non_compliant_password_then_return_true():
     result = PasswordUtil.is_password_policy_non_compliant(NON_COMPLIANT_PASSWORD)
     assert result
+
+def test_is_password_policy_non_compliant_when_non_compliant_longer_than_30_password_then_return_true():
+    result = PasswordUtil.is_password_policy_non_compliant("!FPSEwB^KMuzep6bK6@1rrPJZx!8T78S2v6J2aUNF1ZKKavpDf")
+    assert result
