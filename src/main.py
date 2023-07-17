@@ -21,7 +21,7 @@ session = None
 @app.command()
 def login(
         username: Annotated[str, typer.Option(prompt=True, callback=GeneralUtils.sanitize_input)],
-        password: Annotated[str, typer.Option(prompt=True, hide_input=True)]
+        password: Annotated[str, typer.Option(prompt=True, hide_input=True, callback=GeneralUtils.sanitize_input)]
 ):
     controller: LoginController = ControllerFactory().create_object("login_controller")
     try:
@@ -34,11 +34,14 @@ def login(
 
 @app.command()
 def add_new_user_and_role(
-        username_admin: Annotated[str, typer.Option(prompt=True)],
-        password_admin: Annotated[str, typer.Option(prompt=True, hide_input=True)],
-        new_username: str = typer.Option("Please add new username?", prompt=True),
-        new_user_password: str = typer.Option("password?", confirmation_prompt=True, hide_input=True),
-        role: str = typer.Option("ROLE - ADMIN or NORMAL_USER", confirmation_prompt=True)
+        username_admin: Annotated[str, typer.Option(prompt=True, callback=GeneralUtils.sanitize_input)],
+        password_admin: Annotated[
+            str, typer.Option(prompt=True, hide_input=True, callback=GeneralUtils.sanitize_input)],
+        new_username: str = typer.Option("Please add new username?", prompt=True, callback=GeneralUtils.sanitize_input),
+        new_user_password: str = typer.Option("password?", confirmation_prompt=True, hide_input=True,
+                                              callback=GeneralUtils.sanitize_input),
+        role: str = typer.Option("ROLE - ADMIN or NORMAL_USER", confirmation_prompt=True,
+                                 callback=GeneralUtils.sanitize_input)
 ):
     controller: LoginController = ControllerFactory().create_object("login_controller")
     try:
@@ -54,11 +57,11 @@ def add_new_user_and_role(
 
 @app.command()
 def add_music_data(
-        username: Annotated[str, typer.Option(prompt=True)],
-        password: Annotated[str, typer.Option(prompt=True, hide_input=True)],
-        music_file_path: str = typer.Option(),
-        music_score: int = typer.Option(),
-        lyrics_file_path: str = typer.Option()
+        username: Annotated[str, typer.Option(prompt=True, callback=GeneralUtils.sanitize_input)],
+        password: Annotated[str, typer.Option(prompt=True, hide_input=True, callback=GeneralUtils.sanitize_input)],
+        music_file_path: str = typer.Option(callback=GeneralUtils.sanitize_input),
+        music_score: int = typer.Option(callback=GeneralUtils.sanitize_input),
+        lyrics_file_path: str = typer.Option(callback=GeneralUtils.sanitize_input)
 ):
     controller_login: LoginController = ControllerFactory().create_object("login_controller")
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
@@ -72,12 +75,12 @@ def add_music_data(
 
 @app.command()
 def update_music_data(
-        username: str = typer.Option(default=""),
-        password: str = typer.Option(hide_input=True, default=""),
-        music_file_path: str = typer.Option(default=""),
-        music_score: int = typer.Option(default=0),
-        lyrics_file_path: str = typer.Option(default=""),
-        music_data_id: int = typer.Option()
+        username: str = typer.Option(default="", callback=GeneralUtils.sanitize_input),
+        password: str = typer.Option(hide_input=True, default="", callback=GeneralUtils.sanitize_input),
+        music_file_path: str = typer.Option(default="", callback=GeneralUtils.sanitize_input),
+        music_score: int = typer.Option(default=0, callback=GeneralUtils.sanitize_input),
+        lyrics_file_path: str = typer.Option(default="", callback=GeneralUtils.sanitize_input),
+        music_data_id: int = typer.Option(callback=GeneralUtils.sanitize_input)
 ):
     controller_login: LoginController = ControllerFactory().create_object("login_controller")
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
@@ -103,8 +106,8 @@ can only see their own data.
 '''
 @app.command()
 def list_music_data(
-        username: str = typer.Option(default=""),
-        password: str = typer.Option(hide_input=True, default="")
+        username: str = typer.Option(default="", callback=GeneralUtils.sanitize_input),
+        password: str = typer.Option(hide_input=True, default="", callback=GeneralUtils.sanitize_input)
 ):
     controller_login: LoginController = ControllerFactory().create_object("login_controller")
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
@@ -125,9 +128,9 @@ def list_music_data(
 
 @app.command()
 def delete_music_data(
-        username: str = typer.Option(),
-        password: str = typer.Option(hide_input=True),
-        music_data_id: int = typer.Option()
+        username: str = typer.Option(callback=GeneralUtils.sanitize_input),
+        password: str = typer.Option(hide_input=True, callback=GeneralUtils.sanitize_input),
+        music_data_id: int = typer.Option(callback=GeneralUtils.sanitize_input)
 ):
     controller_login: LoginController = ControllerFactory().create_object("login_controller")
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
@@ -141,18 +144,20 @@ def delete_music_data(
 
 @app.command()
 def download_music_data(
-        username: str = typer.Option(),
-        password: str = typer.Option(hide_input=True),
-        music_data_id: int = typer.Option()
+        username: str = typer.Option(callback=GeneralUtils.sanitize_input),
+        password: str = typer.Option(hide_input=True, callback=GeneralUtils.sanitize_input),
+        music_data_id: int = typer.Option(callback=GeneralUtils.sanitize_input)
 ):
     controller_login: LoginController = ControllerFactory().create_object("login_controller")
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
     try:
         data: TokenInput = controller_login.login(username, password)
         music_data: MusicData = controller_music.get_music_data_by_id(data.user_data, music_data_id)
-        print(f' ID: {music_data.id} Music Score:  {music_data.music_score} Music File: {music_data.music_file_name} Lyrics File: {music_data.lyrics_file_name}')
+        print(
+            f' ID: {music_data.id} Music Score:  {music_data.music_score} Music File: {music_data.music_file_name} Lyrics File: {music_data.lyrics_file_name}')
     except UserDeniedError as e:
         print(e.message)
+
 
 def load_app_config() -> Session:
     loader = ConfigFactory().create_object('config_loader')

@@ -37,23 +37,6 @@ The cyclomatic complexity of the code can be tested using the following commands
 radon cc -a src 
 ```
 
-## Using Password Strength to set password policy
-
-This gives an easy method to set password policies for python projects (Password-strength. PyPI. (n.d.)).
-Also, the entropy for the password policies can be set easily to achieve a stronger password.
-
-``` python
-from password_strength import PasswordPolicy
-
-policy = PasswordPolicy.from_names(
-    length=8,  # min length: 8
-    uppercase=2,  # need min. 2 uppercase letters
-    numbers=2,  # need min. 2 digits
-    special=2,  # need min. 2 special characters
-    nonletters=2,  # need min. 2 non-letter characters (digits, specials, anything)
-)
-policy.test('12345!')
-```
 
 ### Commands for the application
 
@@ -165,6 +148,7 @@ authentication, and performance (Satoh, A.,
 2006). Therefore out of the different mode GCM is applied to this project.
 
 ###### Private Key and salt generation
+
 Using Scrypt to generate human-readable private keys for AES-256 with GCM mode is selected
 as it is a secure algorithm (Encryption and decryption with AES GCM (n.d))
 
@@ -174,6 +158,27 @@ The project handles the upload of various music data, such as audio and lyric fi
 tampering within the database is
 carried out. A checksum is calculated using the SHA-256 hash function(Rachmawati.D et al., 2018)to ensure that the data
 inside the database are not tampered with for spoofing attacks.
+
+### ReDoS and Password Policy
+
+To ensure a strong password policy the new password is tested against a regex of with the policy pattern mentioned
+below:
+Also to avoid ReDoS the inputs size is capped at 30 characters max.
+
+``` python
+
+Pattern(
+    length=8,  # min length: 8
+    uppercase=1,  # need min. 1 uppercase letters
+    numbers=1,  # need min. 1 digits
+    special=1,  # need min. 1 special characters
+    max-length=30,  # need min. 30 max length
+)
+password_pattern = "^(?=.*?[A-Z]{2,})(?=.*?[a-z]{2,})(?=.*?[0-9]{2,})(?=.*?[\[\]<>#?!@$%^&*-]{2,}).{8,30}$"
+```
+
+Additionally, to avoid using compromised passwords an additional check to Have I been Pawned API is conducted to see if
+the password is compromised.
 
 ### References
 
@@ -189,7 +194,6 @@ inside the database are not tampered with for spoofing attacks.
 * Josefsson, S. and Liusvaara, I., 2017. Edwards-curve digital signature algorithm (EdDSA) (No. rfc8032).
 * Mushtaq, M.F., Jamel, S., Disina, A.H., Pindar, Z.A., Shakir, N.S.A. and Deris, M.M., 2017. A survey on the
   cryptographic encryption algorithms. International Journal of Advanced Computer Science and Applications, 8(11).
-* Password-strength. PyPI. (n.d.). https://pypi.org/project/password-strength/
 * Rachmawati, D., Tarigan, J.T. and Ginting, A.B.C., 2018, March. A comparative study of Message Digest 5 (MD5) and
   SHA256 algorithm. In Journal of Physics: Conference Series (Vol. 978, p. 012116). IOP Publishing.
 * Rao, S., Mahto, D., Yadav, D.K. and Khan, D.A., 2017. The AES-256 cryptosystem resists quantum attacks. Int. J. Adv.

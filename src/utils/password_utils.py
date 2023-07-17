@@ -4,7 +4,6 @@ import re
 import requests
 from pydantic.fields import defaultdict
 
-
 HAVE_I_BEEN_PAWNED_URL = "https://api.pwnedpasswords.com/range/{}"
 
 class PasswordUtil:
@@ -29,7 +28,7 @@ class PasswordUtil:
     @staticmethod
     def is_password_policy_non_compliant(passwd: str):
         # <a href=https://uibakery.io/regex-library/password-regex-python> strong password regex
+        # password_pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[\[\]<>#?!@$%^&*-]).{8,30}$"
         password_pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[\[\]<>#?!@$%^&*-]).{8,30}$"
-        # matches = re.match(r'[A-Za-z0-9@#$%^&+=]{8,}', passwd)
         matches = re.match(password_pattern, passwd)
         return matches is None
