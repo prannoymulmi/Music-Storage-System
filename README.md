@@ -159,11 +159,10 @@ tampering within the database is
 carried out. A checksum is calculated using the SHA-256 hash function(Rachmawati.D et al., 2018)to ensure that the data
 inside the database are not tampered with for spoofing attacks.
 
-### ReDoS and Password Policy
+### Password Policy
 
 To ensure a strong password policy the new password is tested against a regex of with the policy pattern mentioned
 below:
-Also to avoid ReDoS the inputs size is capped at 30 characters max.
 
 ``` python
 

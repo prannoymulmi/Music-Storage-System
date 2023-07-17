@@ -124,6 +124,8 @@ def list_music_data(
             print(result)
     except UserDeniedError as e:
         print(e.message)
+    except Exception as e:
+        print(e.message)
 
 
 @app.command()
