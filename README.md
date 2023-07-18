@@ -37,7 +37,6 @@ The cyclomatic complexity of the code can be tested using the following commands
 radon cc -a src 
 ```
 
-
 ### Commands for the application
 
 ``` bash
@@ -82,13 +81,13 @@ coverage html && open htmlcov/index.html
 
 ### Libraries Used
 
-| Library     | Description                                         |
-|-------------|-----------------------------------------------------|
-| Typer       | Create the Entry Point for the CLI APP              |
-| SQLModel    | ORM mapper for Python to interact with the database |
-| PyJWT       | To Create JWT Tokens                                |
-| argon2-cffi | To Hash data using Argon2                           |
-| Pycrptdom   | To encrypt data using AES-256                       |
+| Library       | Justification                                       |
+|---------------|-----------------------------------------------------|
+| Typer         | Create the Entry Point for the CLI APP              |
+| SQLModel      | ORM mapper for Python to interact with the database |
+| PyJWT         | To Create JWT Tokens                                |
+| argon2-cffi   | To Hash data using Argon2                           |
+| pycryptodomex | To encrypt data using AES-256 (using GCM Mode)      |
 
 ### Types of roles in the Project
 
@@ -159,7 +158,7 @@ tampering within the database is
 carried out. A checksum is calculated using the SHA-256 hash function(Rachmawati.D et al., 2018)to ensure that the data
 inside the database are not tampered with for spoofing attacks.
 
-### Password Policy
+### Password Policy and ReDoS protection
 
 To ensure a strong password policy the new password is tested against a regex of with the policy pattern mentioned
 below:
@@ -176,8 +175,33 @@ Pattern(
 password_pattern = "^(?=.*?[A-Z]{2,})(?=.*?[a-z]{2,})(?=.*?[0-9]{2,})(?=.*?[\[\]<>#?!@$%^&*-]{2,}).{8,30}$"
 ```
 
+To prevent ReDoS the input validation for the Regex for password policy applies the following points as mentioned in
+Input validation cheat sheet(n.d), OWASP:
+
+* Minimum password length and maximum length
+* There is a defined allowed characters which are accepted.
+
 Additionally, to avoid using compromised passwords an additional check to Have I been Pawned API is conducted to see if
-the password is compromised.
+the password is compromised (Pal, B et al. 2019).
+
+#### Input Validation and sanitization
+
+According to Input validation cheat sheet(n.d), OWASP the main goal of input validation is to prevent malformed data
+to be persisted in the database or the system to prevent malfunctioning. Input validations carried out:
+
+* Maximum and Minimum values range (Min 5 and Max 50 )for username and passwords.
+* Range check for integer so that no negative values and no max value of the integer are provided.
+* The file names are limited to
+* Allow list for types of Audio files such as (.mp3, .wav, aac, wma, ogg, and flac).
+* Allow list for types of lyrics files such as (LRC and txt).
+* Maximum size for upload of audio file (30 MB) and max file for Lyrics(2MB).
+
+#### Improvements for the future
+
+* User-Id should not be a numeric value but a unique UUID, so that an attacker cannot do an enumeration attacks,
+  by guessing the id.
+* The audio files must be validated if the file is really an audio file, not only testing the file extension.
+* Encryption and decryption using more threads to make this process faster and improve the application performance.
 
 ### References
 
@@ -189,10 +213,15 @@ the password is compromised.
 * Hameed, M.E., Ibrahim, M.M., Abd Manap, N. and Attiah, M.L., 2019. Comparative study of several operation modes of AES
   algorithm for encryption ECG biomedical signal. International Journal of Electrical and Computer Engineering, 9(6),
   p.4850.
+* Input validation cheat sheet(n.d), OWASP Input Validation - OWASP Cheat Sheet Series. Available
+  from: https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html (Accessed: 18 July 2023).
 * Jones, M., Bradley, J. and Sakimura, N., 2015. Json web token (jwt) (No. rfc7519).
 * Josefsson, S. and Liusvaara, I., 2017. Edwards-curve digital signature algorithm (EdDSA) (No. rfc8032).
 * Mushtaq, M.F., Jamel, S., Disina, A.H., Pindar, Z.A., Shakir, N.S.A. and Deris, M.M., 2017. A survey on the
   cryptographic encryption algorithms. International Journal of Advanced Computer Science and Applications, 8(11).
+* Pal, B., Islam, M., Bohuk, M.S., Sullivan, N., Valenta, L., Whalen, T., Wood, C., Ristenpart, T. and Chatterjee, R.,
+  2022. Might i get pwned: A second generation compromised credential checking service. In 31st USENIX Security
+        Symposium (USENIX Security 22) (pp. 1831-1848).
 * Rachmawati, D., Tarigan, J.T. and Ginting, A.B.C., 2018, March. A comparative study of Message Digest 5 (MD5) and
   SHA256 algorithm. In Journal of Physics: Conference Series (Vol. 978, p. 012116). IOP Publishing.
 * Rao, S., Mahto, D., Yadav, D.K. and Khan, D.A., 2017. The AES-256 cryptosystem resists quantum attacks. Int. J. Adv.

@@ -17,6 +17,9 @@ from tests.test_config import session_fixture
 from utils import configLoader
 from utils.schema.token_input import TokenInput
 
+VALID_USERNAME = "valid_username"
+VALID_PASSWORD_LENGTH = "valid_password"
+
 
 class TestMain(unittest.TestCase):
 
@@ -48,7 +51,8 @@ class TestMain(unittest.TestCase):
             test.load_config.return_value = MagicMock(Session)
             mock__creator.side_effect = TestMain.side_effect
             runner = CliRunner()
-            result = runner.invoke(app, ['list-music-data', "--username", "test", "--password", "test"])
+            result = runner.invoke(app, ['list-music-data', "--username", VALID_USERNAME, "--password",
+                                         VALID_PASSWORD_LENGTH])
             mock_login_controller.assert_called_once()
             mock_music_data.assert_called_once()
             assert 'Listing Data' in result.output
@@ -56,7 +60,7 @@ class TestMain(unittest.TestCase):
     @mock.patch.object(music_data_controller.MusicDataController, "list_music_data")
     @mock.patch.object(login_controller.LoginController, "get_details_for_token")
     @mock.patch("src.main.ConfigFactory.create_object")
-    def test_when_list_music_data_with_no_user_data_then_is_listed(
+    def test_when_list_music_data_with_no_credentials_but_token_present_then_data_is_listed(
             self,
             mock__creator,
             mock_login_controller,
@@ -96,7 +100,8 @@ class TestMain(unittest.TestCase):
             mock_login.load_config.return_value = TokenInput(user_data=User(), role=Role(role_name="NORMAL_USER"))
             runner = CliRunner()
             result = runner.invoke(app,
-                                   ['delete-music-data', "--username", "test", "--password", "test", "--music-data-id",
+                                   ['delete-music-data', "--username", VALID_USERNAME, "--password",
+                                    VALID_PASSWORD_LENGTH, "--music-data-id",
                                     "1"])
             assert 'Data Deleted' in result.output
             mock_music_repo_delete.assert_called_once()
@@ -112,7 +117,8 @@ class TestMain(unittest.TestCase):
             mock_login.side_effect = UserDeniedError("error")
             runner = CliRunner()
             result = runner.invoke(app,
-                                   ['delete-music-data', "--username", "test", "--password", "test", "--music-data-id",
+                                   ['delete-music-data', "--username", VALID_USERNAME, "--password",
+                                    VALID_PASSWORD_LENGTH, "--music-data-id",
                                     "1"])
             assert 'Data Deleted' not in result.output
             assert 'error' in result.output
@@ -151,12 +157,12 @@ class TestMain(unittest.TestCase):
             # mock__creator.side_effect = side_effect
             runner = CliRunner()
             result = runner.invoke(app, ['add-new-user-and-role'],
-                                   input="hello\nworld\ntester\ntest_pass\ntest_pass\nNORMAL_USER")
+                                   input="hello_user\nworld_tester\ntester\ntest_pass\ntest_pass\nNORMAL_USER")
             assert 'access_denied' in result.output
 
     @mock.patch.object(music_data_controller.MusicDataController, "get_music_data_by_id")
     @mock.patch("src.main.LoginController.login")
-    def test_when_delete_music_data_as_normal_user_and_own_data_then_music_data_is_downloaded(
+    def test_when_download_music_data_as_normal_user_and_own_data_then_music_data_is_downloaded(
             self,
             mock_login,
             mock_music_repo_get
@@ -166,14 +172,15 @@ class TestMain(unittest.TestCase):
             music_data = MusicData(id=1, music_score=100, music_file_name="some_file", lyrics_file_name="some_file")
             mock_music_repo_get.return_value = music_data
             runner = CliRunner()
-            result = runner.invoke(app, ['download-music-data', "--username", "test", "--password", "test",
+            result = runner.invoke(app, ['download-music-data', "--username", VALID_USERNAME, "--password",
+                                         VALID_PASSWORD_LENGTH,
                                          "--music-data-id", "1"])
             assert f'ID: {music_data.id}' in result.output
             mock_music_repo_get.assert_called_once()
 
     @mock.patch.object(music_data_controller.MusicDataController, "get_music_data_by_id")
     @mock.patch("src.main.LoginController.login")
-    def test_when_delete_music_data_as_normal_user_and_wrong_credentials_then_access_denied(
+    def test_when_download_music_data_as_normal_user_and_wrong_credentials_then_access_denied(
             self,
             mock_login,
             mock_music_repo_get
@@ -184,7 +191,8 @@ class TestMain(unittest.TestCase):
             mock_music_repo_get.return_value = music_data
             runner = CliRunner()
 
-            result = runner.invoke(app, ['download-music-data', "--username", "test", "--password", "test",
+            result = runner.invoke(app, ['download-music-data', "--username", VALID_USERNAME, "--password",
+                                         VALID_PASSWORD_LENGTH,
                                          "--music-data-id", "1"])
             mock_music_repo_get.assert_not_called()
             assert "error" in result.output
