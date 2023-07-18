@@ -34,7 +34,7 @@ class GeneralUtils:
                 f'The maximum value of the file name should be {MAX_FILE_NAME_LENGTH}')
         elif file_extension not in allowed_file_types_audio:
             raise typer.BadParameter(
-                f'The file extension is not allowed')
+                'The file extension is not allowed')
         elif os.path.getsize(path) >= MAX_AUDIO_FILE_SIZE:
             raise typer.BadParameter(
                 f'The max allowed size of audio file is  {MAX_AUDIO_FILE_SIZE / 1000000} MB')

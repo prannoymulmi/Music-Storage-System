@@ -57,5 +57,5 @@ def test_sanitize_audio_file_with_large_file_then_typer_error_is_returned():
 def test_sanitize_audio_file_with_forbidden_extension_then_typer_error_is_returned():
     invalid_file_name = f"{Path(__file__).parent.parent}/files/large_file.txt"
     with pytest.raises(typer.BadParameter,
-                       match=f'The file extension is not allowed'):
+                       match='The file extension is not allowed'):
         GeneralUtils.sanitize_audio_file_input(invalid_file_name)
