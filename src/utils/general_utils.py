@@ -7,7 +7,7 @@ MINIMUM_USER_PASS_VALUE = 5
 MAX_USER_PASS_VALUE = 50
 MAX_FILE_NAME_LENGTH = 50
 MAX_AUDIO_FILE_SIZE = 35000000  # 35 MB
-MAX_LYRICS_FILE_SIZE = 5000000  # 35 MB
+MAX_LYRICS_FILE_SIZE = 2000000  # 2 MB
 
 
 class GeneralUtils:
@@ -41,16 +41,16 @@ class GeneralUtils:
 
     @staticmethod
     def sanitize_lyrics_file_input(path: str):
-        allowed_file_types_audio = [".lrc", ".txt"]
+        allowed_file_types_lyrics = [".lrc", ".txt"]
         _, file_extension = os.path.splitext(path)
         filename = os.path.basename(path)
         GeneralUtils.is_file_name_complaint_or_else_raise_bad_param_error(filename)
-        if file_extension not in allowed_file_types_audio:
+        if file_extension not in allowed_file_types_lyrics:
             raise typer.BadParameter(
                 'The file extension is not allowed')
-        elif os.path.getsize(path) >= MAX_AUDIO_FILE_SIZE:
+        elif os.path.getsize(path) >= MAX_LYRICS_FILE_SIZE:
             raise typer.BadParameter(
-                f'The max allowed size of audio file is  {MAX_AUDIO_FILE_SIZE / 1000000} MB')
+                f'The max allowed size of audio file is  {MAX_LYRICS_FILE_SIZE / 1000000} MB')
         return path
 
     @staticmethod

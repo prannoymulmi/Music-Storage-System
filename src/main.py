@@ -68,7 +68,7 @@ def add_music_data(
                                               callback=GeneralUtils.sanitize_user_name_and_password_input)],
         music_file_path: str = typer.Option(callback=GeneralUtils.sanitize_music_file_input),
         music_score: int = typer.Option(callback=GeneralUtils.sanitize_int_input),
-        lyrics_file_path: str = typer.Option()
+        lyrics_file_path: str = typer.Option(callback=GeneralUtils.sanitize_lyrics_file_input)
 ):
     controller_login: LoginController = ControllerFactory().create_object("login_controller")
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
@@ -87,7 +87,7 @@ def update_music_data(
                                      callback=GeneralUtils.sanitize_user_name_and_password_input),
         music_file_path: str = typer.Option(default="", callback=GeneralUtils.sanitize_music_file_input),
         music_score: int = typer.Option(default=0, callback=GeneralUtils.sanitize_int_input),
-        lyrics_file_path: str = typer.Option(default=""),
+        lyrics_file_path: str = typer.Option(default="", callback=GeneralUtils.sanitize_lyrics_file_input),
         music_data_id: int = typer.Option(callback=GeneralUtils.sanitize_int_input)
 ):
     controller_login: LoginController = ControllerFactory().create_object("login_controller")

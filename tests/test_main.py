@@ -1,5 +1,6 @@
 import os
 import unittest
+from pathlib import Path
 from unittest import mock
 from unittest.mock import MagicMock
 
@@ -7,6 +8,7 @@ from sqlmodel import Session
 from typer.testing import CliRunner
 
 from controllers import login_controller, music_data_controller
+from exceptions.data_not_found import DataNotFoundError
 from exceptions.user_denied_exception import UserDeniedError
 from main import app
 from models.music_data import MusicData
@@ -88,6 +90,18 @@ class TestMain(unittest.TestCase):
             result = runner.invoke(app, ['login'], input="hello\nworld")
             assert mock_login.call_count == 1
             assert 'logged_in' in result.output
+
+    @mock.patch("src.main.LoginController.login")
+    def test_when_login_with_wrong_credentials_then_user_denied_error(
+            self,
+            mock_login
+    ):
+        with self.mock_config:
+            mock_login.side_effect = UserDeniedError("access_denied")
+            runner = CliRunner()
+            result = runner.invoke(app, ['login'], input="hello\nworld")
+            assert "access_denied" in result.output
+            assert mock_login.call_count == 1
 
     @mock.patch.object(music_data_controller.MusicDataController, "delete_music_data")
     @mock.patch("src.main.LoginController.login")
@@ -197,5 +211,119 @@ class TestMain(unittest.TestCase):
             mock_music_repo_get.assert_not_called()
             assert "error" in result.output
 
+    @mock.patch.object(music_data_controller.MusicDataController, "add_music_data")
+    @mock.patch("src.main.LoginController.login")
+    def test_when_add_music_data_as_normal_user_and_own_data_then_music_data_is_added(
+            self,
+            mock_login,
+            mock_music_repo_add
+    ):
+        with self.mock_config:
+            mock_login.return_value = TokenInput(user_data=User(), role=Role(role_name="NORMAL_USER"))
+            runner = CliRunner()
+            result = runner.invoke(app, ['add-music-data', "--username", VALID_USERNAME, "--password",
+                                         VALID_PASSWORD_LENGTH,
+                                         "--music-file-path",
+                                         f"{Path(__file__).parent}/files/audio_file_test.mp3",
+                                         "--lyrics-file-path",
+                                         f"{Path(__file__).parent}/files/lyrics_1.lrc",
+                                         "--music-score",
+                                         "1"
+                                         ])
+            assert "data added" in result.output
+            mock_music_repo_add.assert_called_once()
 
+    @mock.patch.object(music_data_controller.MusicDataController, "add_music_data")
+    @mock.patch("src.main.LoginController.login")
+    def test_when_add_music_data_as_normal_user_and_wrong_credentials_then_access_denied(
+            self,
+            mock_login,
+            mock_music_repo_add
+    ):
+        with self.mock_config:
+            mock_login.side_effect = UserDeniedError("access_denied")
+            runner = CliRunner()
+            result = runner.invoke(app, ['add-music-data', "--username", VALID_USERNAME, "--password",
+                                         VALID_PASSWORD_LENGTH,
+                                         "--music-file-path",
+                                         f"{Path(__file__).parent}/files/audio_file_test.mp3",
+                                         "--lyrics-file-path",
+                                         f"{Path(__file__).parent}/files/lyrics_1.lrc",
+                                         "--music-score",
+                                         "1"
+                                         ])
+            assert "access_denied" in result.output
+            mock_music_repo_add.assert_not_called()
 
+    @mock.patch.object(music_data_controller.MusicDataController, "update_music_data")
+    @mock.patch("src.main.LoginController.login")
+    def test_when_update_music_data_as_normal_user_and_own_data_then_music_data_is_updated(
+            self,
+            mock_login,
+            mock_music_repo_update
+    ):
+        with self.mock_config:
+            mock_login.return_value = TokenInput(user_data=User(), role=Role(role_name="NORMAL_USER"))
+            runner = CliRunner()
+            result = runner.invoke(app, ['update-music-data', "--username", VALID_USERNAME, "--password",
+                                         VALID_PASSWORD_LENGTH,
+                                         "--music-file-path",
+                                         f"{Path(__file__).parent}/files/audio_file_test.mp3",
+                                         "--lyrics-file-path",
+                                         f"{Path(__file__).parent}/files/lyrics_1.lrc",
+                                         "--music-score",
+                                         "1",
+                                         "--music-data-id",
+                                         "1"
+                                         ])
+            assert "updated data" in result.output
+            mock_music_repo_update.assert_called_once()
+
+    @mock.patch.object(music_data_controller.MusicDataController, "update_music_data")
+    @mock.patch("src.main.LoginController.login")
+    def test_when_update_music_data_as_normal_user_and_wrong_credentials_then_access_denied(
+            self,
+            mock_login,
+            mock_music_repo_update
+    ):
+        with self.mock_config:
+            mock_login.side_effect = UserDeniedError("access_denied")
+            runner = CliRunner()
+            result = runner.invoke(app, ['update-music-data', "--username", VALID_USERNAME, "--password",
+                                         VALID_PASSWORD_LENGTH,
+                                         "--music-file-path",
+                                         f"{Path(__file__).parent}/files/audio_file_test.mp3",
+                                         "--lyrics-file-path",
+                                         f"{Path(__file__).parent}/files/lyrics_1.lrc",
+                                         "--music-score",
+                                         "1",
+                                         "--music-data-id",
+                                         "1"
+                                         ])
+            assert "access_denied" in result.output
+            mock_music_repo_update.assert_not_called()
+
+    @mock.patch.object(music_data_controller.MusicDataController, "update_music_data")
+    @mock.patch("src.main.LoginController.login")
+    def test_when_update_music_data_as_normal_user_and_data_not_found_then_data_not_found(
+            self,
+            mock_login,
+            mock_music_repo_update
+    ):
+        with self.mock_config:
+            mock_login.return_value = TokenInput(user_data=User(), role=Role(role_name="NORMAL_USER"))
+            mock_music_repo_update.side_effect = DataNotFoundError("data error")
+            runner = CliRunner()
+            result = runner.invoke(app, ['update-music-data', "--username", VALID_USERNAME, "--password",
+                                         VALID_PASSWORD_LENGTH,
+                                         "--music-file-path",
+                                         f"{Path(__file__).parent}/files/audio_file_test.mp3",
+                                         "--lyrics-file-path",
+                                         f"{Path(__file__).parent}/files/lyrics_1.lrc",
+                                         "--music-score",
+                                         "1",
+                                         "--music-data-id",
+                                         "1"
+                                         ])
+            assert "data error" in result.output
+            mock_music_repo_update.assert_called_once()
