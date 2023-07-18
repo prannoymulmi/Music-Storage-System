@@ -1,12 +1,11 @@
 import sys
+from pathlib import Path
 
 import pytest
 import typer
 
-from utils.general_utils import GeneralUtils
-
-MINIMUM_USER_PASS_VALUE = 5
-MAX_USER_PASS_VALUE = 50
+from utils.general_utils import GeneralUtils, MAX_FILE_NAME_LENGTH, MINIMUM_USER_PASS_VALUE, MAX_USER_PASS_VALUE, \
+    MAX_AUDIO_FILE_SIZE
 
 
 def test_sanitize_user_name_and_password_input_with_correct_value_then_string_is_returned():
@@ -33,3 +32,30 @@ def test_sanitize_int_input_with_long_value_then_typer_error_is_returned():
     with pytest.raises(typer.BadParameter,
                        match=f'The minimum value should be {0} and maximum should be {sys.maxsize}'):
         GeneralUtils.sanitize_int_input(invalid_int)
+
+
+def test_sanitize_file_input_with_correct_value_then_string_is_returned():
+    valid_file_name = f"{Path(__file__).parent.parent}/files/audio_file_test.mp3"
+    result = GeneralUtils.sanitize_audio_file_input(valid_file_name)
+    assert result == valid_file_name
+
+
+def test_sanitize_audio_file_with_long_value_then_typer_error_is_returned():
+    invalid_file_name = "../files/audio_file_long_name_long_name_long_name_long_name_long_name_long_name_long_name_long_name.mp3"
+    with pytest.raises(typer.BadParameter,
+                       match=f'The maximum value of the file name should be {MAX_FILE_NAME_LENGTH}'):
+        GeneralUtils.sanitize_audio_file_input(invalid_file_name)
+
+
+def test_sanitize_audio_file_with_large_file_then_typer_error_is_returned():
+    invalid_file_name = f"{Path(__file__).parent.parent}/files/large_file.flac"
+    with pytest.raises(typer.BadParameter,
+                       match=f'The max allowed size of audio file is  {MAX_AUDIO_FILE_SIZE / 1000000} MB'):
+        GeneralUtils.sanitize_audio_file_input(invalid_file_name)
+
+
+def test_sanitize_audio_file_with_forbidden_extension_then_typer_error_is_returned():
+    invalid_file_name = f"{Path(__file__).parent.parent}/files/large_file.txt"
+    with pytest.raises(typer.BadParameter,
+                       match=f'The file extension is not allowed'):
+        GeneralUtils.sanitize_audio_file_input(invalid_file_name)

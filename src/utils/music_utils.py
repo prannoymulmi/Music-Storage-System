@@ -2,8 +2,6 @@ import hashlib
 import os
 
 from exceptions.data_not_found import DataNotFoundError
-from models.role import Role
-from models.user import User
 
 
 class MusicUtils(object):
@@ -50,11 +48,4 @@ class MusicUtils(object):
                 file.write(bytes_to_write)
         except Exception:
             raise DataNotFoundError(f'{path} not found')
-
-    @staticmethod
-    def run_function_according_to_role(role: Role, user: User, data: User, function):
-        if role.role_name == "ADMIN" or data.id == user.id:
-            function()
-        else:
-            pass
 

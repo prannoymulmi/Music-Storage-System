@@ -46,8 +46,7 @@ def add_new_user_and_role(
                                          callback=GeneralUtils.sanitize_user_name_and_password_input),
         new_user_password: str = typer.Option("password?", confirmation_prompt=True, hide_input=True,
                                               callback=GeneralUtils.sanitize_user_name_and_password_input),
-        role: str = typer.Option("ROLE - ADMIN or NORMAL_USER", confirmation_prompt=True,
-                                 callback=GeneralUtils.sanitize_user_name_and_password_input)
+        role: str = typer.Option("ROLE - ADMIN or NORMAL_USER", confirmation_prompt=True)
 ):
     controller: LoginController = ControllerFactory().create_object("login_controller")
     try:
@@ -67,9 +66,9 @@ def add_music_data(
             str, typer.Option(prompt=True, callback=GeneralUtils.sanitize_user_name_and_password_input)],
         password: Annotated[str, typer.Option(prompt=True, hide_input=True,
                                               callback=GeneralUtils.sanitize_user_name_and_password_input)],
-        music_file_path: str = typer.Option(callback=GeneralUtils.sanitize_user_name_and_password_input),
-        music_score: int = typer.Option(callback=GeneralUtils.sanitize_user_name_and_password_input),
-        lyrics_file_path: str = typer.Option(callback=GeneralUtils.sanitize_user_name_and_password_input)
+        music_file_path: str = typer.Option(callback=GeneralUtils.sanitize_audio_file_input),
+        music_score: int = typer.Option(callback=GeneralUtils.sanitize_int_input),
+        lyrics_file_path: str = typer.Option()
 ):
     controller_login: LoginController = ControllerFactory().create_object("login_controller")
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
@@ -86,10 +85,10 @@ def update_music_data(
         username: str = typer.Option(default="", callback=GeneralUtils.sanitize_user_name_and_password_input),
         password: str = typer.Option(hide_input=True, default="",
                                      callback=GeneralUtils.sanitize_user_name_and_password_input),
-        music_file_path: str = typer.Option(default="", callback=GeneralUtils.sanitize_user_name_and_password_input),
-        music_score: int = typer.Option(default=0, callback=GeneralUtils.sanitize_user_name_and_password_input),
-        lyrics_file_path: str = typer.Option(default="", callback=GeneralUtils.sanitize_user_name_and_password_input),
-        music_data_id: int = typer.Option(callback=GeneralUtils.sanitize_user_name_and_password_input)
+        music_file_path: str = typer.Option(default="", callback=GeneralUtils.sanitize_audio_file_input),
+        music_score: int = typer.Option(default=0, callback=GeneralUtils.sanitize_int_input),
+        lyrics_file_path: str = typer.Option(default=""),
+        music_data_id: int = typer.Option(callback=GeneralUtils.sanitize_int_input)
 ):
     controller_login: LoginController = ControllerFactory().create_object("login_controller")
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")

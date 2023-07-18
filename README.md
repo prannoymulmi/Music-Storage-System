@@ -4,8 +4,8 @@
 
 ### Prerequisites for running the Notebooks for the simulations
 
-* <a href=https://www.python.org/downloads/release/python-370/> Python 3.7 or Greater</a>
-* <a href=https://pip.pypa.io/en/stable/installation/> pip 21.3.1 or Greater</a>
+* <a href=https://www.python.org/downloads/release/python-390/> Python 3.9 or Greater</a>
+* <a href=https://pip.pypa.io/en/stable/installation/> pip 23.1.2 or Greater</a>
 
 After installing the requirements, run the following commands in order
 
@@ -189,6 +189,21 @@ Input validation cheat sheet(n.d), OWASP:
 Additionally, to avoid using compromised passwords an additional check to Have I been Pawned API is conducted to see if
 the password is compromised (Pal, B et al. 2019).
 
+### Password hashing using Argon2id
+
+In order to generate a complex Digest, we are using Argon2id as a password-hashing algorithm which helps protect user
+credentials and enhances the security of applications and systems. Its robustness against attacks and ongoing
+development makes it a strong choice for password storage.
+
+* The big advantage of Argon2id has the option to choose between modes of protection and there is no compromise on
+  security or speed. This algorithm is recommended by the OWASP Foundation winner of the Password Hashing Algorithm in
+  2015 .
+* Argon2id resists both attacks and will also protect our application from brute force attacks, specifically against GPU
+  cracking.
+* Since Argon2id uses a lot of memory to hash data, it is more resistant to attacks like GPU-based cracking. Attackers
+  are discouraged from attempting to crack passwords because the memory requirement ensures that they must invest
+  significant resources to mount successful attacks.
+
 #### Input Validation and sanitization
 
 According to Input validation cheat sheet(n.d), OWASP the main goal of input validation is to prevent malformed data
@@ -201,7 +216,7 @@ to be persisted in the database or the system to prevent malfunctioning. Input v
 * Allow list for types of lyrics files such as (LRC and txt).
 * Maximum size for upload of audio file (30 MB) and max file for Lyrics(2MB).
 
-## Buffer Overflow Prevention
+### Buffer Overflow Prevention
 
 Following the paper (Yadav, S., Ahmad, K. and Shekhar, J., 2011) the following protections for buffer overflow were
 applied:
@@ -211,12 +226,14 @@ applied:
   buffers (Frykholm, N., 2000).
 * Using bandit to scan for vulnerable libraries which could contain CVE's and also cause buffer-overflow.
 
-#### Improvements for the future
+### Improvements for the future
 
 * User-Id should not be a numeric value but a unique UUID, so that an attacker cannot do an enumeration attacks,
   by guessing the id.
 * The audio files must be validated if the file is really an audio file, not only testing the file extension.
 * Encryption and decryption using more threads to make this process faster and improve the application performance.
+* Store the private keys in a secret manager which is not available publicly. Currently just for testing purposes,+
+  the private key is included in the project.
 
 ### References
 
