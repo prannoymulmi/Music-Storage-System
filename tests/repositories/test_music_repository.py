@@ -6,9 +6,9 @@ from sqlalchemy.engine import ScalarResult
 from sqlmodel import Session
 
 from models.music_data import MusicData
-from utils import encryption_utils
 from models.user import User
 from repositories.music_repository import MusicRepository
+from utils import encryption_utils
 
 MUSIC_DATA = MusicData(id=101,
                        music_score=1,
@@ -71,13 +71,15 @@ def test_when_get_music_data_by_music_id_with_correct_music_id_then_the_correct_
     assert music_data_all.id == 101
 
 
-def test_when_update_music_data_with_correct_music_data_then_the_correct_music_data_is_updated():
+@mock.patch.object(encryption_utils.EncryptionUtils, "encrypt")
+def test_when_update_music_data_with_correct_music_data_then_the_correct_music_data_is_updated(mock_encrypt):
     # Given
     mock_session = MagicMock(Session)
 
     mocked_scalar_res = MagicMock(ScalarResult)
     music_repo = MusicRepository()
 
+    mock_encrypt.return_value = "SOME_DATA"
     mock_session.exec.return_value = mocked_scalar_res
     mocked_scalar_res.one.return_value = MUSIC_DATA
 
