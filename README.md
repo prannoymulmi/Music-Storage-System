@@ -89,17 +89,22 @@ coverage html && open htmlcov/index.html
 | argon2-cffi   | To Hash data using Argon2                           |
 | pycryptodomex | To encrypt data using AES-256 (using GCM Mode)      |
 
-### Types of roles in the Project
+### Role-based access control
+
+To apply the least-privilege the application uses role based access control. It only allows actions to certain
+roles, and denies them if they are not allowed.
+
+#### Types of roles in the Project
 
 Currently, there are only two types of roles in this application but can the roles can be extended
 by modification of some code.
 
-| Role id | Role Name   | Description                                              |
-|---------|-------------|----------------------------------------------------------|
-| 1       | ADMIN       | Is allowed to do all the actions                         |
-| 2       | NORMAL_USER | Is only allowed to view/change items created by the user |
+| Role id | Role Name   | Description                                                              |
+|---------|-------------|--------------------------------------------------------------------------|
+| 1       | ADMIN       | Is allowed to do all the actions                                         |
+| 2       | NORMAL_USER | Is only allowed to view/change/update/delete items created by themselves |
 
-### JWT Tokens
+### JWT Tokens for listing data
 
 The Jwt token store user claims like user id, expiry date, permissions (Jones, M., Bradley, J. and Sakimura, N., 2015).
 This token is stored in a config when the users successfully logs-in. The token in this
@@ -191,10 +196,20 @@ to be persisted in the database or the system to prevent malfunctioning. Input v
 
 * Maximum and Minimum values range (Min 5 and Max 50 )for username and passwords.
 * Range check for integer so that no negative values and no max value of the integer are provided.
-* The file names are limited to
+* The file names also have a maximum length.
 * Allow list for types of Audio files such as (.mp3, .wav, aac, wma, ogg, and flac).
 * Allow list for types of lyrics files such as (LRC and txt).
 * Maximum size for upload of audio file (30 MB) and max file for Lyrics(2MB).
+
+## Buffer Overflow Prevention
+
+Following the paper (Yadav, S., Ahmad, K. and Shekhar, J., 2011) the following protections for buffer overflow were
+applied:
+
+* Input validation and sanitization.
+* Using Python as a programming language as this langauge has some built in protection to automatic bound checking of
+  buffers (Frykholm, N., 2000).
+* Using bandit to scan for vulnerable libraries which could contain CVE's and also cause buffer-overflow.
 
 #### Improvements for the future
 
@@ -210,6 +225,7 @@ to be persisted in the database or the system to prevent malfunctioning. Input v
 * Encryption and decryption with AES GCM (n.d) Essential Programming Books. Available
   from: https://www.programming-books.io/essential/go/encryption-and-decryption-with-aes-gcm-474ffe54eb92473b908b5ef162789cad (
   Accessed: 16 July 2023).
+* Frykholm, N., 2000. Countermeasures against buffer overflow attacks. RSA Tech Note, pp.1-9.
 * Hameed, M.E., Ibrahim, M.M., Abd Manap, N. and Attiah, M.L., 2019. Comparative study of several operation modes of AES
   algorithm for encryption ECG biomedical signal. International Journal of Electrical and Computer Engineering, 9(6),
   p.4850.
@@ -228,3 +244,5 @@ to be persisted in the database or the system to prevent malfunctioning. Input v
   Res. Comput. Sci, 8(3), pp.404-408.
 * Satoh, A., 2006, May. High-speed hardware architectures for authenticated encryption mode GCM. In 2006 IEEE
   International Symposium on Circuits and Systems (pp. 4-pp). IEEE.
+* Yadav, S., Ahmad, K. and Shekhar, J., 2011. Classification and prevention techniques of buffer overflow attacks. In
+  Proceedings of the 5th National Conference (pp. 10-11).
