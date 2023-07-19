@@ -61,6 +61,20 @@ def test_sanitize_audio_file_with_forbidden_extension_then_typer_error_is_return
         GeneralUtils.sanitize_music_file_input(invalid_file_name)
 
 
+def test_sanitize_audio_file_with_double_extension_with_allowed_and_forbidden_extension_then_typer_error_is_returned():
+    invalid_file_name = f"{Path(__file__).parent.parent}/files/double_extension_file.mp3.js"
+    with pytest.raises(typer.BadParameter,
+                       match='The file extension is not allowed'):
+        GeneralUtils.sanitize_music_file_input(invalid_file_name)
+
+
+def test_sanitize_audio_file_with_null_bytes_with_allowed_and_forbidden_extension_then_typer_error_is_returned():
+    invalid_file_name = f"{Path(__file__).parent.parent}/files/null_byte_file.js%00.mp3"
+    with pytest.raises(typer.BadParameter,
+                       match='The file extension is not allowed'):
+        GeneralUtils.sanitize_music_file_input(invalid_file_name)
+
+
 def test_sanitize_lyrics_file_input_with_correct_value_then_string_is_returned():
     valid_file_name = f"{Path(__file__).parent.parent}/files/lyrics_1.lrc"
     result = GeneralUtils.sanitize_lyrics_file_input(valid_file_name)

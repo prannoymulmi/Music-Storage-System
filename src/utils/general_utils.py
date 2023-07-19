@@ -3,6 +3,8 @@ import sys
 
 import typer
 
+from utils.music_utils import MusicUtils
+
 MINIMUM_USER_PASS_VALUE = 5
 MAX_USER_PASS_VALUE = 50
 MAX_FILE_NAME_LENGTH = 50
@@ -31,13 +33,22 @@ class GeneralUtils:
         _, file_extension = os.path.splitext(path)
         filename = os.path.basename(path)
         GeneralUtils.is_file_name_complaint_or_else_raise_bad_param_error(filename)
+        GeneralUtils.is_null_byte_present(path)
         if file_extension not in allowed_file_types_audio:
             raise typer.BadParameter(
                 'The file extension is not allowed')
         elif os.path.getsize(path) >= MAX_AUDIO_FILE_SIZE:
             raise typer.BadParameter(
                 f'The max allowed size of audio file is  {MAX_AUDIO_FILE_SIZE / 1000000} MB')
+        MusicUtils.scan_file(path)
         return path
+
+    @staticmethod
+    def is_null_byte_present(filename):
+        # Check if the filename contains a null byte
+        if '\x00' in filename or '%00' in filename:
+            raise typer.BadParameter(
+                'The file extension is not allowed')
 
     @staticmethod
     def sanitize_lyrics_file_input(path: str):
@@ -45,6 +56,7 @@ class GeneralUtils:
         _, file_extension = os.path.splitext(path)
         filename = os.path.basename(path)
         GeneralUtils.is_file_name_complaint_or_else_raise_bad_param_error(filename)
+        GeneralUtils.is_null_byte_present(path)
         if file_extension not in allowed_file_types_lyrics:
             raise typer.BadParameter(
                 'The file extension is not allowed')

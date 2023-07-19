@@ -6,6 +6,7 @@
 
 * <a href=https://www.python.org/downloads/release/python-390/> Python 3.9 or Greater</a>
 * <a href=https://pip.pypa.io/en/stable/installation/> pip 23.1.2 or Greater</a>
+* <a href=https://www.docker.com/>Docker</a>
 
 After installing the requirements, run the following commands in order
 
@@ -27,6 +28,12 @@ pip -V
 
 # Install all required dependencies
 pip install -r requirements.txt 
+
+# Docker check if it is running (Should show no error before continuing)
+docker ps
+
+# Docker run clamav
+docker run -d -p 127.0.0.1:3310:3310 --name clamav clamav/clamav:1.1
 ```
 
 ### Cyclomatic Complexity
@@ -81,13 +88,14 @@ coverage html && open htmlcov/index.html
 
 ### Libraries Used
 
-| Library       | Justification                                       |
+| Library       | Description                                         |
 |---------------|-----------------------------------------------------|
 | Typer         | Create the Entry Point for the CLI APP              |
 | SQLModel      | ORM mapper for Python to interact with the database |
 | PyJWT         | To Create JWT Tokens                                |
 | argon2-cffi   | To Hash data using Argon2                           |
 | pycryptodomex | To encrypt data using AES-256 (using GCM Mode)      |
+| pyclamd       | Used to scan files for viruses                      |
 
 ### Role-based access control
 
@@ -214,7 +222,6 @@ to be persisted in the database or the system to prevent malfunctioning. Input v
 * The file names also have a maximum length.
 * Allow list for types of Audio files such as (.mp3, .wav, aac, wma, ogg, and flac).
 * Allow list for types of lyrics files such as (LRC and txt).
-* Maximum size for upload of audio file (30 MB) and max file for Lyrics(2MB).
 
 ### Buffer Overflow Prevention
 
@@ -226,6 +233,18 @@ applied:
   buffers (Frykholm, N., 2000).
 * Using bandit to scan for vulnerable libraries which could contain CVE's and also cause buffer-overflow.
 
+### File Upload Protection
+
+Following OWASP File Upload protection (File upload cheat sheet, OWASP, n.d) the below mentioned measures are
+implemented:
+
+* Maximum size for upload of audio file (35 MB) and max file for Lyrics(2MB).
+* Virus scanning for file using ClamAV (ClamAV, 2021) before file upload.
+  The Virus scanner is tested using an ECIAR file, which is a benign-infected file for AV testing (Harley, D., Myers, L.
+  and Willems, E., 2011).
+* Double extensions, such as **double_extension_file.mp3.js** are not allowed and are validated.
+* Null bytes in the file, such as null_byte_file.js%00.mp3 or null_byte_file.js\00.mp3 are not allowed.
+
 ### Improvements for the future
 
 * User-Id should not be a numeric value but a unique UUID, so that an attacker cannot do an enumeration attacks,
@@ -234,22 +253,28 @@ applied:
 * Encryption and decryption using more threads to make this process faster and improve the application performance.
 * Store the private keys in a secret manager which is not available publicly. Currently just for testing purposes,+
   the private key is included in the project.
+* Rotate keys used for encryption.
 
 ### References
 
 * Bisheh-Niasar, M., Azarderakhsh, R. and Mozaffari-Kermani, M., 2021. Cryptographic accelerators for digital signature
   based on Ed25519. IEEE Transactions on Very Large Scale Integration (VLSI) Systems, 29(7), pp.1297-1305.
+* ClamAV, 2021. ClamAV. [online] Available from: https://www.clamav.net/ [Accessed 19 Jul 2023].
 * Encryption and decryption with AES GCM (n.d) Essential Programming Books. Available
   from: https://www.programming-books.io/essential/go/encryption-and-decryption-with-aes-gcm-474ffe54eb92473b908b5ef162789cad (
   Accessed: 16 July 2023).
+* File upload cheat sheet. OWASP [online] - OWASP Cheat Sheet Series. (
+  n.d.). Available from: https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html
 * Frykholm, N., 2000. Countermeasures against buffer overflow attacks. RSA Tech Note, pp.1-9.
 * Hameed, M.E., Ibrahim, M.M., Abd Manap, N. and Attiah, M.L., 2019. Comparative study of several operation modes of AES
   algorithm for encryption ECG biomedical signal. International Journal of Electrical and Computer Engineering, 9(6),
   p.4850.
-* Input validation cheat sheet(n.d), OWASP Input Validation - OWASP Cheat Sheet Series. Available
+* Input validation cheat sheet(n.d), OWASP Input Validation [online] - OWASP Cheat Sheet Series. Available
   from: https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html (Accessed: 18 July 2023).
 * Jones, M., Bradley, J. and Sakimura, N., 2015. Json web token (jwt) (No. rfc7519).
 * Josefsson, S. and Liusvaara, I., 2017. Edwards-curve digital signature algorithm (EdDSA) (No. rfc8032).
+* Harley, D., Myers, L. and Willems, E., 2011. Test Files and Product Evaluation: the Case for and against Malware
+  Simulation. In AVAR Conference.
 * Mushtaq, M.F., Jamel, S., Disina, A.H., Pindar, Z.A., Shakir, N.S.A. and Deris, M.M., 2017. A survey on the
   cryptographic encryption algorithms. International Journal of Advanced Computer Science and Applications, 8(11).
 * Pal, B., Islam, M., Bohuk, M.S., Sullivan, N., Valenta, L., Whalen, T., Wood, C., Ristenpart, T. and Chatterjee, R.,

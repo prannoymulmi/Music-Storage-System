@@ -1,7 +1,10 @@
 import hashlib
 import os
 
+from pyclamd import pyclamd
+
 from exceptions.data_not_found import DataNotFoundError
+from exceptions.virus_found import VirusFoundError
 
 
 class MusicUtils(object):
@@ -49,3 +52,27 @@ class MusicUtils(object):
         except Exception:
             raise DataNotFoundError(f'{path} not found')
 
+    @staticmethod
+    def scan_file(path):
+        try:
+            # Connect to ClamAV daemon
+            cd = pyclamd.ClamdAgnostic()
+
+            # Check if ClamAV daemon is running
+            if not cd.ping():
+                print("ClamAV daemon is not running.")
+                return
+
+            with open(path, 'rb') as f:
+                file_bytes = f.read()
+
+            # Scan the file bytes for viruses
+            result = cd.scan_stream(file_bytes)
+
+            # Check the scan result
+            if result is None:
+                print(f"{path}: No virus found")
+            else:
+                raise VirusFoundError(f"{path}: virus found")
+        except ValueError:
+            return
