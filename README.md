@@ -217,7 +217,7 @@ development makes it a strong choice for password storage.
 According to Input validation cheat sheet(n.d), OWASP the main goal of input validation is to prevent malformed data
 to be persisted in the database or the system to prevent malfunctioning. Input validations carried out:
 
-* Maximum and Minimum values range (Min 5 and Max 50 )for username and passwords.
+* Maximum and Minimum values range (Min 5 and Max 50 characters) for username and passwords.
 * Range check for integer so that no negative values and no max value of the integer are provided.
 * The file names also have a maximum length.
 * Allow list for types of Audio files such as (.mp3, .wav, aac, wma, ogg, and flac).

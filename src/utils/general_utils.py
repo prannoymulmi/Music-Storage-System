@@ -63,6 +63,7 @@ class GeneralUtils:
         elif os.path.getsize(path) >= MAX_LYRICS_FILE_SIZE:
             raise typer.BadParameter(
                 f'The max allowed size of audio file is  {MAX_LYRICS_FILE_SIZE / 1000000} MB')
+        MusicUtils.scan_file(path)
         return path
 
     @staticmethod

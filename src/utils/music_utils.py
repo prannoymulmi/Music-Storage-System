@@ -71,7 +71,7 @@ class MusicUtils(object):
 
             # Check the scan result
             if result is None:
-                print(f"{path}: No virus found")
+                print(f" For path: {path}, No virus found")
             else:
                 raise VirusFoundError(f"{path}: virus found")
         except ValueError:
