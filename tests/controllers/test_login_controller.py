@@ -7,8 +7,8 @@ from unittest.mock import patch, ANY
 import argon2
 import pytest
 from argon2.exceptions import VerifyMismatchError
-from exceptions.jwt_decode_error import JWTDecodeError
 
+from exceptions.jwt_decode_error import JWTDecodeError
 from exceptions.user_denied_exception import UserDeniedError
 from exceptions.user_not_found import UserNotFound
 from exceptions.weak_password import WeakPasswordError
@@ -243,7 +243,7 @@ class TestLoginController(unittest.TestCase):
         with self.mock_config:
             # Given
             mock_user_repo.return_value = True
-            mock_password_util.return_value = True
+            mock_password_util.return_value = False
             mock_password_util_pass_strength.return_value = True
 
             # When
@@ -254,10 +254,30 @@ class TestLoginController(unittest.TestCase):
                 login_controller.add_new_user(ANY, ANY, RoleNames.normal_user.value)
             mock_user_repo.assert_not_called()
 
+    @mock.patch.object(password_utils.PasswordUtil, "is_password_compromised_password_in_have_i_been_pawned")
+    @mock.patch.object(user_repository.UserRepository, "create_user_or_else_return_none")
+    def test_login_when_add_new_user_with_non_have_i_been_pawned_compliant_password_then_return_weak_password_error(
+            self,
+            mock_user_repo,
+            mock_password_util,
+    ):
+        with self.mock_config:
+            # Given
+            mock_user_repo.return_value = True
+            mock_password_util.return_value = True
+
+            # When
+            login_controller = LoginController()
+
+            # Then
+            with pytest.raises(WeakPasswordError, match="Error: Have I been pawned says the password is compromised"):
+                login_controller.add_new_user(ANY, ANY, RoleNames.normal_user.value)
+            mock_user_repo.assert_not_called()
+
     @mock.patch.object(user_repository.UserRepository, "create_user_or_else_return_none")
     def test_login_when_add_new_user_with_unknown_role_then_return_user_denied_error_with_role_not_found(
-           self,
-           mock_user_repo
+            self,
+            mock_user_repo
     ):
         with self.mock_config:
             # Given

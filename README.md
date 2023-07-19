@@ -6,7 +6,7 @@
 
 * <a href=https://www.python.org/downloads/release/python-390/> Python 3.9 or Greater</a>
 * <a href=https://pip.pypa.io/en/stable/installation/> pip 23.1.2 or Greater</a>
-* <a href=https://www.docker.com/>Docker</a>
+* <a href=https://www.docker.com/>Docker for running clamav</a>
 
 After installing the requirements, run the following commands in order
 

@@ -6,6 +6,8 @@ from repositories.user_repository import UserRepository
 
 '''
 For testing purposes the DB will will have an admin user whose credentials can be changed here.
+Without the initial User no other users can be created. Generally the database would not be local
+and would be hosted in a secure server but for the purpose of testing this function is necessary.
 '''
 def seed_database(session_from_config):
     role_repo: RoleRepository = RepositoryFactory().create_object("role_repo")
@@ -20,4 +22,5 @@ def seed_database(session_from_config):
         role_repo.create_and_add_role(session_from_config, role_normal_user)
 
         user_repo: UserRepository = RepositoryFactory().create_object("user_repo")
-        user_repo.create_user_or_else_return_none(session_from_config, "<CHANGED>", "<CHANGED>", role_admin.role_name)
+        user_repo.create_user_or_else_return_none(session_from_config, "PLEASE_CHANGE_USERNAME", "PLEASE_CHANGE_PASS",
+                                                  role_admin.role_name)

@@ -3,9 +3,10 @@ from repositories.role_repository import RoleRepository
 from repositories.user_repository import UserRepository
 from .abstract_factory import AbstractFactory
 
-
+"""
+The concrete implementation of the abstract factory to create repositories.
+"""
 class RepositoryFactory(AbstractFactory):
-    "The Factory Class for Repository"
     @staticmethod
     def create_object(some_property):
         "A static method to get a concrete product"

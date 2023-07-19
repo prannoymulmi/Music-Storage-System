@@ -13,6 +13,10 @@ from utils.decorator_utils import check_token_and_role
 from utils.music_utils import MusicUtils
 from utils.schema.music_data_output import MusicDataOutput
 
+"""
+A Controller which is responsible to handle all the actions related to creating/updating/reading/deleting 
+music data files in the application.
+"""
 
 class MusicDataController:
     __repo_factory: RepositoryFactory = None
@@ -28,6 +32,10 @@ class MusicDataController:
         self.__music_repo = self.__repo_factory.create_object("music_repo")
         self.__role_repo = self.__repo_factory.create_object("role_repo")
         self.__music_utils = MusicUtils.instance()
+
+    """
+    Method to create music data with lyrics, music and music scores. 
+    """
 
     def add_music_data(
             self,
@@ -49,6 +57,10 @@ class MusicDataController:
                                lyrics=lyrics_file
                                )
         self.__music_repo.create_and_add_new__music_data(self.__session, music_data)
+
+    """
+    Method which updates the music data either only for own user or admins, who can change everything.
+    """
 
     @check_token_and_role(role=["ADMIN", "NORMAL_USER"])
     def update_music_data(self, user_data: User, to_be_changed_music_data: MusicData):

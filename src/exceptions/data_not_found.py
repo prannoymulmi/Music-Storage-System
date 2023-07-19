@@ -1,5 +1,5 @@
 class DataNotFoundError(Exception):
-    """ Exception raised when the user is not authenticated or authorized.
+    """ Exception raised when the data in the database is nor found or file not found
 
     Attributes:
         message -- explanation of the error

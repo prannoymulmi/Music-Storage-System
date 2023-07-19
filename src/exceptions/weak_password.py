@@ -1,5 +1,5 @@
 class WeakPasswordError(Exception):
-    """ Exception raised when the user is not authenticated or authorized.
+    """ Exception raised when password is non-compliant to policies.
 
     Attributes:
         message -- explanation of the error

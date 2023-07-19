@@ -3,6 +3,7 @@ import sys
 
 import typer
 
+from exceptions.virus_found import VirusFoundError
 from utils.music_utils import MusicUtils
 
 MINIMUM_USER_PASS_VALUE = 5
@@ -40,7 +41,10 @@ class GeneralUtils:
         elif os.path.getsize(path) >= MAX_AUDIO_FILE_SIZE:
             raise typer.BadParameter(
                 f'The max allowed size of audio file is  {MAX_AUDIO_FILE_SIZE / 1000000} MB')
-        MusicUtils.scan_file(path)
+        try:
+            MusicUtils.scan_file(path)
+        except VirusFoundError as e:
+            raise typer.BadParameter(e.message)
         return path
 
     @staticmethod
@@ -63,7 +67,10 @@ class GeneralUtils:
         elif os.path.getsize(path) >= MAX_LYRICS_FILE_SIZE:
             raise typer.BadParameter(
                 f'The max allowed size of audio file is  {MAX_LYRICS_FILE_SIZE / 1000000} MB')
-        MusicUtils.scan_file(path)
+        try:
+            MusicUtils.scan_file(path)
+        except VirusFoundError as e:
+            raise typer.BadParameter(e.message)
         return path
 
     @staticmethod

@@ -3,6 +3,7 @@ from datetime import datetime
 
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
+from argon2.profiles import RFC_9106_HIGH_MEMORY
 
 from exceptions.jwt_decode_error import JWTDecodeError
 from exceptions.user_denied_exception import UserDeniedError
@@ -22,6 +23,9 @@ from utils.password_utils import PasswordUtil
 from utils.schema.token import Token
 from utils.schema.token_input import TokenInput
 
+"""
+A Controller which is responsible to handle all the actions related to login and adding users.
+"""
 
 class LoginController:
     __session = None
@@ -78,13 +82,15 @@ class LoginController:
         values = [member.value for member in RoleNames]
         if role not in values:
             raise UserDeniedError("role does not exist")
-        if PasswordUtil.is_password_compromised_password_in_have_i_been_pawned(password) or PasswordUtil.is_password_policy_non_compliant(password):
+        if PasswordUtil.is_password_compromised_password_in_have_i_been_pawned(password):
+            raise WeakPasswordError("Error: Have I been pawned says the password is compromised")
+        if PasswordUtil.is_password_policy_non_compliant(password):
             raise WeakPasswordError
         user_repo: UserRepository = self.__repo_factory.create_object("user_repo")
         user_repo.create_user_or_else_return_none(self.__session, username, password, role)
 
     def verify_hashed_password(self, hashed_password, password):
-        ph = PasswordHasher()
+        ph = PasswordHasher().from_parameters(RFC_9106_HIGH_MEMORY)
         try:
             return ph.verify(hashed_password, password)
         except VerifyMismatchError:

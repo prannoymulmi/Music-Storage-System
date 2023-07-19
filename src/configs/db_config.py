@@ -1,6 +1,10 @@
 from sqlmodel import Session, create_engine
 
-from models import user, role
+from models import user, role, music_data
+
+"""
+Configuration file for the database which generates the SQLite table locally.
+"""
 
 engine = create_engine(
     "sqlite:///test.db",
@@ -9,9 +13,12 @@ engine = create_engine(
 )
 
 """ A function which creates all the tables defined in the models if not created"""
+
+
 def create_db_and_tables():
     user.SQLModel.metadata.create_all(engine)
     role.SQLModel.metadata.create_all(engine)
+    music_data.SQLModel.metadata.create_all(engine)
 
 
 """

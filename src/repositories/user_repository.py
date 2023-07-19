@@ -1,9 +1,11 @@
 from typing import Any
 
 from argon2 import PasswordHasher
+from argon2.profiles import RFC_9106_HIGH_MEMORY
 from sqlalchemy.exc import NoResultFound
 from sqlmodel import Session, select
 
+from exceptions.user_denied_exception import UserDeniedError
 from exceptions.user_not_found import UserNotFound
 from models.role import Role
 from models.user import User
@@ -46,7 +48,7 @@ class UserRepository:
                                         ) -> Any:
         # does nothing if a user already exists
         if self.check_if_user_exists(username, session):
-            return
+            raise UserDeniedError("Error: cannot add user")
 
         # the staff is then saved in the database using the orm
         statement = select(Role).where(
@@ -55,7 +57,9 @@ class UserRepository:
         result = session.exec(statement)
         data: Role = result.one()
         # hashes the password into argon2id with random salt
-        ph = PasswordHasher()
+        # Using the first recommendation per RFC 9106 with high memory.
+        ph = PasswordHasher().from_parameters(RFC_9106_HIGH_MEMORY)
+
         hashed_password = ph.hash(password)
 
         db_user = User(username=username,

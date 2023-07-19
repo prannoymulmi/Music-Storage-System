@@ -5,7 +5,7 @@ from sqlalchemy import Column, DateTime
 from sqlmodel import Field
 from sqlmodel import SQLModel
 
-""" The database models, which the ORM uses to translate data into tables."""
+""" The database models, for music data which the ORM uses to translate data into tables."""
 class MusicData(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     music_score: int = Field(nullable=True)

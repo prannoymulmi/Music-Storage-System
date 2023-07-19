@@ -1,6 +1,5 @@
 class EncryptionError(Exception):
-    """ Exception raised when the user is not authenticated or authorized.
-
+    """ Exception raised when the data cannot be encrypted or decrypted
     Attributes:
         message -- explanation of the error
 

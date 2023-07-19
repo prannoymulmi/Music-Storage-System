@@ -1,11 +1,11 @@
+from controllers.login_controller import LoginController
 from controllers.music_data_controller import MusicDataController
 from .abstract_factory import AbstractFactory
-from controllers.login_controller import LoginController
 
-
+"""
+The concrete implementation of the abstract factory to create config loader.
+"""
 class ControllerFactory(AbstractFactory):
-    "The Factory Class for controller"
-
     def create_object(self, some_property):
         "A static method to get a concrete product"
         if some_property == 'login_controller':

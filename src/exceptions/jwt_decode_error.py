@@ -1,5 +1,5 @@
 class JWTDecodeError(Exception):
-    """ Exception raised when the user is not authenticated or authorized.
+    """ Exception raised when the jwt token cannot be issued or verified.
 
     Attributes:
         message -- explanation of the error
