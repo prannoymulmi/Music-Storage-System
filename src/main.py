@@ -16,9 +16,12 @@ from utils.schema.token_input import TokenInput
 
 app = typer.Typer()
 
-session = None
+"""
+The entry point to the CLI application, it uses Typer to make to empower the CLI app.
+"""
 
-
+"""
+"""
 @app.command()
 def login(
         username: Annotated[
