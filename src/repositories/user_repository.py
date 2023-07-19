@@ -10,7 +10,8 @@ from exceptions.user_not_found import UserNotFound
 from models.role import Role
 from models.user import User
 
-
+""" Using the repository pattern to create an abstraction between the model and database 
+logic separating the persistence concerns for user database."""
 class UserRepository:
     """ Get User Data based on name"""
 

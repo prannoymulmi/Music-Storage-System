@@ -5,7 +5,8 @@ from models.music_data import MusicData
 from models.user import User
 from utils.encryption_utils import EncryptionUtils
 
-
+""" Using the repository pattern to create an abstraction between the model and database 
+logic separating the persistence concerns for music database."""
 class MusicRepository:
 
     def get_music_data_by_user(self, session: Session,  user: User):

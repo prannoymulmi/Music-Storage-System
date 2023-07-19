@@ -4,7 +4,8 @@ from sqlmodel import Session, select
 
 from models.role import Role
 
-
+""" Using the repository pattern to create an abstraction between the model and database 
+logic separating the persistence concerns for role database."""
 class RoleRepository:
     """ Get User Data based on name"""
 
