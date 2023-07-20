@@ -33,7 +33,8 @@ jobs:
         run: |
           pytest
       - name: Security check - Bandit
-        uses: ./
+        run: |
+          bandit -r src
         with:
           python_version: ${{ matrix.python-version }}
           project_path: .
