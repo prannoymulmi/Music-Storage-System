@@ -6,19 +6,29 @@ from jwt import DecodeError
 
 from exceptions.jwt_decode_error import JWTDecodeError
 from utils.encryption_utils import EncryptionUtils
-# from jwt import (
-#     JWT,
-#     jwk_from_dict,
-#     jwk_from_pem, jwk_from_bytes,
-# )
-
 from utils.schema.token import Token
 from utils.schema.token_input import TokenInput
 
 
-class JWTUtils:
+class JWTUtils(object):
+    _instance = None
+
+    '''
+    Making the class singleton so the constructor throws an error when the object is instantiated 
+    '''
+
+    def __init__(self):
+        raise RuntimeError('Call instance() instead')
+
+    @classmethod
+    def instance(cls):
+        if cls._instance is None:
+            cls._instance = cls.__new__(cls)
+            # Put any initialization here.
+        return cls._instance
+
     """
-    Encode the message to JWT(JWS).
+    Method that encode the message to JWT(JWS) using EdDSA using Ed25519 Key to sign the jwt tokens.
     """
 
     @staticmethod

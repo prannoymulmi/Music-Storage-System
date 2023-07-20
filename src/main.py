@@ -172,7 +172,7 @@ def list_music_data(
             print(result)
     except UserDeniedError as e:
         print(e.message)
-    except Exception as e:
+    except RuntimeError as e:
         print(e.message)
 
 

@@ -13,6 +13,10 @@ class ConfigLoader:
     def __init__(self) -> None:
         super().__init__()
 
+    """
+    Method that load all the configurations that is required by the application.
+    """
+
     def load_config(self):
         create_db_and_tables()
         app_dir = typer.get_app_dir(self.APP_NAME)
@@ -27,6 +31,11 @@ class ConfigLoader:
             line = file.readline()
             os.environ["encryption_key"] = line.split("ENCRYPTION_KEY:")[1]
         else:
+            """
+             Create encryption key when the application starts.
+             if anyone deletes an existing key then a new key will be generated and the 
+             data encrypted with the old key cannot be decrypted.
+            """
             file = open(config_path_key, "w")
             key = str(uuid.uuid4())
             file.write(f'ENCRYPTION_KEY:{uuid.uuid4()}')

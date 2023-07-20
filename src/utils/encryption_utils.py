@@ -16,7 +16,23 @@ Block Size for AES-256 is 16 bytes. See <a href=https://www.cryptosys.net/manapi
 Code Referenced from <a href=https://nitratine.net/blog/post/python-gcm-encryption-tutorial/>
 '''
 
-class EncryptionUtils:
+class EncryptionUtils(object):
+    _instance = None
+
+    '''
+    Making the class singleton so the constructor throws an error when the object is instantiated 
+    '''
+
+    def __init__(self):
+        raise RuntimeError('Call instance() instead')
+
+    @classmethod
+    def instance(cls):
+        if cls._instance is None:
+            cls._instance = cls.__new__(cls)
+            # Put any initialization here.
+        return cls._instance
+
     """
     Method which implements the AES-256 encryption algorithm in GCM mode.
     The salt is generated using a pseudo random generator which is then used to create the nonce and tag values.

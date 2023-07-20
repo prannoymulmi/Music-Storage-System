@@ -13,7 +13,23 @@ MAX_AUDIO_FILE_SIZE = 35000000  # 35 MB
 MAX_LYRICS_FILE_SIZE = 2000000  # 2 MB
 
 
-class GeneralUtils:
+class GeneralUtils(object):
+    _instance = None
+
+    '''
+    Making the class singleton so the constructor throws an error when the object is instantiated 
+    '''
+
+    def __init__(self):
+        raise RuntimeError('Call instance() instead')
+
+    @classmethod
+    def instance(cls):
+        if cls._instance is None:
+            cls._instance = cls.__new__(cls)
+            # Put any initialization here.
+        return cls._instance
+
     @staticmethod
     def sanitize_user_name_and_password_input(value):
         if len(value) > MAX_USER_PASS_VALUE or len(value) < MINIMUM_USER_PASS_VALUE:

@@ -7,7 +7,23 @@ from pydantic.fields import defaultdict
 HAVE_I_BEEN_PAWNED_URL = "https://api.pwnedpasswords.com/range/{}"
 
 
-class PasswordUtil:
+class PasswordUtil(object):
+    _instance = None
+
+    '''
+    Making the class singleton so the constructor throws an error when the object is instantiated 
+    '''
+
+    def __init__(self):
+        raise RuntimeError('Call instance() instead')
+
+    @classmethod
+    def instance(cls):
+        if cls._instance is None:
+            cls._instance = cls.__new__(cls)
+            # Put any initialization here.
+        return cls._instance
+
     @staticmethod
     def is_password_compromised_password_in_have_i_been_pawned(passwd: str) -> bool:
         # The API requires the password to be hashed in SHA1.
