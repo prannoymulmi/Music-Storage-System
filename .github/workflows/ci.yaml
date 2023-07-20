@@ -35,11 +35,6 @@ jobs:
       - name: Security check - Bandit
         run: |
           bandit -r src
-        with:
-          python_version: ${{ matrix.python-version }}
-          project_path: .
-          ignore_failure: true
-
       - name: Security check report artifacts
         uses: actions/upload-artifact@v1
         # if: failure()
