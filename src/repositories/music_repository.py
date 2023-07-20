@@ -8,15 +8,18 @@ from utils.encryption_utils import EncryptionUtils
 """ Using the repository pattern to create an abstraction between the model and database 
 logic separating the persistence concerns for music database."""
 class MusicRepository:
+    """
+    Method which gets the music data from the database by user
+    """
 
-    def get_music_data_by_user(self, session: Session,  user: User):
+    def get_music_data_by_user(self, session: Session, user: User):
         statement = select(MusicData).where(
             MusicData.user_id == user.id)
 
         result = session.exec(statement)
         return self.decrypt_list_all_music_data(result)
 
-    def get_music_data_by_music_id(self, session: Session,  music_id: int):
+    def get_music_data_by_music_id(self, session: Session, music_id: int):
         statement = select(MusicData).where(
             MusicData.id == music_id)
 

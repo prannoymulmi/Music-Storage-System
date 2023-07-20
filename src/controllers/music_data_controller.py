@@ -144,9 +144,14 @@ class MusicDataController:
             ))
         return result_output
 
+    """
+    Controller method which deletes the music data from the database and checks if the user is authorized.
+    """
+
     @check_token_and_role(role=["ADMIN", "NORMAL_USER"])
     def delete_music_data(self, user: User, music_id: int):
         try:
+            # Role repository and music repositories used to perform database actions
             role: Role = self.__role_repo.get_role_by_id(self.__session, user.role_id)
             data: MusicData = self.__music_repo.get_music_data_by_music_id(self.__session, music_id)
             if role.role_name == "ADMIN" or data.user_id == user.id:

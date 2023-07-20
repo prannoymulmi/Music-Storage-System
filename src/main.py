@@ -21,6 +21,9 @@ The entry point to the CLI application, it uses Typer to make to empower the CLI
 """
 
 """
+The method which handles the login of users with all the other input sanitization step.
+This method will create a signed JWT token stored encrypted in the local machine. This token
+can be used to only list the data for users without re authentication, given the token is valid.
 """
 @app.command()
 def login(
@@ -29,6 +32,7 @@ def login(
         password: Annotated[str, typer.Option(prompt=True, hide_input=True,
                                               callback=GeneralUtils.sanitize_user_name_and_password_input)]
 ):
+    # Using Factory pattern to create controller instances
     controller: LoginController = ControllerFactory().create_object("login_controller")
     try:
         result = controller.login(username, password)
@@ -38,19 +42,38 @@ def login(
         print(e.message)
 
 
+"""
+The method which handles adding new user with roles with all the other input sanitization step and authorization and authentication
+process required for this action.
+It is to be noted that only Admins are allowed to perform this operation.
+"""
 @app.command()
 def add_new_user_and_role(
         username_admin: Annotated[
-            str, typer.Option(prompt=True, callback=GeneralUtils.sanitize_user_name_and_password_input)],
+            str, typer.Option(
+                prompt=True,
+                callback=GeneralUtils.sanitize_user_name_and_password_input
+            )],
         password_admin: Annotated[
-            str, typer.Option(prompt=True, hide_input=True,
-                              callback=GeneralUtils.sanitize_user_name_and_password_input)],
-        new_username: str = typer.Option("Please add new username?", prompt=True,
-                                         callback=GeneralUtils.sanitize_user_name_and_password_input),
-        new_user_password: str = typer.Option("password?", confirmation_prompt=True, hide_input=True,
-                                              callback=GeneralUtils.sanitize_user_name_and_password_input),
+            str, typer.Option(
+                prompt=True,
+                hide_input=True,
+                callback=GeneralUtils.sanitize_user_name_and_password_input
+            )],
+        new_username: str = typer.Option(
+            "Please add new username?",
+            prompt=True,
+            callback=GeneralUtils.sanitize_user_name_and_password_input
+        ),
+        new_user_password: str = typer.Option(
+            "password?",
+            confirmation_prompt=True,
+            hide_input=True,
+            callback=GeneralUtils.sanitize_user_name_and_password_input
+        ),
         role: str = typer.Option("ROLE - ADMIN or NORMAL_USER", confirmation_prompt=True)
 ):
+    # Using Factory pattern to create controller instances
     controller: LoginController = ControllerFactory().create_object("login_controller")
     try:
         controller.login(username_admin, password_admin)
@@ -63,6 +86,10 @@ def add_new_user_and_role(
         print(e.message)
 
 
+"""
+The method which handles the adding new data with all the other input sanitization step and authorization and authentication
+process required for this action.
+"""
 @app.command()
 def add_music_data(
         username: Annotated[
@@ -73,6 +100,7 @@ def add_music_data(
         music_score: int = typer.Option(callback=GeneralUtils.sanitize_int_input),
         lyrics_file_path: str = typer.Option(callback=GeneralUtils.sanitize_lyrics_file_input)
 ):
+    # Using Factory pattern to create controller instances
     controller_login: LoginController = ControllerFactory().create_object("login_controller")
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
     try:
@@ -83,6 +111,10 @@ def add_music_data(
         print(e.message)
 
 
+"""
+The method which handles the update data with all the other input sanitization step and authorization and authentication
+process required for this action.
+"""
 @app.command()
 def update_music_data(
         username: str = typer.Option(default="", callback=GeneralUtils.sanitize_user_name_and_password_input),
@@ -93,6 +125,7 @@ def update_music_data(
         lyrics_file_path: str = typer.Option(default="", callback=GeneralUtils.sanitize_lyrics_file_input),
         music_data_id: int = typer.Option(callback=GeneralUtils.sanitize_int_input)
 ):
+    # Using Factory pattern to create controller instances
     controller_login: LoginController = ControllerFactory().create_object("login_controller")
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
     try:
@@ -115,8 +148,6 @@ def update_music_data(
 This method only list the music data. If the user is an admin they can see all the user data, but a normal user
 can only see their own data.
 '''
-
-
 @app.command()
 def list_music_data(
         username: str = typer.Option(default="CHECK_TOKEN",
@@ -124,11 +155,13 @@ def list_music_data(
         password: str = typer.Option(hide_input=True, default="CHECK_TOKEN",
                                      callback=GeneralUtils.sanitize_user_name_and_password_input)
 ):
+    # Using Factory pattern to create controller instances
     controller_login: LoginController = ControllerFactory().create_object("login_controller")
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
     try:
         data: TokenInput
-        # If username and password are empty check if there is a valid token and get user details
+        """If username and password are default value (non input provided), then check 
+        if there is a valid token and get user details"""
         if username == "CHECK_TOKEN" and password == "CHECK_TOKEN":
             data = controller_login.get_details_for_token()
         else:
@@ -143,12 +176,17 @@ def list_music_data(
         print(e.message)
 
 
+"""
+The method which handles the delete the data with all the other input sanitization step and authorization and authentication
+process required for this action.
+"""
 @app.command()
 def delete_music_data(
         username: str = typer.Option(callback=GeneralUtils.sanitize_user_name_and_password_input),
         password: str = typer.Option(hide_input=True, callback=GeneralUtils.sanitize_user_name_and_password_input),
         music_data_id: int = typer.Option(callback=GeneralUtils.sanitize_int_input)
 ):
+    # Using Factory pattern to create controller instances
     controller_login: LoginController = ControllerFactory().create_object("login_controller")
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
     try:
@@ -159,12 +197,17 @@ def delete_music_data(
         print(e.message)
 
 
+"""
+The method which handles the download data with all the other input sanitization step and authorization and authentication
+process required for this action.
+"""
 @app.command()
 def download_music_data(
         username: str = typer.Option(callback=GeneralUtils.sanitize_user_name_and_password_input),
         password: str = typer.Option(hide_input=True, callback=GeneralUtils.sanitize_user_name_and_password_input),
         music_data_id: int = typer.Option(callback=GeneralUtils.sanitize_int_input)
 ):
+    # Using Factory pattern to create controller instances
     controller_login: LoginController = ControllerFactory().create_object("login_controller")
     controller_music: MusicDataController = ControllerFactory().create_object("music_controller")
     try:

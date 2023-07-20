@@ -17,6 +17,11 @@ Code Referenced from <a href=https://nitratine.net/blog/post/python-gcm-encrypti
 '''
 
 class EncryptionUtils:
+    """
+    Method which implements the AES-256 encryption algorithm in GCM mode.
+    The salt is generated using a pseudo random generator which is then used to create the nonce and tag values.
+    """
+
     @staticmethod
     def encrypt(password):
         key = EncryptionUtils.get_encryption_key()
@@ -26,6 +31,7 @@ class EncryptionUtils:
         private_key = scrypt(key, salt, key_len=32, N=2 ** 17, r=8, p=1)
 
         # create cipher config
+        # using the salt the nonce and the tags for the encryption is never reused
         cipher_config = AES.new(private_key, AES.MODE_GCM)
 
         if type(password) == bytes:
@@ -35,6 +41,12 @@ class EncryptionUtils:
             cipher_text, tag = cipher_config.encrypt_and_digest(bytes(password, 'utf-8'))
         # In Format cipher_text:salt:nonce:tag
         return f"{b64encode(cipher_text).decode('utf-8')}:{b64encode(salt).decode('utf-8')}:{b64encode(cipher_config.nonce).decode('utf-8')}:{b64encode(tag).decode('utf-8')}"
+
+    """
+    Method which implements the AES-256 decryption algorithm in GCM mode.
+    For decryption the nonce value and the tag value generate during encryption is required.
+    These values help in achieving authenticated encryption. See Readme for reference. 
+    """
 
     @staticmethod
     def decrypt(encrypted_text):
@@ -73,6 +85,6 @@ class EncryptionUtils:
         try:
             key = os.environ.get("encryption_key")
         except Exception:
-            raise EncryptionError("Error: Kee cannot be found")
+            raise EncryptionError("Error: Key cannot be found")
             # generate a random salt
         return key
