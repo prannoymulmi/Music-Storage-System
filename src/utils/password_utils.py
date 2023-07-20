@@ -40,11 +40,11 @@ class PasswordUtil:
         """
         (?=.*[A-Z].*[A-Z]) ensures there are at least two uppercase letters.
         (?=.*[a-z].*[a-z]) ensures there are at least two lowercase letters.
-        (?=.*\d.*\d) ensures there are at least two digits.
+        (?=.*\\d.*\\d) ensures there are at least two digits.
         (?=.*[-+_!@#$%^&*.,?].*[-+_!@#$%^&*.,?]) ensures there are at least two special characters (-+_!@#$%^&*.,?).
         .{8,} matches any character (except newline) at least 8 times.
         """
 
-        pattern = "^(?=.*[A-Z].*[A-Z])(?=.*[a-z].*[a-z])(?=.*\d.*\d)(?=.*[+-_@#$%^&*.,?!].*[+-_@#$%^&*.,?!]).{8,30}$"
+        pattern = r"^(?=.*[A-Z].*[A-Z])(?=.*[a-z].*[a-z])(?=.*\d.*\d)(?=.*[-+_!@#$%^&*.,?].*[-+_!@#$%^&*.,?]).{8,30}$"
         matches = re.match(pattern, passwd)
         return matches is None
