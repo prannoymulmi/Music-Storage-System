@@ -28,7 +28,16 @@ jobs:
           ruff --format=github --target-version=py39 .
       - name: Check Cyclic Complexity
         run: |
-           radon cc -a src
+          radon cc -a src
       - name: Test with pytest
         run: |
           pytest
+      - name: Security check - Bandit
+        run: |
+          bandit -r src
+      - name: Security check report artifacts
+        uses: actions/upload-artifact@v1
+        # if: failure()
+        with:
+          name: Security report
+          path: output/security_report.txt
