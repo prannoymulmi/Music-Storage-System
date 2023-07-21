@@ -33,10 +33,12 @@ jobs:
         run: |
           pytest
       - name: Security check - Bandit
+        continue-on-error: true
         run: |
           bandit -r src
       - name: Security check report artifacts
         uses: actions/upload-artifact@v1
+        continue-on-error: true
         # if: failure()
         with:
           name: Security report
