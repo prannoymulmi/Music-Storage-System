@@ -223,6 +223,20 @@ development makes it a strong choice for password storage.
   are discouraged from attempting to crack passwords because the memory requirement ensures that they must invest
   significant resources to mount successful attacks.
 
+``` python
+'''
+This is the first recommendation from  RFC9106 which is recommended 
+to protect against side-channel attacks (Biryukov, Dinu, & Khovratovich, 2021). 
+'''
+RFC_9106_HIGH_MEMORY = Parameters( 
+    salt_len=16, 
+    hash_len=32, 
+    time_cost=1, 
+    memory_cost=2097152,  # 2 GiB 
+    parallelism=4, 
+) 
+```
+
 #### Input Validation and sanitization
 
 According to Input validation cheat sheet(n.d), OWASP the main goal of input validation is to prevent malformed data
@@ -268,6 +282,8 @@ implemented:
 
 ### References
 
+* Biryukov, A., Dinu, D., & Khovratovich, D. (2021). The Memory-Hard Argon2 Password Hash Function.
+  RFC 9106. IETF. Available from: https://datatracker.ietf.org/doc/rfc9106/
 * Bisheh-Niasar, M., Azarderakhsh, R. and Mozaffari-Kermani, M., 2021. Cryptographic accelerators for digital signature
   based on Ed25519. IEEE Transactions on Very Large Scale Integration (VLSI) Systems, 29(7), pp.1297-1305.
 * ClamAV, 2021. ClamAV. [online] Available from: https://www.clamav.net/ [Accessed 19 Jul 2023].
@@ -299,3 +315,4 @@ implemented:
   International Symposium on Circuits and Systems (pp. 4-pp). IEEE.
 * Yadav, S., Ahmad, K. and Shekhar, J., 2011. Classification and prevention techniques of buffer overflow attacks. In
   Proceedings of the 5th National Conference (pp. 10-11).
+ 
