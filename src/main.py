@@ -219,6 +219,9 @@ def download_music_data(
         print(e.message)
 
 
+"""
+The method that loads all the configurations that the application needs to start. 
+"""
 def load_app_config() -> Session:
     loader = ConfigFactory().create_object('config_loader')
     session_from_config = loader.load_config()

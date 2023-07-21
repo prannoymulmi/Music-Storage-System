@@ -98,12 +98,15 @@ coverage html && open htmlcov/index.html
 | pyclamd       | Used to scan files for viruses                      |
 
 #### Security testing and unit testing dependencies
+
 | Library | Description                                                                                                                                                                                                                                               |
 |---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Pytest  | The library use for simplifying the process of writing and running tests, promoting code quality and preventing the introduction of errors                                                                                                                |
 | Bandit  | Python security linter designed to spot potential security issues in Python code. It flags common security issues in Python code and exposes any related Common Weakness Enumerations (CWEs), thereby aiding in the prevention of security vulnerabilitie |
 | Ruff    | A Python linter that helps to identify problematic areas in your code following PEP8 standards, aiming to promote a more readable and consistent coding style                                                                                             |
 | Safety  | Safety is a Python library that checks your installed dependencies for known security vulnerabilities and helps to prevent the use of insecure packages                                                                                                   |
+
+## Security Mitigations applied
 
 ### Role-based access control
 
@@ -188,9 +191,9 @@ below:
 
 Pattern(
     length=8,  # min length: 8
-    uppercase=1,  # need min. 1 uppercase letters
-    numbers=1,  # need min. 1 digits
-    special=1,  # need min. 1 special characters
+    uppercase=2,  # need min. 1 uppercase letters
+    numbers=2,  # need min. 1 digits
+    special=2,  # need min. 1 special characters
     max-length=30,  # need min. 30 max length
 )
 password_pattern = "^(?=.*?[A-Z]{2,})(?=.*?[a-z]{2,})(?=.*?[0-9]{2,})(?=.*?[\[\]<>#?!@$%^&*-]{2,}).{8,30}$"
