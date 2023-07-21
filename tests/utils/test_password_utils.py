@@ -1,12 +1,24 @@
 from pathlib import Path
 from unittest.mock import MagicMock
 
+import pytest
 import requests
 
 from utils.password_utils import PasswordUtil
 
 COMPLIANT_PASSWORD = "Amazing$GoodPassW0rd$4&?"
 NON_COMPLIANT_PASSWORD = "test"
+
+
+def test_password_util_is_singleton():
+    password_instance = PasswordUtil.instance()
+    assert isinstance(password_instance, PasswordUtil)
+
+
+def test_password_util_is_throws_error_if_tried_to_create_object():
+    with pytest.raises(RuntimeError):
+        PasswordUtil()
+
 
 def test_check_is_password_compromised_password_in_have_i_been_pawned_when_breached_password_is_given_then_true_is_returned():
     with open(f"{Path(__file__).parent.parent}/utils/test_password_hashes.txt") as f:

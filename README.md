@@ -77,13 +77,25 @@ python src/main.py download-music-data --username <CHANGE_USER> --password <CHAN
 
 ### Run tests with coverage
 
-To prove the
+The following commands runs the unit tests present in the project and also calculates its coverage
 
 ```bash
+# This is for linux and mac os
 coverage run --source=src -m pytest -v tests && coverage report -m 
 
 # Generate result in 
 coverage html && open htmlcov/index.html  
+```
+
+```bash
+# This is for windows OS
+coverage run --source=src -m pytest -v tests 
+
+coverage report -m 
+
+# Generate result in 
+coverage html 
+open htmlcov/index.html  
 ```
 
 ### Libraries Used

@@ -8,6 +8,16 @@ from utils.general_utils import GeneralUtils, MAX_FILE_NAME_LENGTH, MINIMUM_USER
     MAX_AUDIO_FILE_SIZE, MAX_LYRICS_FILE_SIZE
 
 
+def test_general_util_is_singleton():
+    instance = GeneralUtils.instance()
+    assert isinstance(instance, GeneralUtils)
+
+
+def test_general_util_is_throws_error_if_tried_to_create_object():
+    with pytest.raises(RuntimeError):
+        GeneralUtils()
+
+
 def test_sanitize_user_name_and_password_input_with_correct_value_then_string_is_returned():
     valid_string = "username1"
     result = GeneralUtils.sanitize_user_name_and_password_input(valid_string)

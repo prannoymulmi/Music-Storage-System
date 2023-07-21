@@ -7,14 +7,14 @@ import pytest
 from freezegun import freeze_time
 
 from exceptions.jwt_decode_error import JWTDecodeError
-# from exceptions.jwt_decode_error import JWTDecodeError
-# from jwt.utils import get_int_from_datetime
-
 from models.role import Role
 from models.user import User
 from utils.jwt_utils import JWTUtils
 from utils.schema.token import Token
 from utils.schema.token_input import TokenInput
+
+# from exceptions.jwt_decode_error import JWTDecodeError
+# from jwt.utils import get_int_from_datetime
 
 """
 Using freeze time to mock date and time, 
@@ -40,22 +40,14 @@ def test_encode_jwt_when_default_sub_then_encode_is_called_with_right_parameters
                                    ))
     mock_jwt.assert_called_with(expected_message.dict(), ANY, algorithm='EdDSA')
 
-# def test():
-#     private_key = Ed25519PrivateKey.generate()
-#     private_key_bytes = private_key.private_bytes(encoding=Encoding.PEM, format=PrivateFormat.PKCS8,
-#                                     encryption_algorithm=NoEncryption())
-#     public_key_bytes = private_key.public_key().public_bytes(encoding=Encoding.PEM, format=PublicFormat.SubjectPublicKeyInfo)
-#     print(private_key_bytes)
-#     print(public_key_bytes)
-#     res = JWTUtils.encode_jwt(TokenInput(user_data=User(id=1),
-#                                    role=Role(
-#                                        id=1,
-#                                        role_name="test"
-#                                    )
-#                                    ))
-#     res_dec = JWTUtils.decode_jwt(res)
-#     print(res_dec)
+def test_jwt_util_is_singleton():
+    instance = JWTUtils.instance()
+    assert isinstance(instance, JWTUtils)
 
+
+def test_jwt_util_is_throws_error_if_tried_to_create_object():
+    with pytest.raises(RuntimeError):
+        JWTUtils()
 
 def test_decode_jwt_when_correct_valid_token_then_returns_decoded_token():
     expected_token = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtdXNpY19zdG9yYWdlX3N5c3RlbSIsInN1YiI6IjEiLCJpYXQiOjE2ODk0MjMwMDcsImV4cCI6NDg0MzAyMzAwNywidXNlcl9pZCI6IjEiLCJwZXJtaXNzaW9ucyI6WyJ0ZXN0Il19.2XNOlPdNAiMwY6cR8qDO3jDLmkecVsWAStdXO0syZPRrZVPgF-cEGq5fI6CWfHySnc-EltiJ5WRWwf_yE6CpCA"
