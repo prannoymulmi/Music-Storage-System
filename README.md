@@ -116,13 +116,13 @@ open htmlcov/index.html
 
 #### Security testing and unit testing dependencies
 
-| Library | Description                                                                                                                                                                                                                                               |
-|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Pytest  | The library use for simplifying the process of writing and running tests, promoting code quality and preventing the introduction of errors                                                                                                                |
-| Bandit  | Python security linter designed to spot potential security issues in Python code. It flags common security issues in Python code and exposes any related Common Weakness Enumerations (CWEs), thereby aiding in the prevention of security vulnerabilitie |
-| Ruff    | A Python linter that helps to identify problematic areas in your code following PEP8 standards, aiming to promote a more readable and consistent coding style                                                                                             |
-| Safety  | Safety is a Python library that checks your installed dependencies for known security vulnerabilities and helps to prevent the use of insecure packages                                                                                                   |
-
+| Library    | Description                                                                                                                                                                                                                                               |
+|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Pytest     | The library use for simplifying the process of writing and running tests, promoting code quality and preventing the introduction of errors                                                                                                                |
+| Bandit     | Python security linter designed to spot potential security issues in Python code. It flags common security issues in Python code and exposes any related Common Weakness Enumerations (CWEs), thereby aiding in the prevention of security vulnerabilitie |
+| Ruff       | A Python linter that helps to identify problematic areas in your code following PEP8 standards, aiming to promote a more readable and consistent coding style                                                                                             |
+| Safety     | Safety is a Python library that checks your installed dependencies for known security vulnerabilities and helps to prevent the use of insecure packages                                                                                                   |
+| pythonfuzz | Fuzzer to test the program                                                                                                                                                                                                                                |
 ## Security Mitigations applied
 
 ### Role-based access control
