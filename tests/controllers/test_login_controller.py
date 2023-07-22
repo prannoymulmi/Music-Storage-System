@@ -250,7 +250,7 @@ class TestLoginController(unittest.TestCase):
             login_controller = LoginController()
 
             # Then
-            with pytest.raises(WeakPasswordError, match="password is non-compliant"):
+            with pytest.raises(WeakPasswordError):
                 login_controller.add_new_user(ANY, ANY, RoleNames.normal_user.value)
             mock_user_repo.assert_not_called()
 

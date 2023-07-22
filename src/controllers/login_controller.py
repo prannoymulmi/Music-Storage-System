@@ -27,6 +27,7 @@ from utils.schema.token_input import TokenInput
 A Controller which is responsible to handle all the actions related to login and adding users.
 """
 
+
 class LoginController:
     __session = None
     __repo_factory: RepositoryFactory = None
@@ -41,12 +42,11 @@ class LoginController:
         self.__user_repo = self.__repo_factory.create_object("user_repo")
         self.__role_repo = self.__repo_factory.create_object("role_repo")
 
-
     @encode_and_store_jwt
     def login(self, username, password):
         try:
             user: User = self.__user_repo.get_user_by_username(self.__session, username)
-            time_delta = (datetime.utcnow().timestamp() - user.last_login_attempt.timestamp())/60
+            time_delta = (datetime.utcnow().timestamp() - user.last_login_attempt.timestamp()) / 60
             if user.login_counter > 5 and time_delta <= 10:
                 raise UserDeniedError("User is blocked")
             if self.verify_hashed_password(user.password, password):
@@ -59,7 +59,6 @@ class LoginController:
                 raise UserDeniedError("access_denied")
         except UserNotFound:
             raise UserDeniedError("Username or password is wrong")
-
 
     def get_details_for_token(self):
         try:
@@ -85,7 +84,9 @@ class LoginController:
         if PasswordUtil.is_password_compromised_password_in_have_i_been_pawned(password):
             raise WeakPasswordError("Error: Have I been pawned says the password is compromised")
         if PasswordUtil.is_password_policy_non_compliant(password):
-            raise WeakPasswordError
+            raise WeakPasswordError(
+                "Password is non complaint, must have at least two capital, two small, two digits, and two special "
+                "characters (-+_!@#%^&*.,?)")
         user_repo: UserRepository = self.__repo_factory.create_object("user_repo")
         user_repo.create_user_or_else_return_none(self.__session, username, password, role)
 
