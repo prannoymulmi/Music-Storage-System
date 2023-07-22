@@ -1,12 +1,13 @@
 import random
+import string
+
+from rich import print
 
 from factories.repository_factory import RepositoryFactory
 from models.role import Role
 from models.role_names import RoleNames
 from repositories.role_repository import RoleRepository
 from repositories.user_repository import UserRepository
-import string
-from rich import print
 
 '''
 For testing purposes the DB will will have an admin user whose credentials can be changed here.
@@ -38,7 +39,7 @@ Generates random Password for the initial run
 
 
 def generate_password():
-    special_chars = '!@#$%^&*()_-+=<>?'
+    special_chars = '!@#%^&*()_-+=<>?'
     uppercase_letters = string.ascii_uppercase
     lowercase_letters = string.ascii_lowercase
     digits = string.digits
