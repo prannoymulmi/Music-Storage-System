@@ -47,6 +47,9 @@ radon cc -a src
 ### Commands for the application
 
 ``` bash
+# Initialize the program
+python src/main.py init
+
 # Add-new-role
 python src/main.py add-new-user-and-role --username-admin <CHANGE_USER> --password-admin <CHANGE_PASSWORD> --new-username <CHANGE_USER>--new-user-password <CHANGE_PASSWORD> --role NORMAL_USER
 

@@ -219,13 +219,21 @@ def download_music_data(
         print(e.message)
 
 
+@app.command()
+def init():
+    load_app_config(True)
+
+
 """
 The method that loads all the configurations that the application needs to start. 
 """
-def load_app_config() -> Session:
+
+
+def load_app_config(is_init: bool = False) -> Session:
     loader = ConfigFactory().create_object('config_loader')
     session_from_config = loader.load_config()
-    seed_database(session_from_config)
+    if is_init:
+        seed_database(session_from_config)
     return session_from_config
 
 

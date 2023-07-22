@@ -7,7 +7,7 @@ Configuration file for the database which generates the SQLite table locally.
 """
 
 engine = create_engine(
-    "sqlite:///test.db",
+    "sqlite:///music_storage.db",
     connect_args={'check_same_thread': False},
     echo=False
 )
