@@ -120,9 +120,9 @@ def update_music_data(
         username: str = typer.Option(default="", callback=GeneralUtils.sanitize_user_name_and_password_input),
         password: str = typer.Option(hide_input=True, default="",
                                      callback=GeneralUtils.sanitize_user_name_and_password_input),
-        music_file_path: str = typer.Option(default="", callback=GeneralUtils.sanitize_music_file_input),
+        music_file_path: str = typer.Option(default="EMPTY", callback=GeneralUtils.sanitize_music_file_input),
         music_score: int = typer.Option(default=0, callback=GeneralUtils.sanitize_int_input),
-        lyrics_file_path: str = typer.Option(default="", callback=GeneralUtils.sanitize_lyrics_file_input),
+        lyrics_file_path: str = typer.Option(default="EMPTY", callback=GeneralUtils.sanitize_lyrics_file_input),
         music_data_id: int = typer.Option(callback=GeneralUtils.sanitize_int_input)
 ):
     # Using Factory pattern to create controller instances

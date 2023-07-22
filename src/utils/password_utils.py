@@ -61,6 +61,6 @@ class PasswordUtil(object):
         .{8,} matches any character (except newline) at least 8 times.
         """
 
-        pattern = r"^(?=.*[A-Z].*[A-Z])(?=.*[a-z].*[a-z])(?=.*\d.*\d)(?=.*[-+_!@#$%^&*.,?].*[-+_!@#$%^&*.,?]).{8,30}$"
+        pattern = r"^(?=.*[A-Z].*[A-Z])(?=.*[a-z].*[a-z])(?=.*\d.*\d)(?=.*[-+_!@#%^&*.,?].*[-+_!@#%^&*.,?]).{8,50}$"
         matches = re.match(pattern, passwd)
         return matches is None

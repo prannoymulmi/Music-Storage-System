@@ -46,6 +46,8 @@ class GeneralUtils(object):
 
     @staticmethod
     def sanitize_music_file_input(path: str):
+        if path == "EMPTY":
+            return
         allowed_file_types_audio = [".mp3", ".aac", ".wav", ".wma", ".flac"]
         _, file_extension = os.path.splitext(path)
         filename = os.path.basename(path)
@@ -72,6 +74,8 @@ class GeneralUtils(object):
 
     @staticmethod
     def sanitize_lyrics_file_input(path: str):
+        if path == "EMPTY":
+            return
         allowed_file_types_lyrics = [".lrc", ".txt"]
         _, file_extension = os.path.splitext(path)
         filename = os.path.basename(path)
