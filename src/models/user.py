@@ -14,7 +14,7 @@ class User(SQLModel, table=True):
     hash_method: str = Field(nullable=True)
     modified_timestamp: datetime = Field(
         sa_column=Column(DateTime,
-                         onupdate=datetime.now(),
+                         onupdate=datetime.utcnow(),
                          nullable=False,
                          default=datetime.utcnow()
                          )

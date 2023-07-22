@@ -17,7 +17,7 @@ class MusicData(SQLModel, table=True):
     user_id: Optional[int] = Field(default=None, foreign_key="user.id")
     modified_timestamp: datetime = Field(
         sa_column=Column(DateTime,
-                         onupdate=datetime.now(),
+                         onupdate=datetime.utcnow(),
                          nullable=False,
                          default=datetime.utcnow()
                          )
