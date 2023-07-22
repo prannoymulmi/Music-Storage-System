@@ -162,7 +162,7 @@ def list_music_data(
         data: TokenInput
         """If username and password are default value (non input provided), then check 
         if there is a valid token and get user details"""
-        if username == "CHECK_TOKEN" and password == "CHECK_TOKEN":
+        if username == "CHECK_TOKEN" and password == "CHECK_TOKEN": # nosec
             data = controller_login.get_details_for_token()
         else:
             data = controller_login.login(username, password)

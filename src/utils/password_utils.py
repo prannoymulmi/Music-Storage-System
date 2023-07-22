@@ -27,7 +27,11 @@ class PasswordUtil(object):
     @staticmethod
     def is_password_compromised_password_in_have_i_been_pawned(passwd: str) -> bool:
         # The API requires the password to be hashed in SHA1.
-        sha1 = hashlib.sha1()
+        """
+        Bandit false positive, as only the last 5 characters of the hash is tranamistted
+        to have I been pawned at it requires SHA1.
+        """
+        sha1 = hashlib.sha1() # nosec
         sha1.update(passwd.encode())
         hex_digest = sha1.hexdigest().upper()
         """
