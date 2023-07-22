@@ -26,7 +26,7 @@ def seed_database(session_from_config):
 
         user_repo: UserRepository = RepositoryFactory().create_object("user_repo")
         password = generate_password()
-        print(f"[bold red]Please Copy the use the user and password as the initial admin user[bold red]")
+        print("[bold red]Please Copy the use the user and password as the initial admin user[bold red]")
         print(f"[bold green]Initial user name: admin and password: {password} [bold green]")
         user_repo.create_user_or_else_return_none(session_from_config, "admin", password,
                                                   role_admin.role_name)
