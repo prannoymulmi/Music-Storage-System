@@ -73,6 +73,7 @@ def add_new_user_and_role(
         ),
         role: str = typer.Option("ROLE - ADMIN or NORMAL_USER", confirmation_prompt=True)
 ):
+    print(f'New Pass: {new_user_password}')
     # Using Factory pattern to create controller instances
     controller: LoginController = ControllerFactory().create_object("login_controller")
     try:

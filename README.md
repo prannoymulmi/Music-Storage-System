@@ -47,7 +47,9 @@ radon cc -a src
 ### Commands for the application
 
 ``` bash
-# Initialize the program
+# Initialize the program (Must be done only for the first time when setting the application)
+# This command creates a initial user name and password which is an admin that can be used.
+#Example: Initial user name: admin and password: #TWuJJ&BbMWbAnS*5r1J 
 python src/main.py init
 
 # Add-new-role
@@ -206,12 +208,12 @@ below:
 
 Pattern(
     length=8,  # min length: 8
-    uppercase=2,  # need min. 1 uppercase letters
-    numbers=2,  # need min. 1 digits
-    special=2,  # need min. 1 special characters
-    max-length=30,  # need min. 30 max length
+    uppercase=2,  # need min. 2 uppercase letters
+    numbers=2,  # need min. 2 digits
+    special=2,  # need min. 2 special characters
+    max-length=50,  # need min. 50 max length
 )
-password_pattern = "^(?=.*?[A-Z]{2,})(?=.*?[a-z]{2,})(?=.*?[0-9]{2,})(?=.*?[\[\]<>#?!@$%^&*-]{2,}).{8,30}$"
+password_pattern = r"^(?=.*[A-Z].*[A-Z])(?=.*[a-z].*[a-z])(?=.*\d.*\d)(?=.*[-+_!@#%^&*.,?].*[-+_!@#%^&*.,?]).{8,50}$"
 ```
 
 To prevent ReDoS the input validation for the Regex for password policy applies the following points as mentioned in
@@ -231,9 +233,9 @@ development makes it a strong choice for password storage.
 
 * The big advantage of Argon2id has the option to choose between modes of protection and there is no compromise on
   security or speed. This algorithm is recommended by the OWASP Foundation winner of the Password Hashing Algorithm in
-  2015 .
+  2015 OWASP.(2021).
 * Argon2id resists both attacks and will also protect our application from brute force attacks, specifically against GPU
-  cracking.
+  cracking (Biryukov, A., Dinu, D, 2016).
 * Since Argon2id uses a lot of memory to hash data, it is more resistant to attacks like GPU-based cracking. Attackers
   are discouraged from attempting to crack passwords because the memory requirement ensures that they must invest
   significant resources to mount successful attacks.
@@ -319,6 +321,8 @@ implemented:
   Simulation. In AVAR Conference.
 * Mushtaq, M.F., Jamel, S., Disina, A.H., Pindar, Z.A., Shakir, N.S.A. and Deris, M.M., 2017. A survey on the
   cryptographic encryption algorithms. International Journal of Advanced Computer Science and Applications, 8(11).
+* OWASP. (2021). OWASP Password Storage Cheat Sheet:. (OWASP) Retrieved
+  from https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
 * Pal, B., Islam, M., Bohuk, M.S., Sullivan, N., Valenta, L., Whalen, T., Wood, C., Ristenpart, T. and Chatterjee, R.,
   2022. Might i get pwned: A second generation compromised credential checking service. In 31st USENIX Security
         Symposium (USENIX Security 22) (pp. 1831-1848).
