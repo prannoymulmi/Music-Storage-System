@@ -63,6 +63,8 @@ class GeneralUtils(object):
             MusicUtils.scan_file(path)
         except VirusFoundError as e:
             raise typer.BadParameter(e.message)
+        except Exception as e:
+            raise typer.BadParameter(e.message)
         return path
 
     @staticmethod
@@ -90,6 +92,8 @@ class GeneralUtils(object):
         try:
             MusicUtils.scan_file(path)
         except VirusFoundError as e:
+            raise typer.BadParameter(e.message)
+        except Exception as e:
             raise typer.BadParameter(e.message)
         return path
 

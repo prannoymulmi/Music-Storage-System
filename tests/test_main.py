@@ -16,7 +16,7 @@ from models.role import Role
 from models.user import User
 from src.utils.configLoader import ConfigLoader
 from tests.test_config import session_fixture
-from utils import configLoader
+from utils import configLoader, music_utils
 from utils.schema.token_input import TokenInput
 
 VALID_USERNAME = "valid_username"
@@ -253,12 +253,14 @@ class TestMain(unittest.TestCase):
             mock_music_repo_get.assert_not_called()
             assert "error" in result.output
 
+    @mock.patch.object(music_utils.MusicUtils, "scan_file")
     @mock.patch.object(music_data_controller.MusicDataController, "add_music_data")
     @mock.patch("src.main.LoginController.login")
     def test_when_add_music_data_as_normal_user_and_own_data_then_music_data_is_added(
             self,
             mock_login,
-            mock_music_repo_add
+            mock_music_repo_add,
+            mock_scan
     ):
         with self.mock_config:
             mock_login.return_value = TokenInput(user_data=User(), role=Role(role_name="NORMAL_USER"))
@@ -275,12 +277,14 @@ class TestMain(unittest.TestCase):
             assert "data added" in result.output
             mock_music_repo_add.assert_called_once()
 
+    @mock.patch.object(music_utils.MusicUtils, "scan_file")
     @mock.patch.object(music_data_controller.MusicDataController, "add_music_data")
     @mock.patch("src.main.LoginController.login")
     def test_when_add_music_data_as_normal_user_and_wrong_credentials_then_access_denied(
             self,
             mock_login,
-            mock_music_repo_add
+            mock_music_repo_add,
+            mock_scan
     ):
         with self.mock_config:
             mock_login.side_effect = UserDeniedError("access_denied")
@@ -297,12 +301,14 @@ class TestMain(unittest.TestCase):
             assert "access_denied" in result.output
             mock_music_repo_add.assert_not_called()
 
+    @mock.patch.object(music_utils.MusicUtils, "scan_file")
     @mock.patch.object(music_data_controller.MusicDataController, "update_music_data")
     @mock.patch("src.main.LoginController.login")
     def test_when_update_music_data_as_normal_user_and_own_data_then_music_data_is_updated(
             self,
             mock_login,
-            mock_music_repo_update
+            mock_music_repo_update,
+            mock_scan
     ):
         with self.mock_config:
             mock_login.return_value = TokenInput(user_data=User(), role=Role(role_name="NORMAL_USER"))
@@ -321,12 +327,14 @@ class TestMain(unittest.TestCase):
             assert "updated data" in result.output
             mock_music_repo_update.assert_called_once()
 
+    @mock.patch.object(music_utils.MusicUtils, "scan_file")
     @mock.patch.object(music_data_controller.MusicDataController, "update_music_data")
     @mock.patch("src.main.LoginController.login")
     def test_when_update_music_data_as_normal_user_and_wrong_credentials_then_access_denied(
             self,
             mock_login,
-            mock_music_repo_update
+            mock_music_repo_update,
+            mock_scan
     ):
         with self.mock_config:
             mock_login.side_effect = UserDeniedError("access_denied")
@@ -345,12 +353,14 @@ class TestMain(unittest.TestCase):
             assert "access_denied" in result.output
             mock_music_repo_update.assert_not_called()
 
+    @mock.patch.object(music_utils.MusicUtils, "scan_file")
     @mock.patch.object(music_data_controller.MusicDataController, "update_music_data")
     @mock.patch("src.main.LoginController.login")
     def test_when_update_music_data_as_normal_user_and_data_not_found_then_data_not_found(
             self,
             mock_login,
-            mock_music_repo_update
+            mock_music_repo_update,
+            mock_scan
     ):
         with self.mock_config:
             mock_login.return_value = TokenInput(user_data=User(), role=Role(role_name="NORMAL_USER"))

@@ -2,7 +2,9 @@ import hashlib
 import os
 
 from pyclamd import pyclamd
+from rich import print
 
+from exceptions.av_not_running_error import AVNotRunningError
 from exceptions.data_not_found import DataNotFoundError
 from exceptions.virus_found import VirusFoundError
 
@@ -71,8 +73,8 @@ class MusicUtils(object):
 
             # Check the scan result
             if result is None:
-                print(f" For path: {path}, No virus found")
+                print(f"[bold green] For path: {path}, No virus found [bold green]")
             else:
                 raise VirusFoundError(f"{path}: virus found")
         except ValueError:
-            return
+            raise AVNotRunningError("ClamAV is not running cannot upload file")

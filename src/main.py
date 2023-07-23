@@ -15,7 +15,8 @@ from models.music_data import MusicData
 from utils.general_utils import GeneralUtils
 from utils.schema.token_input import TokenInput
 
-app = typer.Typer()
+# Do not show exception data in the console
+app = typer.Typer(pretty_exceptions_enable=False)
 
 """
 The entry point to the CLI application, it uses Typer to make to empower the CLI app.

@@ -24,16 +24,22 @@ source ./venv/bin/activate
 python -m pip install --upgrade pip 
 
 #Is used to check if the virtual environment is being used 
-pip -V  
+pip3 -V  
 
 # Install all required dependencies
-pip install -r requirements.txt 
+pip3 install -r requirements.txt 
 
 # Docker check if it is running (Should show no error before continuing)
 docker ps
 
+# remove all previous containers if present
+docker container prune -f
+
 # Docker run clamav
 docker run -d -p 127.0.0.1:3310:3310 --name clamav clamav/clamav:1.1
+
+# After finishing all the tests run
+docker stop clamav
 ```
 
 ### Cyclomatic Complexity
@@ -313,12 +319,12 @@ implemented:
 * Hameed, M.E., Ibrahim, M.M., Abd Manap, N. and Attiah, M.L., 2019. Comparative study of several operation modes of AES
   algorithm for encryption ECG biomedical signal. International Journal of Electrical and Computer Engineering, 9(6),
   p.4850.
+* Harley, D., Myers, L. and Willems, E., 2011. Test Files and Product Evaluation: the Case for and against Malware
+  Simulation. In AVAR Conference.
 * Input validation cheat sheet(n.d), OWASP Input Validation [online] - OWASP Cheat Sheet Series. Available
   from: https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html (Accessed: 18 July 2023).
 * Jones, M., Bradley, J. and Sakimura, N., 2015. Json web token (jwt) (No. rfc7519).
 * Josefsson, S. and Liusvaara, I., 2017. Edwards-curve digital signature algorithm (EdDSA) (No. rfc8032).
-* Harley, D., Myers, L. and Willems, E., 2011. Test Files and Product Evaluation: the Case for and against Malware
-  Simulation. In AVAR Conference.
 * Mushtaq, M.F., Jamel, S., Disina, A.H., Pindar, Z.A., Shakir, N.S.A. and Deris, M.M., 2017. A survey on the
   cryptographic encryption algorithms. International Journal of Advanced Computer Science and Applications, 8(11).
 * OWASP. (2021). OWASP Password Storage Cheat Sheet:. (OWASP) Retrieved
