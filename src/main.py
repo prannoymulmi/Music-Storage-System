@@ -1,4 +1,5 @@
 import typer
+from rich import print
 from sqlmodel import Session
 from typing_extensions import Annotated
 
@@ -39,6 +40,8 @@ def login(
         if isinstance(result, TokenInput) and result:
             print("logged_in")
     except UserDeniedError as e:
+        print(e.message)
+    except Exception as e:
         print(e.message)
 
 
@@ -84,7 +87,8 @@ def add_new_user_and_role(
         print(e.message)
     except WeakPasswordError as e:
         print(e.message)
-
+    except Exception as e:
+        print(e.message)
 
 """
 The method which handles the adding new data with all the other input sanitization step and authorization and authentication
@@ -109,7 +113,8 @@ def add_music_data(
         print("data added")
     except UserDeniedError as e:
         print(e.message)
-
+    except Exception as e:
+        print(e.message)
 
 """
 The method which handles the update data with all the other input sanitization step and authorization and authentication
@@ -142,7 +147,8 @@ def update_music_data(
         print(e.message)
     except DataNotFoundError as e:
         print(e.message)
-
+    except Exception as e:
+        print(e.message)
 
 '''
 This method only list the music data. If the user is an admin they can see all the user data, but a normal user
@@ -162,7 +168,7 @@ def list_music_data(
         data: TokenInput
         """If username and password are default value (non input provided), then check 
         if there is a valid token and get user details"""
-        if username == "CHECK_TOKEN" and password == "CHECK_TOKEN": # nosec
+        if username == "CHECK_TOKEN" and password == "CHECK_TOKEN":  # nosec
             data = controller_login.get_details_for_token()
         else:
             data = controller_login.login(username, password)
@@ -172,7 +178,7 @@ def list_music_data(
             print(result)
     except UserDeniedError as e:
         print(e.message)
-    except RuntimeError as e:
+    except Exception as e:
         print(e.message)
 
 
@@ -195,7 +201,8 @@ def delete_music_data(
         print("Data Deleted")
     except UserDeniedError as e:
         print(e.message)
-
+    except Exception as e:
+        print(e.message)
 
 """
 The method which handles the download data with all the other input sanitization step and authorization and authentication
@@ -217,8 +224,13 @@ def download_music_data(
             f' ID: {music_data.id} Music Score:  {music_data.music_score} Music File: {music_data.music_file_name} Lyrics File: {music_data.lyrics_file_name}')
     except UserDeniedError as e:
         print(e.message)
+    except Exception as e:
+        print(e.message)
 
 
+"""
+This Command initializes the application with the required admin roles and an admin user name and random password.
+"""
 @app.command()
 def init():
     load_app_config(True)
@@ -227,13 +239,13 @@ def init():
 """
 The method that loads all the configurations that the application needs to start. 
 """
-
-
 def load_app_config(is_init: bool = False) -> Session:
     loader = ConfigFactory().create_object('config_loader')
     session_from_config = loader.load_config()
     if is_init:
-        seed_database(session_from_config)
+        result = seed_database(session_from_config)
+        if not result:
+            print("[bold red] Application is already initialized ![bold red]")
     return session_from_config
 
 

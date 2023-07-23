@@ -79,6 +79,48 @@ class TestMain(unittest.TestCase):
             mock_music_data.assert_called_once()
             assert 'Listing Data' in result.output
 
+    @mock.patch.object(music_data_controller.MusicDataController, "list_music_data")
+    @mock.patch.object(login_controller.LoginController, "get_details_for_token")
+    @mock.patch("src.main.ConfigFactory.create_object")
+    def test_when_list_music_data_with_no_credentials_but_no_token_present_then_user_denied(
+            self,
+            mock__creator,
+            mock_login_controller,
+            mock_music_data
+    ):
+        with self.mock_config:
+            test = MagicMock(ConfigLoader())
+            mock_login_controller.side_effect = UserDeniedError("access denied")
+            test.load_config.return_value = MagicMock(Session)
+            mock__creator.side_effect = TestMain.side_effect
+            runner = CliRunner()
+
+            result = runner.invoke(app, ['list-music-data'])
+            mock_login_controller.assert_called_once()
+            mock_music_data.assernot_called()
+            assert 'access denied' in result.output
+
+    @mock.patch.object(music_data_controller.MusicDataController, "list_music_data")
+    @mock.patch.object(login_controller.LoginController, "get_details_for_token")
+    @mock.patch("src.main.ConfigFactory.create_object")
+    def test_when_list_music_data_with_no_credentials_throws_run_time_error_then_throw_error(
+            self,
+            mock__creator,
+            mock_login_controller,
+            mock_music_data
+    ):
+        with self.mock_config:
+            test = MagicMock(ConfigLoader())
+            mock_login_controller.side_effect = DataNotFoundError("error")
+            test.load_config.return_value = MagicMock(Session)
+            mock__creator.side_effect = TestMain.side_effect
+            runner = CliRunner()
+
+            result = runner.invoke(app, ['list-music-data'])
+            mock_login_controller.assert_called_once()
+            mock_music_data.assernot_called()
+            assert 'error' in result.output
+
     @mock.patch("src.main.LoginController.login")
     def test_when_login_with_right_credentials_then_user_is_logged_on(
             self,

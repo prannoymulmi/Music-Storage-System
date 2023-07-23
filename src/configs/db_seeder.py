@@ -14,10 +14,11 @@ For testing purposes the DB will will have an admin user whose credentials can b
 Without the initial User no other users can be created. Generally the database would not be local
 and would be hosted in a secure server but for the purpose of testing this function is necessary.
 '''
-def seed_database(session_from_config):
+def seed_database(session_from_config) -> bool:
     role_repo: RoleRepository = RepositoryFactory().create_object("role_repo")
     try:
         role_repo.get_role_by_id(session_from_config, "1")
+        return False
     except Exception:
         role_admin = Role(role_name=RoleNames.admin.value)
         role_normal_user = Role(role_name=RoleNames.normal_user.value)
@@ -31,6 +32,7 @@ def seed_database(session_from_config):
         print(f"[bold green]Initial user name: admin and password: {password} [bold green]")
         user_repo.create_user_or_else_return_none(session_from_config, "admin", password,
                                                   role_admin.role_name)
+        return True
 
 
 """

@@ -1,3 +1,8 @@
 [tool.ruff]
 line-length = 900
 target-version = "py311"
+
+[tool.coverage.run]
+omit = [
+    # omit anything in a .local directory anywhere
+    "*/db_*"]
