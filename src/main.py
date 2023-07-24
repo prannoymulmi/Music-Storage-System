@@ -39,11 +39,11 @@ def login(
     try:
         result = controller.login(username, password)
         if isinstance(result, TokenInput) and result:
-            print("logged_in")
+            print("[bold green]logged_in[bold green]")
     except UserDeniedError as e:
-        print(e.message)
+        print(f'[bold red]{e.message}[bold red]')
     except Exception as e:
-        print(e.message)
+        print(f'[bold red]{e.message}[bold red]')
 
 
 """
@@ -81,15 +81,15 @@ def add_new_user_and_role(
     controller: LoginController = ControllerFactory().create_object("login_controller")
     try:
         controller.login(username_admin, password_admin)
-        print(f'logged_in as {username_admin}')
+        print(f'[bold green]logged_in as {username_admin}[bold green]')
         controller.add_new_user(new_username, new_user_password, role)
-        print(new_username)
+        print(f'[bold green] added new user : {new_username}[bold green]')
     except UserDeniedError as e:
-        print(e.message)
+        print(f'[bold red]{e.message}[bold red]')
     except WeakPasswordError as e:
-        print(e.message)
+        print(f'[bold red]{e.message}[bold red]')
     except Exception as e:
-        print(e.message)
+        print(f'[bold red]{e.message}[bold red]')
 
 """
 The method which handles the adding new data with all the other input sanitization step and authorization and authentication
@@ -111,11 +111,11 @@ def add_music_data(
     try:
         data: TokenInput = controller_login.login(username, password)
         controller_music.add_music_data(music_file_path, music_score, lyrics_file_path, data.user_data)
-        print("data added")
+        print("[bold green]data added[bold green]")
     except UserDeniedError as e:
-        print(e.message)
+        print(f'[bold red]{e.message}[bold red]')
     except Exception as e:
-        print(e.message)
+        print(f'[bold red]{e.message}[bold red]')
 
 """
 The method which handles the update data with all the other input sanitization step and authorization and authentication
@@ -143,13 +143,13 @@ def update_music_data(
             lyrics_file_name=lyrics_file_path
         )
         controller_music.update_music_data(login_data.user_data, music_data)
-        print("updated data")
+        print("[bold green]updated data[bold green]")
     except UserDeniedError as e:
-        print(e.message)
+        print(f'[bold red]{e.message}[bold red]')
     except DataNotFoundError as e:
-        print(e.message)
+        print(f'[bold red]{e.message}[bold red]')
     except Exception as e:
-        print(e.message)
+        print(f'[bold red]{e.message}[bold red]')
 
 '''
 This method only list the music data. If the user is an admin they can see all the user data, but a normal user
@@ -174,13 +174,13 @@ def list_music_data(
         else:
             data = controller_login.login(username, password)
         results = controller_music.list_music_data(data.user_data)
-        print("Listing Data")
+        print("[bold green]Listing Data[bold green]")
         for result in results:
             print(result)
     except UserDeniedError as e:
-        print(e.message)
+        print(f'[bold red]{e.message}[bold red]')
     except Exception as e:
-        print(e.message)
+        print(f'[bold red]{e.message}[bold red]')
 
 
 """
@@ -199,11 +199,11 @@ def delete_music_data(
     try:
         data: TokenInput = controller_login.login(username, password)
         controller_music.delete_music_data(data.user_data, music_data_id)
-        print("Data Deleted")
+        print("[bold red]Data Deleted[bold red]")
     except UserDeniedError as e:
-        print(e.message)
+        print(f'[bold red]{e.message}[bold red]')
     except Exception as e:
-        print(e.message)
+        print(f'[bold red]{e.message}[bold red]')
 
 """
 The method which handles the download data with all the other input sanitization step and authorization and authentication
@@ -224,9 +224,9 @@ def download_music_data(
         print(
             f' ID: {music_data.id} Music Score:  {music_data.music_score} Music File: {music_data.music_file_name} Lyrics File: {music_data.lyrics_file_name}')
     except UserDeniedError as e:
-        print(e.message)
+        print(f'[bold red]{e.message}[bold red]')
     except Exception as e:
-        print(e.message)
+        print(f'[bold red]{e.message}[bold red]')
 
 
 """

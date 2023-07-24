@@ -63,8 +63,8 @@ class GeneralUtils(object):
             MusicUtils.scan_file(path)
         except VirusFoundError as e:
             raise typer.BadParameter(e.message)
-        except Exception as e:
-            raise typer.BadParameter(e.message)
+        except Exception:
+            raise typer.BadParameter("Error: occurred cannot scan file")
         return path
 
     @staticmethod
@@ -93,8 +93,8 @@ class GeneralUtils(object):
             MusicUtils.scan_file(path)
         except VirusFoundError as e:
             raise typer.BadParameter(e.message)
-        except Exception as e:
-            raise typer.BadParameter(e.message)
+        except Exception:
+            raise typer.BadParameter("Error: occurred cannot scan file")
         return path
 
     @staticmethod
