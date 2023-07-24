@@ -12,6 +12,7 @@ from exceptions.weak_password import WeakPasswordError
 from factories.config_factory import ConfigFactory
 from factories.controller_factory import ControllerFactory
 from models.music_data import MusicData
+from utils.schema.music_data_output import MusicDataOutput
 from utils.general_utils import GeneralUtils
 from utils.schema.token_input import TokenInput
 
@@ -173,10 +174,15 @@ def list_music_data(
             data = controller_login.get_details_for_token()
         else:
             data = controller_login.login(username, password)
-        results = controller_music.list_music_data(data.user_data)
+        results: MusicDataOutput = controller_music.list_music_data(data.user_data)
         print("[bold green]Listing Data[bold green]")
         for result in results:
-            print(result)
+            print(f' id: {result.id} music_score: {result.music_score}'
+                  f'music_file_name: {result.music_file_name} '
+                  f'lyrics_file_name: {result.lyrics_file_name} '
+                  f'checksum: {result.checksum} user_id: {result.user_id}'
+                  f' modified_timestamp: {result.modified_timestamp} '
+                  f'created_timestamp: {result.created_timestamp}')
     except UserDeniedError as e:
         print(f'[bold red]{e.message}[bold red]')
     except Exception as e:
