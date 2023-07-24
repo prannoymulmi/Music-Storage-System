@@ -36,6 +36,10 @@ class MusicUtils(object):
         except Exception:
             raise DataNotFoundError(f'{path} not found')
 
+    """
+    Method which calculates the SHA256
+    """
+
     @staticmethod
     def calculate_check_sum(data):
         return hashlib.sha256(data).hexdigest()
@@ -53,6 +57,12 @@ class MusicUtils(object):
                 file.write(bytes_to_write)
         except Exception:
             raise DataNotFoundError(f'{path} not found')
+
+    """
+    Method which scans a file for viruses. 
+    The bytes for the files are read and the fed into the function which then determines using its database if a virus is present or not.
+    source <a href=https://xael.org/pages/pyclamd-en.html />
+    """
 
     @staticmethod
     def scan_file(path):

@@ -54,6 +54,10 @@ class PasswordUtil(object):
             leaked_passwd_freq[passwd] = int(freq)
         return hex_digest_remaining in leaked_passwd_freq
 
+    """
+    A method which checks if a password string is 
+    """
+
     @staticmethod
     def is_password_policy_non_compliant(passwd: str):
         # regex cheat sheet <a href=https://www.rexegg.com/regex-quickstart.html>
@@ -61,10 +65,10 @@ class PasswordUtil(object):
         (?=.*[A-Z].*[A-Z]) ensures there are at least two uppercase letters.
         (?=.*[a-z].*[a-z]) ensures there are at least two lowercase letters.
         (?=.*\\d.*\\d) ensures there are at least two digits.
-        (?=.*[-+_!@#$^&*.,?].*[-+_!@#$^&*.,?]) ensures there are at least two special characters (-+_!@#$%^&*.,?).
+        (?=.*[-+_!@#^&*.,?].*[-+_!@#^&*.,?]) ensures there are at least two special characters (-+_!@#$%^&*.,?).
         .{8,50} matches any character (except newline) at least 8 times and maximum 50.
         """
 
         pattern = r"^(?=.*[A-Z].*[A-Z])(?=.*[a-z].*[a-z])(?=.*\d.*\d)(?=.*[-+_!@#%^&*.,?].*[-+_!@#%^&*.,?]).{8,50}$"
-        matches = re.match(pattern, passwd)
+        matches = re.fullmatch(pattern, passwd)
         return matches is None
